@@ -27,7 +27,14 @@
 
 #include  <stdio.h>
 #include  <stdlib.h>
+#include  <stdarg.h>
+#include  <errno.h>
+#include  <string.h>
+//#include  <time.h>
+
 #include  "../inc/lgr.h"
+#include  "../../timex/inc/timex.h"
+
 
 /**
  * \internal  
@@ -51,13 +58,78 @@ static enum verblvls  vlvl    = WARNING;
 int
 main(void)
 {
+    printf("%s\n", getyear());
     return 0;
 }
 
+/**
+ * \internal  
+ *  @todo Log to file.
+ *  @todo Enabled \e only selected #verblvls.
+ *  @todo Logging level.
+ *  @todo Enabled logging for \e only selected #verblvls.
+ *  @todo Implement option for 'timesamps'.
+ *
+ *  @note Still want \c #ERROR to be logged even if #vlvl is set to \c #FATAL.
+ *  @note Eventually want to add an option to enable color and after being done
+ *          so, implement an option for colors to be customized.
+ * \endinternal
+ */
 void
 loglf(enum verblvls verblvl, char *strfmt, ...)
 {
+    /*
+     * 'verblvl' is not a vald verbose level.
+     */
+    if (!isverblvl(verblvl)) { return; }
 
+    /*
+     * Prioirty is to high for this message to be displayed.
+     */
+    if (verblvl > vlvl) { return; }
+    
+    /*
+     * NOTE:  Don't really like this approach...  It's faster than 'if'
+     *          conditional checks, but maybe there is another way to
+     *          accomplish duplicate results when 'Log to file' feature is
+     *          implemented.
+     *
+     * file pointer stream */
+    FILE *fpstrm;
+    switch (verblvl)
+    {
+        case FATAL:
+        case ERROR:
+            fpstrm = stderr;
+            break;
+        case WARNING:
+        case INFO:
+        case DEBUG:
+        case INTERN_INFO:
+        case INTERN_DEBUG:
+            fpstrm = stdout;
+            break;
+        default:
+
+            /*
+             * If somehow the code reaches here...  Something fucked up
+             *  emensely..!.
+             */
+            fprintf(stderr,
+                    "%s:%s:%u:\t010001!2!!1 errno(%d)%s\n",
+                    __FILE__,
+                    __func__,
+                    __LINE__,
+                    errno,
+                    strerror(errno));
+            exit(EXIT_FAILURE);
+    }
+    
+    /* argument pointer */
+    va_list ap;
+    va_start(ap, strfmt);
+    vfprintf(fpstrm, strfmt, ap);
+    va_end(ap);
 }
 
 char*
