@@ -30,11 +30,9 @@
 #include  <stdarg.h>
 #include  <errno.h>
 #include  <string.h>
-//#include  <time.h>
+#include  <time.h>
 
 #include  "../inc/lgr.h"
-#include  "../../timex/inc/timex.h"
-
 
 /**
  * \internal  
@@ -54,14 +52,14 @@ static char           *vlvln  = WARNING_STR;
  * \endinternal
  */
 static enum verblvls  vlvl    = WARNING;
-
+/*
 int
 main(void)
 {
     printf("%s\n", getyear());
     return 0;
 }
-
+*/
 /**
  * \internal  
  *  @todo Log to file.
@@ -105,6 +103,7 @@ loglf(enum verblvls verblvl, char *strfmt, ...)
         case WARNING:
         case INFO:
         case DEBUG:
+        case INTERN_WARNING:
         case INTERN_INFO:
         case INTERN_DEBUG:
             fpstrm = stdout;
@@ -132,6 +131,8 @@ loglf(enum verblvls verblvl, char *strfmt, ...)
     va_end(ap);
 }
 
+
+
 char*
 getverblvlname(enum verblvls verblvl)
 {
@@ -151,13 +152,14 @@ getverblvlname(enum verblvls verblvl)
      *          definition.
      *
      * temp verbose level name */
-    char *tmpvln  = verblvl == INTERN_DEBUG ? INTERN_DEBUG_STR
-                  : verblvl == INTERN_INFO  ? INTERN_INFO_STR
-                  : verblvl == DEBUG        ? DEBUG_STR
-                  : verblvl == INFO         ? INFO_STR
-                  : verblvl == WARNING      ? WARNING_STR
-                  : verblvl == ERROR        ? ERROR_STR
-                  : verblvl == FATAL        ? FATAL_STR
+    char *tmpvln  = verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
+                  : verblvl == INTERN_INFO    ? INTERN_INFO_STR
+                  : verblvl == INTERN_WARNING ? INTERN_WARNING_STR
+                  : verblvl == DEBUG          ? DEBUG_STR
+                  : verblvl == INFO           ? INFO_STR
+                  : verblvl == WARNING        ? WARNING_STR
+                  : verblvl == ERROR          ? ERROR_STR
+                  : verblvl == FATAL          ? FATAL_STR
                   
                   /*
                    * If 'verblvl' is not of a valid constant contained in the
@@ -187,7 +189,7 @@ getverblvlname(enum verblvls verblvl)
     loglf(tmpvl,
           "'%hhu' is%sa valid verbose level(%s)!\n",
           verblvl,
-          tmpvln == NVALID_VERB_LVL_STR ? " not " : " ",
+          !strcmp(tmpvln, NVALID_VERB_LVL_STR) ? " not " : " ",
           tmpvln);
 
     loglf(INTERN_DEBUG, "Returning '%s'...\n", tmpvln);
@@ -211,6 +213,157 @@ isverblvl(unsigned char lvl)
 
     loglf(INTERN_DEBUG, "Returning '%d'...\n", tmplvl);
     return tmplvl;
+}
+
+/**
+ * \internal  
+ *  @brief  validate verbose level name
+ *
+ *  Makes sure that #vlvl corresponds with #vlvln.
+ *
+ *  @return If #vlvl correpsonds to #vlvln, \c nonzero will be returned.\n
+ *          If #vlvl does not correspond to #vlvln, \c 0 will be returned.
+ * \endinternal
+ */
+static int
+vldtvlvlname(void)
+{
+    loglf(INTERN_DEBUG, "Validating verbose level with verbose name...\n");
+    /* 
+     * Not sure if the '!' will reverse the value or not, and by that I mean if
+     *  '0', turn the value into 'nonzero' and visa versa..
+     *
+     * return code */
+    int rcode = !(strcmp(vlvln, getverblvlname(vlvl)));
+
+    loglf(INTERN_DEBUG, "Returning '%d'...\n", rcode);
+    return rcode;
+}
+
+/**
+ * \internal  
+ *  @brief  set verbose level name
+ *
+ *  Changes the current \link #vlvln verbose level name\endlink to that of
+ *    given to \p verblvl, if it is of a valid \link #verblvls verbose
+ *    level\endlink.
+ *
+ *  param[in] verblvl An enumerator constant decalred in enumeration type
+ *                      #verblvls.
+ *
+ *  @return If \p verblvl is a valid is a valid \link #verblvls verbose
+ *            level\endlink, the string representation of \p verblvl will be
+ *            returned.\n
+ *          If \p verblvl is not a valid \link #verblvls verbose level\endlink,
+ *            #vlvln will be returned.
+ *
+ *  @remark #vlvln is a \c static global variable, delcared near the top of
+ *            this source (lgr.c).
+ * \endinternal
+ */
+static char*
+setverblvlname(enum verblvls verblvl)
+{
+    loglf(INTERN_DEBUG,
+          "Checking if verbose level name change is redundant...\n");
+    if (!strcmp(vlvln, getverblvlname(verblvl)))
+    {
+        /*
+         * This validation check may be redundant..
+         *
+         * Unlike the function below and how it uses verbose level 'INFO', this
+         *  is an internal function, so a verbose level will be used.
+         */
+        loglf(INTERN_INFO,
+              "Verbose level name already set to '%s(%hhu)'!\n", vlvln, vlvl);
+
+        /* temp verbose level */
+        unsigned char tmpvlvl = INTERN_INFO;
+
+        /*
+         * I don't really like how I have this formatted because there isn't
+         *  any parenthasis.
+         *
+         * temp string format argument */
+        char *tmpstrfmta      =
+            /*
+             * Ya I know, another one.  Deal with it...
+             */
+            vldtvlvlname() ? " " : (tmpvlvl = INTERN_WARNING, " un");
+        
+        loglf(tmpvlvl, "Validation was%ssucessfull!\n", tmpstrfmta);
+        loglf(INTERN_INFO, "Leaving verbose level name as is...\n");
+        loglf(INTERN_DEBUG, "Returning '%s'...\n", vlvln);
+        return vlvln;
+    }
+
+    char *tmpvlvln = getverblvlname(verblvl);
+    loglf(INTERN_DEBUG, "Setting verbose level name to '%s'...\n", tmpvlvln);
+    if (strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
+    {
+        /*
+         * I am aware that function 'isverblvl()' uses a verbose level of
+         *  'INTERN_INFO', but if doing so here as well, to much information
+         *  will be output to the stream along about the procedure so to speak.
+         */
+        loglf(INTERN_DEBUG, "'%s' is a valid verbose level name!\n", tmpvlvln);
+        loglf(INTERN_INFO,
+              "Sucessfull changed verbose level name from '%s', to '%s'!\n",
+              vlvln,
+              tmpvlvln);
+
+        loglf(INTERN_DEBUG, "Checking if 'vlvln' needs to be reallocated...\n");
+        /*
+         * I'm drawing blanks here as to weather or not I need to perform a
+         *  'strcpy', or if I just need to reallocate (If need be) 'vlvln' 
+         *  followed by reassigning the value of 'tmpvlvln'..
+         */
+        loglf(INTERN_DEBUG, "Calculating 'strlen' of 'vlvln'...\n");
+        /* temp verbose level size */
+        size_t tmpvlvlnsz   = strlen(vlvln);
+
+        loglf(INTERN_DEBUG, "Calculating 'strlen' of 'tmpvlvln'...\n");
+        /* temp temp verbose level size (tmpt(mp)vlvln) */
+        size_t tmptvlvlnsz  = strlen(tmpvlvln);
+        if (tmpvlvlnsz != tmptvlvlnsz)
+        {
+            loglf(INTERN_DEBUG, 
+                  "sizeof:\t'vlvln'     = %lu\nsizeof:\t'tmpvlvln'  = %lu\n",
+                  tmpvlvlnsz,
+                  tmptvlvlnsz);
+            loglf(INTERN_DEBUG, "'vlvln' needs reallocation!\n");
+            loglf(INTERN_DEBUG,
+                  "Reallocating 'vlvln' to %lu + 1...\n",
+                  tmptvlvlnsz);
+            /*
+             * Plus '1' for 'null byte'.
+             *
+             * temp int */
+            int tmpi = realloc(vlvln, tmptvlvlnsz + 1);
+            loglf(INTERN_DEBUG, "Finished reallocation!\nVerifying...\n");
+            if (!tmpi)
+            {
+                loglf(ERROR, "'realloc' returned %d!\n", tmpi);
+                loglf(ERROR, "vlvln' did not successfully allocate!\n");
+                loglf(ERROR, "Returning '%s'...\n", vlvln);
+                return vlvln;
+            }
+
+            loglf(INTERN_DEBUG, "Reallocation was successfull!\n");
+        }
+        
+        loglf(INTERN_DEBUG, "Assigning 'tmpvlvln' to 'vlvln'...\n");
+        vlvln = tmpvlvln;
+
+        loglf(INTERN_INFO, "Returning '%s'...\n", vlvln);
+        return vlvln;
+    }
+
+    loglf(INTERN_WARNING,
+          "'%s' is not a valid verbose level name...\n",
+          tmpvlvln);
+    loglf(INTERN_INFO, "Returning '%s'...", vlvln);
+    return vlvln;
 }
 
 int
@@ -253,7 +406,7 @@ setverblvl(enum verblvls verblvl)
               vlvl,
               vlvln,
               vlvl  = verblvl,
-              vlvln = getverblvlname(vlvl));
+              setverblvlname(verblvl));
         
         loglf(INTERN_DEBUG, "Returning '%hhu'...\n", vlvl);
         return vlvl;
