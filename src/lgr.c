@@ -5,24 +5,24 @@
  * @date	02/15/2017 18:08:02
  * @author	Anonrate
  * @copyright	
- * 	\parblock
- * 		GNU General Public License
+ *  \parblock
+ *    GNU General Public License
  *
- * 		Copyright (C) 2017 Anonrate
+ * 	  Copyright (C) 2017 Anonrate
  *
- * 		This program is free software: you can redistribute it and/or modify 
- * 		it under the terms of the GNU General Public License as published by 
- * 		the Free Software Foundation, either version 3 of the License, or 
- * 		(at your option) any later version.
+ * 	  This program is free software: you can redistribute it and/or modify 
+ * 	  it under the terms of the GNU General Public License as published by 
+ * 	  the Free Software Foundation, either version 3 of the License, or 
+ * 	  (at your option) any later version.
  *
- * 		This program is distributed in the hope that it will be useful, 
- * 		but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * 		GNU General Public License for more details.
+ * 	  This program is distributed in the hope that it will be useful, 
+ * 	  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * 	  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * 	  GNU General Public License for more details.
  *
- * 		You should have received a copy of the GNU General Public License
- * 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 	\endparblock
+ * 	  You should have received a copy of the GNU General Public License
+ * 	  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *  \endparblock
  */
 
 #include  <stdio.h>
@@ -130,8 +130,6 @@ loglf(enum verblvls verblvl, char *strfmt, ...)
     vfprintf(fpstrm, strfmt, ap);
     va_end(ap);
 }
-
-
 
 char*
 getverblvlname(enum verblvls verblvl)
@@ -312,7 +310,7 @@ setverblvlname(enum verblvls verblvl)
               vlvln,
               tmpvlvln);
 
-        loglf(INTERN_DEBUG, "Checking if 'vlvln' needs to be reallocated...\n");
+        loglf(INTERN_DEBUG, "Checking if 'vlvln' needs to be reallocated..\n");
         /*
          * I'm drawing blanks here as to weather or not I need to perform a
          *  'strcpy', or if I just need to reallocate (If need be) 'vlvln' 
@@ -338,13 +336,14 @@ setverblvlname(enum verblvls verblvl)
             /*
              * Plus '1' for 'null byte'.
              *
-             * temp int */
-            int tmpi = realloc(vlvln, tmptvlvlnsz + 1);
+             * void pointer */
+            void *vp = realloc(vlvln, tmptvlvlnsz + 1);
             loglf(INTERN_DEBUG, "Finished reallocation!\nVerifying...\n");
-            if (!tmpi)
+            if (!vp)
             {
-                loglf(ERROR, "'realloc' returned %d!\n", tmpi);
+                loglf(ERROR, "'realloc' returned %p!\n", vp);
                 loglf(ERROR, "vlvln' did not successfully allocate!\n");
+                
                 loglf(ERROR, "Returning '%s'...\n", vlvln);
                 return vlvln;
             }
@@ -362,6 +361,7 @@ setverblvlname(enum verblvls verblvl)
     loglf(INTERN_WARNING,
           "'%s' is not a valid verbose level name...\n",
           tmpvlvln);
+
     loglf(INTERN_INFO, "Returning '%s'...", vlvln);
     return vlvln;
 }
