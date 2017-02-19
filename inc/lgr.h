@@ -33,13 +33,22 @@
  */
 #define NVALID_VERB_LVL_STR "NVALID_VERB_LVL"
 
-#define FATAL_STR         "FATAL"         /**< \c #FATAL         string  */
-#define ERROR_STR         "ERROR"         /**< \c #ERROR         string  */
-#define WARNING_STR       "WARNING"       /**< \c #WARNING       string  */
-#define INFO_STR          "INFO"          /**< \c #INFO          string  */
-#define DEBUG_STR         "DEBUG"         /**< \c #DEBUG         string  */
-#define INTERN_INFO_STR   "INTERN_INFO"   /**< \c #INTERN_INFO   string  */
-#define INTERN_DEBUG_STR  "INTERN_DEBUG"  /**< \c #INTERN_DEBUG  string  */
+/*
+ * Each same line document in the following definitions, do not have a 'valid'
+ *  'tabstop' after the word 'string' because even if to do so, that would make
+ *  the comment closer at column 80, and that is greater than 79 (Obviously),
+ *  and my coding style is to keep everything under or at max 79 characters
+ *  long for each line as said so in the GNU formating docs.  Yes I follow a
+ *  lot of the conventions there, but not all.
+ */
+#define FATAL_STR           "FATAL"           /**< \c #FATAL          string */
+#define ERROR_STR           "ERROR"           /**< \c #ERROR          string */
+#define WARNING_STR         "WARNING"         /**< \c #WARNING        string */
+#define INFO_STR            "INFO"            /**< \c #INFO           string */
+#define DEBUG_STR           "DEBUG"           /**< \c #DEBUG          string */
+#define INTERN_WARNING_STR  "INTERN_WARNING"  /**< \c #INTERN_WARNING string */
+#define INTERN_INFO_STR     "INTERN_INFO"     /**< \c #INTERN_INFO    string */
+#define INTERN_DEBUG_STR    "INTERN_DEBUG"    /**< \c #INTERN_DEBUG   string */
 
 /**
  * @brief   verbosity levels
@@ -59,16 +68,21 @@ verblvls {
     WARNING = 0x3,  /**< Warning messages.    */
     INFO    = 0x4,  /**< Infomative messages. */
     DEBUG   = 0x5,  /**< Display everything!  */
-    
-    /**
-     * Used to enable the \c #INFO messages of the debugger itself.
-     */
-    INTERN_INFO     = 0x6,  /**< @brief internal informatoin  */
    
     /**
-     * Used to enable the \c #DEBUG messages of the debugger itself.
+     * Used to enable the \c #WARNING messages of the logger itself.
      */
-    INTERN_DEBUG    = 0x7   /**< @brief internal debug        */
+    INTERN_WARNING  = 0x6,  /**< @brief internal warning      */
+
+    /**
+     * Used to enable the \c #INFO messages of the logger itself.
+     */
+    INTERN_INFO     = 0x7,  /**< @brief internal informatoin  */
+   
+    /**
+     * Used to enable the \c #DEBUG messages of the logger itself.
+     */
+    INTERN_DEBUG    = 0x8   /**< @brief internal debug        */
 };
 
 /**
@@ -131,9 +145,10 @@ isverblvl(unsigned char lvl);
  * @brief set verbose level
  *
  * Changes the current \link #verblvls verbose level\endlink to that of
- *  given to \p verblvl if it is a valid \link #verblvls verbose level\endlink.
+ *  given to \p verblvl, if it is a valid \link #verblvls verbose 
+ *  level\endlink.
  *
- * @param[in] verblvl An enumerator constatn declared in enuymeration type
+ * @param[in] verblvl An enumerator constatn declared in enumeration type
  *                      #verblvls.
  *
  * @return  If \p verblvl is a valid \link #verblvls verbose level\endlink, \p
@@ -144,7 +159,7 @@ isverblvl(unsigned char lvl);
  *
  * \internal  
  *  @remark The return value in short, will just return the value of \c #vlvl, 
- *            which is a \c static global variable declared in 'lgr.c'.
+ *            which is a \c static global variable, declared in 'lgr.c'.
  * \endinternal
  */
 extern int
