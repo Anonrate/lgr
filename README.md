@@ -3,6 +3,17 @@
 *stdout*, *stderr* and/or a file depending on the situtation and
 configurations.
 
+1.Test list?
+2. Test list 2?
+3. Test list 2 and 3 work but not 1?
+  * So for this kind of list two spaces are needed
+  1. You can do this as well.
+   Three spaces...
+
+   Three spaces and blank line
+  - You can use this
+  + this 
+    - this is this a sub point?
 
 
 
