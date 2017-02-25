@@ -1,428 +1,774 @@
 /**
- * @file	lgr.c
- * @brief	lgr.c
- * @version	v.1
- * @date	02/15/2017 18:08:02
- * @author	Anonrate
- * @copyright	
- *  \parblock
- *    GNU General Public License
+ *  @file     lgr.c
+ *  @brief    lgr.c
+ *  @version  v.1
+ *  @date     02/15/2017 18:08:02
+ *  @author   Anonrate
+ *  @copyright
+ *    \parblock
+ *      GNU General Public License
  *
- * 	  Copyright (C) 2017 Anonrate
+ *      Copyright (C) 2017 Anonrate
  *
- * 	  This program is free software: you can redistribute it and/or modify 
- * 	  it under the terms of the GNU General Public License as published by 
- * 	  the Free Software Foundation, either version 3 of the License, or 
- * 	  (at your option) any later version.
+ *      This program is free software: you can redistribute it and/or modify
+ *        it under the terms of the GNU General Public License as published by
+ *        the Free Software Foundation, either version 3 of the License, or
+ *        (at your option) any later version.
  *
- * 	  This program is distributed in the hope that it will be useful, 
- * 	  but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * 	  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * 	  GNU General Public License for more details.
+ *      This program is distributed in the hope that it will be useful,
+ *        but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *        GNU General Public License for more details.
  *
- * 	  You should have received a copy of the GNU General Public License
- * 	  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *  \endparblock
+ *      You should have received a copy of the GNU General Public License
+ *        along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *    \endparblock
  */
 
 #include  <stdio.h>
 #include  <stdlib.h>
 #include  <stdarg.h>
+#include  <stdnoreturn.h>
 #include  <errno.h>
 #include  <string.h>
-#include  <time.h>
 
 #include  "../inc/lgr.h"
 
-/**
- * \internal  
- *  @brief  verbose level name
- *
- *  Contains the name representation that of what the current verbose \link 
- *    #vlvl level\endlink is set to.
- * \endinternal
- */
-static char           *vlvln  = WARNING_STR;
+#define LGR_DEV
 
 /**
- * \internal  
- *  @brief  verbose level
- *
- *  Level of which verbosity is currently set at.
- * \endinternal
+ *  \internal
+ *    return message decimal
+ *  \endinternal
  */
-static enum verblvls  vlvl    = WARNING;
-/*
-int
-main(void)
-{
-    printf("%s\n", getyear());
-    return 0;
-}
-*/
+#define RMSG_D    "Returning %d...\n"
+
 /**
- * \internal  
- *  @todo Log to file.
- *  @todo Enabled \e only selected #verblvls.
- *  @todo Logging level.
- *  @todo Enabled logging for \e only selected #verblvls.
- *  @todo Implement option for 'timesamps'.
+ *  \internal
+ *    return message unsigned char
+ *  \endinternal
+ */
+#define RMSG_HHU  "Returning %hhu...\n"
+
+/**
+ *  \internal
+ *    return message string
+ *  \endinternal
+ */
+#define RMSG_S    "Returning %s...\n"
+
+/**
+ *  \internal
+ *    return message unsigned int
+ *  \endinternal
+ */
+#define RMSG_U    "Returning %u...\n"
+
+/**
+ *  \internal
+ *    verbose level name change check
+ *  \endinternal
+ */
+#define VERB_LVL_N_CH_CHCK \
+    "Checking if verbose level name change is redundant...\n"
+
+/**
+ *  \internal
+ *    verbose level name already set
+ *  \endinternal
+ */
+#define VERB_LVL_N_ASET   "Verbose level name already set to '%s(%hhu)'!\n"
+
+/**
+ *  \internal
+ *    verbose level name no change
+ *  \endinternal
+ */
+#define VERB_LVL_N_NOCH   "Leaving verbose level name as is...\n"
+
+/**
+ *  \internal
+ *    verbose level name check
+ *  \endinternal
+ */
+#define VERB_LVL_N_CHCK   "Checking if '%s' is a valid verbose level name...\n"
+
+/**
+ *  \internal
+ *    verbose level check
+ *  \endinternal
+ */
+#define VERB_LVL_CH_CHCK  \
+    "Checking if verbose level change is redundant...\n"
+
+/**
+ *  \internal
+ *    verbose level already set
+ *  \endinternal
+ */
+#define VERB_LVL_ASET     "Verbose level already set to '%hhu(%s)'!\n"
+
+/**
+ *  \internal
+ *    verbose level no change
+ *  \endinternal
+ */
+#define VERB_LVL_NOCH     "Leaving verbose level as is...\n"
+
+/**
+ *  \internal
+ *    verbose level (and) name no change
  *
- *  @note Still want \c #ERROR to be logged even if #vlvl is set to \c #FATAL.
- *  @note Eventually want to add an option to enable color and after being done
- *          so, implement an option for colors to be customized.
- * \endinternal
+ *    @remark This is not the same as #VERB_LVL_N_NOCH.  This is used in
+ *              function #setverblvl().
+ *  \endinternal
+ */
+#define VERB_LVLN_NOCH    "Verbose level unchanged (%hhu(%s))...\n"
+
+/**
+ *  \internal
+ *    verbose set fail
+ *  \endinternal
+ */
+#define VERB_SET_FAIL     "Failed to set verbose level to '%hhu(%s)'!\n"
+
+/**
+ *  \internal
+ *    x valid verbose level name
+ *  \endinternal
+ */
+#define XVALID_VERB_LVL_N "'%s' is%sa valid verbose level name(%hhu)!\n"
+
+/**
+ *  \internal
+ *    x valid verbose level
+ *  \endinternal
+ */
+#define XVALID_VERB_LVL   "'%hhu' is%sa valid verbose level(%s)!\n"
+
+/**
+ *  \internal
+ *    not valid verbose level name
+ *  \endinternal
+ */
+#define NVALID_VERB_LVL_N "'%s' is not a valid verbose level name...\n"
+
+/**
+ *  \internal
+ *    validating message
+ *  \endinternal
+ */
+#define VALIDATING_MSG    "Validating...\n"
+
+/**
+ *  \internal
+ *    Validation was successful!
+ *  \endinternal
+ */
+#define VALIDATE_WIN      "Validation was successful!\n"
+
+/**
+ *  \internal
+ *    Validation was unsuccessful!
+ *  \endinternal
+ */
+#define VALIDATE_FAIL     "Validation was unsuccessful!  strcmp returned"
+
+/**
+ *  \internal
+ *    valid verbose level name
+ *  \endinternal
+ */
+#define VALID_VERB_LVL_N  "'%s' is a valid verbose level name!\n"
+
+/**
+ *  \internal
+ *    calculate string
+ *  \endinternal
+ */
+#define CALC_STR          "Calculating length of '%s'...\n"
+
+/**
+ *  \internal
+ *    string length message
+ *  \endinternal
+ */
+#define STR_LEN_MSG       "'%-14s' has a length of %lu\n"
+
+/**
+ *  \internal
+ *    reallocation needed
+ *  \endinternal
+ */
+#define REALLOC_NEEDED    "'vlvln' needs reallocation...\n"
+
+/**
+ *  \internal
+ *    reallocation message
+ *  \endinternal
+ */
+#define REALLOC_MSG       "Reallocating 'vlvln' to %lu + 1...\n"
+
+/**
+ *  \internal
+ *    reallocation win
+ *  \endinternal
+ */
+#define REALLOC_WIN       "Reallocation was successful!\n"
+
+/**
+ *  \internal
+ *    memory allocation fail
+ *  \endinternal
+ */
+#define MALLOC_FAIL       "malloc returned"
+
+/**
+ *  \internal
+ *    setting verbose level name
+ *  \endinternal
+ */
+#define SET_VERB_LVL_N    "Updating verbose level name...\n"
+
+/**
+ *  \internal
+ *    setting verbose level
+ *  \endinternal
+ */
+#define SET_VERB_LVL      "Updating verbose level...\n"
+
+/**
+ *  \internal
+ *    setting file priority
+ *  \endinternal
+ */
+#define SET_FPRIO         "Updating file priority...\n"
+
+/**
+ *  \internal
+ *    set error warning
+ *  \endinternal
+ */
+#define SET_ERRWARN       "%s treat WARNING as ERROR...\n"
+
+#ifdef  LGR_DEV
+int
+main(int argc, char **argv)
+{
+    logltf(INTERN_DEBUG, __TIME__, "TT");
+    return EXIT_SUCCESS;
+}
+#endif  /* LGR_DEV */
+
+/** \var  static char *vlvln
+ *  \internal
+ *    @brief  verbose level name
+ *
+ *    Contains the name representation that of what the current verbose \link
+ *      vlvl level\endlink is set to.
+ *  \endinternal
+ */
+
+/** \var  static enum verblvls vlvl
+ *  \internal
+ *    @brief  verbose level
+ *
+ *    Level of which verbosity is currently set at.
+ *  \endinternal
+ */
+#ifdef  LGR_DEV
+static char           *vlvln  = INTERN_DEBUG_STR;
+static enum verblvls  vlvl    = INTERN_DEBUG;
+#else
+static char           *vlvln  = WARNING_STR;
+static enum verblvls  vlvl    = WARNING;
+#endif  /* LGR_DEV */
+
+/**
+ *  \internal
+ *    @brief  file priority
+ *
+ *    Priority for logging to file.
+ *  \endinternal
+ */
+static enum verblvls fprio = ERROR;
+
+/**
+ *  \internal
+ *    @brief  error warning
+ *
+ *    Treat #WARNING and #INTERN_WARNING as #ERROR.
+ *  \endinternal
+ */
+static int errwarn  = 0;
+
+/**
+ *  \internal
+ *    Outputs the message specified to by \p str, to the #stderr stream, along
+ *      with #error and its meaning, followed by exiting with code
+ *      #EXIT_FAILURE.
+ *
+ *    @param[in]  str The string message to be output to the #stderr stream.
+ *
+ *    @remark This function is marked \e noreturn meaning that this function
+ *              will terminate the process.  (Correct me if my wording for
+ *              'process' and use of it, is incorrect.)  It is also used for
+ *              optimization.
+ *  \endinternal
+ */
+static noreturn void
+fatal(const           char  *timestr,
+      const           char  *filestr,
+      const           char  *funcstr,
+      const unsigned  int   line,
+      const           char  *msg,
+      const           int   rcode)
+{
+    fprintf(stderr,
+            "\n[%s:%s:%s:%u]  FATAL:  %s %d\n",
+            timestr,
+            filestr,
+            funcstr,
+            line,
+            msg,
+            rcode);
+
+    exit(EXIT_FAILURE);
+}
+
+/**
+ *  \internal
+ *    Outputs desired information to respected stream and/or to a log file,
+ *      depending on \link verblvls verbosity level\endlink and configuration.
+ *
+ *    @param[in]  verblvl An enumerator constant declared in enumeration type
+ *                          #verblvls representing the verbosity level of
+ *                          specified message given in \p strfmt.
+ *    @param[in]  timestr The time as a string to be output to the logger.
+ *    @param[in]  line    The line of which corresponds to the given to by \p
+ *                          strfmt.
+ *    @param[in]  strfmt
+ *      \parblock
+ *        Either a regular string containing information to be output to a
+ *          stream and/or log file depending on what \p verblvl is set to and
+ *          configurations or a formatted string.  <b>If a regular string is
+ *          give, optional arguments, even if given will be ignored and not
+ *          used.</b>
+ *
+ *        If a formatted string is given, optional arguments will no longer be
+ *          optional.  They will be required in order to get the desired
+ *          output.
+ *      \endparblock'
+ *  \endinternal
+ */
+static void
+lgrf(enum   verblvls        verblvl,
+     const            char  *timestr,
+     const  unsigned  int   line,
+     const            char  *strfmt,
+            va_list         vargs)
+{
+    if (!(verblvl > 0
+                && verblvl <= INTERN_DEBUG)
+            ? verblvl
+            : NVALID_VERB_LVL) { return; }
+
+    /* temp verbose level */
+    const unsigned char tmpvlvl =
+        ((errwarn && verblvl == WARNING) ? ERROR : verblvl);
+
+    if (tmpvlvl > vlvl) { return; }
+    FILE *fpstrm  =
+        ((errwarn)
+         ? ((verblvl == INTERN_WARNING
+                 || verblvl <= WARNING)
+             ? stderr
+             : stdout)
+         : ((verblvl <= ERROR)
+             ? stderr
+             : stdout));
+
+    if (timestr || line)
+    {
+        fprintf(fpstrm, "[");
+        if (timestr)          { fprintf(fpstrm, "%s", timestr); }
+        if (timestr && line)  { fprintf(fpstrm, ":%7u", line); }
+        else if (line)        { fprintf(fpstrm, "%7u", line); }
+        fprintf(fpstrm, "]  ");
+    }
+
+    fprintf(fpstrm, "%-14s  ", vlvln);
+    vfprintf(fpstrm, strfmt, vargs);
+}
+
+/**
+ *  \internal
+ *    @todo Log to file.
+ *    @todo Enabled \e only selected #verblvls.
+ *    @todo Logging level.
+ *    @todo Enabled logging for \e only selected #verblvls.
+ *    @todo Implement option for 'timestamps'.
+ *
+ *    @note Still want #ERROR to be logged even if #vlvl is set to #FATAL.
+ *    @note Eventually want to add an option to enable color and after being
+ *            done so, implement an option for colors to be customized.
+ *  \endinternal
  */
 void
-loglf(enum verblvls verblvl, char *strfmt, ...)
+loglf(enum verblvls verblvl, const char *strfmt, ...)
 {
-    /*
-     * 'verblvl' is not a vald verbose level.
-     */
-    if (!isverblvl(verblvl)) { return; }
-
-    /*
-     * Prioirty is to high for this message to be displayed.
-     */
-    if (verblvl > vlvl) { return; }
-    
-    /*
-     * NOTE:  Don't really like this approach...  It's faster than 'if'
-     *          conditional checks, but maybe there is another way to
-     *          accomplish duplicate results when 'Log to file' feature is
-     *          implemented.
-     *
-     * file pointer stream */
-    FILE *fpstrm;
-    switch (verblvl)
-    {
-        case FATAL:
-        case ERROR:
-            fpstrm = stderr;
-            break;
-        case WARNING:
-        case INFO:
-        case DEBUG:
-        case INTERN_WARNING:
-        case INTERN_INFO:
-        case INTERN_DEBUG:
-            fpstrm = stdout;
-            break;
-        default:
-
-            /*
-             * If somehow the code reaches here...  Something fucked up
-             *  emensely..!.
-             */
-            fprintf(stderr,
-                    "%s:%s:%u:\t010001!2!!1 errno(%d)%s\n",
-                    __FILE__,
-                    __func__,
-                    __LINE__,
-                    errno,
-                    strerror(errno));
-            exit(EXIT_FAILURE);
-    }
-    
     /* argument pointer */
     va_list ap;
     va_start(ap, strfmt);
-    vfprintf(fpstrm, strfmt, ap);
+    lgrf(verblvl, 0, 0, strfmt, ap);
+    va_end(ap);
+}
+
+void
+logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...)
+{
+    /* argument pointer */
+    va_list ap;
+    va_start(ap, strfmt);
+    lgrf(verblvl, timestr, 0, strfmt, ap);
+    va_end(ap);
+}
+
+void
+logllf(enum   verblvls        verblvl,
+       const  unsigned  int   line,
+       const            char  *strfmt, ...)
+{
+    /* argument pointer */
+    va_list ap;
+    va_start(ap, strfmt);
+    lgrf(verblvl, 0, line, strfmt, ap);
+    va_end(ap);
+}
+
+void
+logltlf(enum   verblvls        verblvl,
+        const            char  *timestr,
+        const  unsigned  int   line,
+        const            char  *strfmt, ...)
+{
+    /* argument pointer */
+    va_list ap;
+    va_start(ap, strfmt);
+    lgrf(verblvl, timestr, line, strfmt, ap);
     va_end(ap);
 }
 
 char*
 getverblvlname(enum verblvls verblvl)
 {
-    loglf(INTERN_DEBUG, "Getting verbose name for level '%hhu'...\n", verblvl);
-    
-    /* temp verbose level */
-    unsigned char tmpvl = INTERN_INFO;
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
 
-    /* 
-     * I don't know if I like this style of formating as it does not use any
+    /* temp verbose level */
+    unsigned char tmpvlvl = INTERN_INFO;
+
+    /*
+     *  I don't know if I like this style of formatting as it does not use any
      *  parenthesis..
      *
-     * NOTE:  We are not using the 'isverblvl()' function as a method to
-     *          validate 'verblvl' prior to retreiving its corresponding name, 
-     *          because that would result in a recursive loop as 'isverblvl()' 
+     *  NOTE: We are not using the 'isverblvl()' function as a method to
+     *          validate 'verblvl' prior to retrieving its corresponding name,
+     *          because that would result in a recursive loop as 'isverblvl()'
      *          uses 'getverblvlname()' for the INFO log part of its
      *          definition.
      *
      * temp verbose level name */
-    char *tmpvln  = verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
-                  : verblvl == INTERN_INFO    ? INTERN_INFO_STR
-                  : verblvl == INTERN_WARNING ? INTERN_WARNING_STR
-                  : verblvl == DEBUG          ? DEBUG_STR
-                  : verblvl == INFO           ? INFO_STR
-                  : verblvl == WARNING        ? WARNING_STR
-                  : verblvl == ERROR          ? ERROR_STR
-                  : verblvl == FATAL          ? FATAL_STR
-                  
-                  /*
-                   * If 'verblvl' is not of a valid constant contained in the
-                   *  enumeration of 'verblvls', 'tmpvl' will be set from its
-                   *  current set level (INTERN_INFO) to 'WARNING'.  (See 
-                   *  remark below, for an explination as to why I have chosen 
-                   *  to set the verbose level accordingly.)
-                   *
-                   * Yes I know I am going to be frowned upon for that I am
-                   *  using an 'expression statment', but that is just my
-                   *  coding style.
-                   */
-                  : (tmpvl = NVALID_VERB_LVL, NVALID_VERB_LVL_STR);
-    
+    char *tmpvlvln  = verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
+                    : verblvl == INTERN_INFO    ? INTERN_INFO_STR
+                    : verblvl == INTERN_WARNING ? INTERN_WARNING_STR
+                    : verblvl == DEBUG          ? DEBUG_STR
+                    : verblvl == INFO           ? INFO_STR
+                    : verblvl == WARNING        ? WARNING_STR
+                    : verblvl == ERROR          ? ERROR_STR
+                    : verblvl == FATAL          ? FATAL_STR
+
+                    /*
+                     *  If 'verblvl' is not of a valid constant contained in
+                     *    the enumeration of 'verblvls', 'tmpvlvl' will be set
+                     *    from its current set level (INTERN_INFO) to 'WARNING'
+                     *    .  (See remark below, for an explanation as to why I
+                     *    have chosen to set the verbose level accordingly.)
+                     *
+                     *  Yes I know I am going to be frowned upon for that I am
+                     *    using an 'expression statement', but that is just my
+                     *    coding style.
+                     */
+                    : (tmpvlvl = WARNING, NVALID_VERB_LVL_STR);
+
     /*
-     * Not sure if I should out this message with verbose level 'INTERN_INFO' 
-     *  or 'WARNING'.
+     *  Not sure if I should out this message with verbose level 'INTERN_INFO'
+     *    or 'WARNING'.
      *
-     * I think it's more appropriate to have this message be 
-     *  out at the 'WARNING' verbose level as the paramater of 
-     *  'getverblvlname()' is of type 'enum verblvls' and the the purpose of 
-     *  this function is to get the name of which corresponds to that argument.
+     *  I think it's more appropriate to have this message be
+     *    out at the 'WARNING' verbose level as the parameter of
+     *    'getverblvlname()' is of type 'enum verblvls' and the purpose of
+     *    this function is to get the name of which corresponds to that
+     *    argument.
      *
-     * NOTE:  Please see above note as to why we are not using function
+     *  NOTE: Please see above note as to why we are not using function
      *          'isverblvl()' as a method of validation.
      */
-    loglf(tmpvl,
-          "'%hhu' is%sa valid verbose level(%s)!\n",
-          verblvl,
-          !strcmp(tmpvln, NVALID_VERB_LVL_STR) ? " not " : " ",
-          tmpvln);
+    logltf(tmpvlvl,
+           __TIME__,
+           XVALID_VERB_LVL_N,
+           verblvl,
+           !strcmp(tmpvlvln, NVALID_VERB_LVL_STR) ? " not " : " ",
+           tmpvlvln);
 
-    loglf(INTERN_DEBUG, "Returning '%s'...\n", tmpvln);
-    return tmpvln;
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, tmpvlvln);
+    return tmpvlvln;
 }
 
 int
 isverblvl(unsigned char lvl)
 {
-    loglf(INTERN_DEBUG,
-          "Checking if '%hhu' is a valid verbose level...\n",
-          lvl);
-    
-    /* temp level */
-    int tmplvl = ((lvl && (lvl <= INTERN_DEBUG)) ? lvl : NVALID_VERB_LVL);
-    loglf(INTERN_INFO,
-          "'%hhu(%s)' is%sa valid verbose level!\n",
-          lvl,
-          getverblvlname(lvl),
-          tmplvl ? " " : " not ");
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
 
-    loglf(INTERN_DEBUG, "Returning '%d'...\n", tmplvl);
+    /* temp verbose level */
+    unsigned char tmpvlvl = INTERN_INFO;
+
+    /* temp level */
+    int tmplvl =
+        ((lvl && (lvl <= INTERN_DEBUG))
+         ? lvl
+         : (tmpvlvl = INTERN_WARNING, NVALID_VERB_LVL));
+
+    logltf(tmpvlvl,
+           __TIME__,
+           XVALID_VERB_LVL,
+           lvl,
+           tmplvl ? " " : " not ");
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_D, tmplvl);
     return tmplvl;
 }
 
 /**
- * \internal  
- *  @brief  validate verbose level name
+ *  \internal
+ *    @brief  set verbose level name
  *
- *  Makes sure that #vlvl corresponds with #vlvln.
+ *    Changes the current \link vlvln verbose level name\endlink to that of
+ *      given to \p verblvl, if it is of a valid \link verblvls verbose
+ *      level\endlink.
  *
- *  @return If #vlvl correpsonds to #vlvln, \c nonzero will be returned.\n
- *          If #vlvl does not correspond to #vlvln, \c 0 will be returned.
- * \endinternal
- */
-static int
-vldtvlvlname(void)
-{
-    loglf(INTERN_DEBUG, "Validating verbose level with verbose name...\n");
-    /* 
-     * Not sure if the '!' will reverse the value or not, and by that I mean if
-     *  '0', turn the value into 'nonzero' and visa versa..
-     *
-     * return code */
-    int rcode = !(strcmp(vlvln, getverblvlname(vlvl)));
-
-    loglf(INTERN_DEBUG, "Returning '%d'...\n", rcode);
-    return rcode;
-}
-
-/**
- * \internal  
- *  @brief  set verbose level name
+ *    @param[in]  verblvl An enumerator constant declared in enumeration type
+ *                          #verblvls.
  *
- *  Changes the current \link #vlvln verbose level name\endlink to that of
- *    given to \p verblvl, if it is of a valid \link #verblvls verbose
- *    level\endlink.
+ *    @return If \p verblvl is a valid is a valid \link verblvls verbose
+ *              level\endlink, the string representation of \p verblvl will be
+ *              returned.\n
+ *            If \p verblvl is not a valid \link verblvls verbose
+ *              level\endlink, #vlvln will be returned.
  *
- *  param[in] verblvl An enumerator constant decalred in enumeration type
- *                      #verblvls.
- *
- *  @return If \p verblvl is a valid is a valid \link #verblvls verbose
- *            level\endlink, the string representation of \p verblvl will be
- *            returned.\n
- *          If \p verblvl is not a valid \link #verblvls verbose level\endlink,
- *            #vlvln will be returned.
- *
- *  @remark #vlvln is a \c static global variable, delcared near the top of
- *            this source (lgr.c).
- * \endinternal
+ *    @remark #vlvln is a \c static global variable, declared near the top of
+ *              this source (lgr.c).
+ *  \endinternal
  */
 static char*
-setverblvlname(enum verblvls verblvl)
+setvlvln(enum verblvls verblvl)
 {
-    loglf(INTERN_DEBUG,
-          "Checking if verbose level name change is redundant...\n");
-    if (!strcmp(vlvln, getverblvlname(verblvl)))
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    /* temp verbose level name */
+    char *tmpvlvln = getverblvlname(verblvl);
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_N_CH_CHCK);
+    if (!strcmp(vlvln, tmpvlvln))
     {
-        /*
-         * This validation check may be redundant..
-         *
-         * Unlike the function below and how it uses verbose level 'INFO', this
-         *  is an internal function, so a verbose level will be used.
-         */
-        loglf(INTERN_INFO,
-              "Verbose level name already set to '%s(%hhu)'!\n", vlvln, vlvl);
+        logltf(INTERN_INFO, __TIME__, VERB_LVL_N_ASET, vlvln, vlvl);
+        logltf(INTERN_INFO, __TIME__, VERB_LVL_N_NOCH);
 
-        /* temp verbose level */
-        unsigned char tmpvlvl = INTERN_INFO;
-
-        /*
-         * I don't really like how I have this formatted because there isn't
-         *  any parenthasis.
-         *
-         * temp string format argument */
-        char *tmpstrfmta      =
-            /*
-             * Ya I know, another one.  Deal with it...
-             */
-            vldtvlvlname() ? " " : (tmpvlvl = INTERN_WARNING, " un");
-        
-        loglf(tmpvlvl, "Validation was%ssucessfull!\n", tmpstrfmta);
-        loglf(INTERN_INFO, "Leaving verbose level name as is...\n");
-        loglf(INTERN_DEBUG, "Returning '%s'...\n", vlvln);
+        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
         return vlvln;
     }
 
-    char *tmpvlvln = getverblvlname(verblvl);
-    loglf(INTERN_DEBUG, "Setting verbose level name to '%s'...\n", tmpvlvln);
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_N_CHCK, tmpvlvln);
     if (strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
     {
-        /*
-         * I am aware that function 'isverblvl()' uses a verbose level of
-         *  'INTERN_INFO', but if doing so here as well, to much information
-         *  will be output to the stream along about the procedure so to speak.
-         */
-        loglf(INTERN_DEBUG, "'%s' is a valid verbose level name!\n", tmpvlvln);
-        loglf(INTERN_INFO,
-              "Sucessfull changed verbose level name from '%s', to '%s'!\n",
-              vlvln,
-              tmpvlvln);
+        logltf(INTERN_INFO, __TIME__, VALID_VERB_LVL_N, tmpvlvln);
 
-        loglf(INTERN_DEBUG, "Checking if 'vlvln' needs to be reallocated..\n");
-        /*
-         * I'm drawing blanks here as to weather or not I need to perform a
-         *  'strcpy', or if I just need to reallocate (If need be) 'vlvln' 
-         *  followed by reassigning the value of 'tmpvlvln'..
-         */
-        loglf(INTERN_DEBUG, "Calculating 'strlen' of 'vlvln'...\n");
+        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, vlvln);
         /* temp verbose level size */
         size_t tmpvlvlnsz   = strlen(vlvln);
 
-        loglf(INTERN_DEBUG, "Calculating 'strlen' of 'tmpvlvln'...\n");
+        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, tmpvlvln);
         /* temp temp verbose level size (tmpt(mp)vlvln) */
         size_t tmptvlvlnsz  = strlen(tmpvlvln);
         if (tmpvlvlnsz != tmptvlvlnsz)
         {
-            loglf(INTERN_DEBUG, 
-                  "sizeof:\t'vlvln'     = %lu\nsizeof:\t'tmpvlvln'  = %lu\n",
-                  tmpvlvlnsz,
-                  tmptvlvlnsz);
-            loglf(INTERN_DEBUG, "'vlvln' needs reallocation!\n");
-            loglf(INTERN_DEBUG,
-                  "Reallocating 'vlvln' to %lu + 1...\n",
-                  tmptvlvlnsz);
-            /*
-             * Plus '1' for 'null byte'.
-             *
-             * void pointer */
-            void *vp = realloc(vlvln, tmptvlvlnsz + 1);
-            loglf(INTERN_DEBUG, "Finished reallocation!\nVerifying...\n");
-            if (!vp)
-            {
-                loglf(ERROR, "'realloc' returned %p!\n", vp);
-                loglf(ERROR, "vlvln' did not successfully allocate!\n");
-                
-                loglf(ERROR, "Returning '%s'...\n", vlvln);
-                return vlvln;
+            logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, vlvln, tmpvlvlnsz);
+            logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, tmpvlvln, tmptvlvlnsz);
+            logltf(INTERN_DEBUG, __TIME__, REALLOC_NEEDED);
+
+            logltlf(INTERN_DEBUG,
+                    __TIME__,
+                    __LINE__ + 3u,
+                    REALLOC_MSG,
+                    tmptvlvlnsz);
+
+            if (!(vlvln = malloc(tmptvlvlnsz + 1ul))) {
+                fatal(__TIME__,
+                      __FILE__,
+                      __func__,
+                      __LINE__ - 4u,
+                      MALLOC_FAIL,
+                      0);
             }
 
-            loglf(INTERN_DEBUG, "Reallocation was successfull!\n");
+            logltf(INTERN_DEBUG, __TIME__, REALLOC_WIN);
         }
-        
-        loglf(INTERN_DEBUG, "Assigning 'tmpvlvln' to 'vlvln'...\n");
+
+        logltlf(INTERN_INFO, __TIME__, __LINE__ + 1u, SET_VERB_LVL_N);
         vlvln = tmpvlvln;
 
-        loglf(INTERN_INFO, "Returning '%s'...\n", vlvln);
+        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
         return vlvln;
     }
 
-    loglf(INTERN_WARNING,
-          "'%s' is not a valid verbose level name...\n",
-          tmpvlvln);
+    logltf(INTERN_WARNING, __TIME__, NVALID_VERB_LVL_N, tmpvlvln);
 
-    loglf(INTERN_INFO, "Returning '%s'...", vlvln);
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
     return vlvln;
+}
+
+/**
+ *  \internal
+ *    @brief  set verbose level (static method; used internally)
+ *
+ *    Sets #vlvl to \p verblvl.
+ *
+ *    @param[in]  verblvl The #verblvls to set #vlvl to.
+ *
+ *    @return Returns #vlvl.
+ *
+ *    @remark This is only exists to suppress the warning of #vlvl possibly
+ *              being undefined.
+ *  \endinternal
+ */
+static unsigned char
+setvlvl(unsigned char verblvl)
+{
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    logltlf(INTERN_INFO, __TIME__, __LINE__ + 1u, SET_VERB_LVL);
+    vlvl = verblvl;
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
+    return (verblvl);
 }
 
 int
 setverblvl(enum verblvls verblvl)
 {
-    loglf(INTERN_DEBUG, "Checking if verbsoe level change is redundant...\n");
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_CH_CHCK);
     if (vlvl == verblvl)
     {
         /*
-         * I feel like setting this message priority to 'INFO', rather than
-         *  anything lower such as 'INTERN_INFO' is more appropriate so that
-         *  the end user will know why the verbosity level went unmodified.
+         *  I feel like setting this message priority to 'INFO', rather than
+         *    anything lower such as 'INTERN_INFO' is more appropriate so that
+         *    the end user will know why the verbosity level went unmodified.
          */
-        loglf(INFO, "Verbose level already set to '%hhu(%s)'!\n", vlvl, vlvln);
-        loglf(INFO, "Leaving verbose level as is...\n");
+        logltf(INFO, __TIME__, VERB_LVL_ASET, vlvl, vlvln);
+        logltf(INFO, __TIME__, VERB_LVL_NOCH);
 
-        loglf(INTERN_DEBUG, "Returning '%hhu'...\n", vlvl);
+        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
         return vlvl;
     }
 
-    /*
-     * Can't choose what priority this message should have..  Either
-     * 'INTERN_DEBUG' or 'INTERN_INFO'.
-     */
-    loglf(INTERN_DEBUG, "Setting verbose level to '%hhu'...\n", verblvl);
     if (isverblvl(verblvl))
     {
-        /*
-         * Using verbose level 'INTERN_INFO' here however, seems apropriate
-         *  because setting of the verbose level was successful.
-         */
-        loglf(INTERN_INFO,
-              "Sucessfully %s verbose level from '%hhu(%s)', to '%hhu(%s)'!\n",
-              /*
-               *  verb    < verblvl
-               *  -----------------
-               *  INFO(4) < DEBUG(5)
-               */
-              vlvl < verblvl ? "lowered" : "raised",
-              vlvl,
-              vlvln,
-              vlvl  = verblvl,
-              setverblvlname(verblvl));
-        
-        loglf(INTERN_DEBUG, "Returning '%hhu'...\n", vlvl);
+        setvlvl(verblvl);
+        setvlvln(verblvl);
+
+        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, VALIDATING_MSG);
+        /* temp int */
+        int ti = strcmp(vlvln, getverblvlname(vlvl));
+        if (ti) {
+            fatal(__TIME__,
+                  __FILE__,
+                  __func__,
+                  __LINE__ - 5u,
+                  VALIDATE_FAIL, ti);
+        }
+
+        logltf(INTERN_DEBUG, __TIME__, VALIDATE_WIN);
+
+        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
         return vlvl;
     }
 
-    loglf(WARNING, "Failed to set verbose level to '%hhu(%s)'!\n");
-    loglf(WARNING, "Verbolse level unchanged (%hhu(%s))...\n", vlvl, vlvln);
+    logltf(WARNING, __TIME__, VERB_SET_FAIL, verblvl, getverblvlname(verblvl));
+    logltf(WARNING, __TIME__, VERB_LVLN_NOCH, vlvl, vlvln);
 
-    loglf(INTERN_DEBUG, "Returning '%hhu'...\n", vlvl);
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
     return vlvl;
 }
 
 enum verblvls
 getverblvl()
-{ 
-    loglf(INTERN_DEBUG, "Getting set verbose level...\n");
-    loglf(INTERN_DEBUG, "Returning '%hhu'...\n", vlvl);
+{
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
     return vlvl;
+}
+
+enum verblvls
+getfileprio(void)
+{
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, fprio);
+    return fprio;
+}
+
+int
+geterrwarn(void)
+{
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_D, errwarn);
+    return errwarn;
+}
+
+enum verblvls
+setfileprio(enum verblvls fileprio)
+{
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    unsigned char tmpvlvl = isverblvl(fileprio);
+    logltf(tmpvlvl ? INTERN_INFO : WARNING,
+           __TIME__,
+           XVALID_VERB_LVL,
+           fileprio,
+           tmpvlvl ? " " : " not ",
+           getverblvlname(fileprio));
+
+    logltlf(INTERN_INFO, __TIME__, __LINE__ + 1u, SET_FPRIO);
+    fprio = fileprio;
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, fprio);
+    return fprio;
+}
+
+int
+seterrwarn(int treatwarnerr)
+{
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    logltlf(INTERN_INFO,
+            __TIME__,
+            __LINE__ + 3u,
+            SET_ERRWARN,
+            treatwarnerr ? "Enabling" : "Disabling");
+    errwarn = treatwarnerr;
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_D, errwarn);
+    return errwarn;
 }
