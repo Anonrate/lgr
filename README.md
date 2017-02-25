@@ -1,4 +1,15 @@
 # lgr
+**lgr** is verbose logger with the ability to log to a respected stream,
+*stdout*, *stderr* and/or a file depending on the situtation and
+configurations.
+
+
+
+
+
+
+
+
 THIS IS NOT EVEN CLOSE TO BEING THE FINAL DRAFT!  I JUST WANTED SOMETHING TO BE
 DISPLAYED SO I QUICKLY TYPED OUT THIS HUNK OF SHIT!  DON'T GET BUTT HURT AND/OR
 CRY BECAUSE I DON'T CARE!  THATS A YOU PROBLEM, NOT ME..
