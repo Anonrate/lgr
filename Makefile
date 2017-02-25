@@ -1,19 +1,16 @@
 IDIR		= inc
 CC			=	gcc
-CFLAGS	= -I$(IDIR)
 
 BDIR	= bin
-LDIR	= ../timex/lib
-LIBS	= -ltimex
 ODIR	= obj
 SDIR	= src
-_DEPS	= lgr.h ../../timex/inc/timex.h
+_DEPS	= lgr.h
 DEPS	= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ	= lgr.o ../../timex/obj/timex.o
+_OBJ	= lgr.o
 OBJ		= $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-_CDEPS	= lgr.c ../../timex/src/timex.c
+_CDEPS	= lgr.c
 CDEPS		= $(patsubst %,$(SDIR)/%,$(_CDEPS))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
