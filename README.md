@@ -4,7 +4,9 @@
 configurations.
 
 #### This list below contains the valid verbose levels
-  * `FATAL`
+  * `FATAL`   This verbose level depicts that whatever just occured, can not be
+  recovered from.
+
   * `ERROR`
   * `WARNING`
   * `INFO`
@@ -15,15 +17,6 @@ configurations.
   * `INTERN_WARNING`
   * `INTERN_INFO`
   * `INTERN_DEBUG`
-
-| verbose level   | Description |
-| --------------- | ----------- |
-| `FATAL`         | `FATAL` depicts that whatever just occured can not be
-recovered by, and therefore needs to be terminated.|
-| `ERROR`         | test        |
-| `WARNING`       | test        |
-| `INFO`          | test        |
-| `DEBUG`         | test        |
 
 1. Test list 2?
 2. Test list 2 and 3 work but not 1?
