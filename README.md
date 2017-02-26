@@ -32,21 +32,49 @@ configurations.
    * `INTERN_INFO`
    * `INTERN_DEBUG`
 
-There are a few different types of fucntions that do different things.  
-The following is their declarations.
+There are a few different functions that log.  The following is their
+correspdonding declarations.
+
+#### log level format
+> log level format
+>
+> Outputs desired information to respected stream and/or to a log file,
+> depending on \link verblvls verbosity level\endlink and configuration.
+>
+> verblvl An enumerator constant declared in enumeration type
+>                        #verblvls representing the verbosity level of
+>                        specified message given in \p strfmt.
+>  @param[in]  strfmt
+>    \parblock
+>      Either a regular string containing information to be output to a stream
+>        and/or log file depending on what \p verblvl is set to and
+>        configurations or a formatted string.  <b>If a regular string is
+>       give, optional arguments, even if given will be ignored and not used.
+>        </b>
+>
+>      If a formatted string is given, optional arguments will no longer be
+>        optional.  They will be required in order to get the desired output.
+>    \endparblock
+
 
 ```c
 extern void
 loglf(enum verblvls verblvl, const char *strfmt, ...);
+```
 
+```c
 extern void
 logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
+```
 
+```c
 extern void
 logllf(enum   verblvls        verblvl,
        const  unsigned  int   line,
        const            char  *strfmt, ...);
+```
 
+```c
 extern void
 logltlf(enum   verblvls       verblvl,
        const            char  *timestr,
