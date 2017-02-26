@@ -26,22 +26,11 @@ configurations.
   something.  It information can be very little.  For example:  I put it at the
   starting of every function and when something is being returned.
 
-  There are also some internal verbose level as well, but they are just used
-  during debugging.  But here they are if you're wondering.
-  * `INTERN_WARNING`
-  * `INTERN_INFO`
-  * `INTERN_DEBUG`
-
-1. Test list 2?
-2. Test list 2 and 3 work but not 1?
-  * So for this kind of list two spaces are needed
-  1. You can do this as well.
-   Three spaces...
-
-   Three spaces and blank line
-  - You can use this
-  + this 
-    - this is this a sub point?
+   There are also some internal verbose level as well, but they are just used
+   during debugging.  But here they are if you're wondering.
+   * `INTERN_WARNING`
+   * `INTERN_INFO`
+   * `INTERN_DEBUG`
 
 There are a few different types of fucntions that do different things.  
 The following is their declarations.
@@ -59,7 +48,7 @@ logllf(enum   verblvls        verblvl,
        const            char  *strfmt, ...);
 
 extern void
-logltlf(enum   verblvls        verblvl,
+logltlf(enum   verblvls       verblvl,
        const            char  *timestr,
        const  unsigned  int   line,
        const            char  *strfmt, ...);
