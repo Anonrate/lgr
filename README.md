@@ -43,7 +43,27 @@ configurations.
   + this 
     - this is this a sub point?
 
+There are a few different types of fucntions that do different things.  
+The following is their declarations.
 
+```c
+extern void
+loglf(enum verblvls verblvl, const char *strfmt, ...);
+
+extern void
+logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
+
+extern void
+logllf(enum   verblvls        verblvl,
+       const  unsigned  int   line,
+       const            char  *strfmt, ...);
+
+extern void
+logltlf(enum   verblvls        verblvl,
+       const            char  *timestr,
+       const  unsigned  int   line,
+       const            char  *strfmt, ...);
+```
 
 
 
