@@ -16,6 +16,14 @@ configurations.
   * `INTERN_INFO`
   * `INTERN_DEBUG`
 
+| verbose level | Description |
+| ------------- | ----------- |
+| FATAL         | test        |
+| ERROR         | test        |
+| WARNING       | test        |
+| INFO          | test        |
+| DEBUG         | test        |
+
 1. Test list 2?
 2. Test list 2 and 3 work but not 1?
   * So for this kind of list two spaces are needed
