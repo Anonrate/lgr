@@ -5,12 +5,26 @@ configurations.
 
 #### This list below contains the valid verbose levels
   * `FATAL`   This verbose level depicts that whatever just occured, can not be
-  recovered from.
-
-  * `ERROR`
-  * `WARNING`
-  * `INFO`
-  * `DEBUG`
+  recovered from, and therefore the application/lib etc..  Needs to be
+  terminate.
+  * `ERROR`   This verbose level is kind of along the same lines as `FATAL`
+  except, the application/lib etc, can still run and work a bit, but most likly
+  not.  If you're one that likes to have whatever your coding not terminate
+  whatsoever until the job is completly done...  You could use this level.
+  Another possibly scenario that this level could be used is, if a function
+  fails to do what you had wanted it to do, but returning something else will
+  still make it work just not ideally..  This is your level.
+  * `WARNING` Say the user enters in something stupid that they aren't supposed
+  to, but they either have another chance or you the code is sufficeint enough
+  to fix the problem, you could use this level.
+  * `INFO`    This  is pretty much self expalnitory.  It's purly for
+  informative reasons.  Want to know input given was valid or not?  `INFO` is
+  your verbosity of choice.
+  * `DEBUG`   Finally last but most certainly not lease...  `DEBUG`.  Just use
+  this on everything pretty much, that way when you test your code and it
+  fucks up somehwere you didn't put any other log message too..  You still have
+  something.  It information can be very little.  For example:  I put it at the
+  starting of every function and when something is being returned.
 
   There are also some internal verbose level as well, but they are just used
   during debugging.  But here they are if you're wondering.
