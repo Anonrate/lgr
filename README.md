@@ -7,7 +7,7 @@ configurations.
   * `FATAL`   This verbose level depicts that whatever just occured, can not be
   recovered from, and therefore the application/lib etc..  Needs to be
   terminate.
-  * [`ERROR`](.../blob/master/inc/lgr.h#L67)   This verbose level is kind of
+  * [`ERROR`](inc/lgr.h#L67)   This verbose level is kind of
   along the same lines as `FATAL`except, the application/lib etc, can still run
   and work a bit, but most likly
   not.  If you're one that likes to have whatever your coding not terminate
