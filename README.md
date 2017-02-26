@@ -7,8 +7,9 @@ configurations.
   * `FATAL`   This verbose level depicts that whatever just occured, can not be
   recovered from, and therefore the application/lib etc..  Needs to be
   terminate.
-  * `ERROR`   This verbose level is kind of along the same lines as `FATAL`
-  except, the application/lib etc, can still run and work a bit, but most likly
+  * [`ERROR`](.../blob/master/inc/lgr.h#L67)   This verbose level is kind of
+  along the same lines as `FATAL`except, the application/lib etc, can still run
+  and work a bit, but most likly
   not.  If you're one that likes to have whatever your coding not terminate
   whatsoever until the job is completly done...  You could use this level.
   Another possibly scenario that this level could be used is, if a function
@@ -36,25 +37,25 @@ There are a few different functions that log.  The following is their
 correspdonding declarations.
 
 #### log level format
-> log level format
->
-> Outputs desired information to respected stream and/or to a log file,
-> depending on \link verblvls verbosity level\endlink and configuration.
->
-> verblvl An enumerator constant declared in enumeration type
->                        #verblvls representing the verbosity level of
->                        specified message given in \p strfmt.
->  @param[in]  strfmt
->    \parblock
->      Either a regular string containing information to be output to a stream
->        and/or log file depending on what \p verblvl is set to and
->        configurations or a formatted string.  <b>If a regular string is
->       give, optional arguments, even if given will be ignored and not used.
->        </b>
->
->      If a formatted string is given, optional arguments will no longer be
->        optional.  They will be required in order to get the desired output.
->    \endparblock
+log level format
+
+Outputs desired information to respected stream and/or to a log file,
+depending on \link verblvls verbosity level\endlink and configuration.
+
+verblvl An enumerator constant declared in enumeration type
+ #verblvls representing the verbosity level of
+                        specified message given in \p strfmt.
+ @param[in]  strfmt
+    \parblock
+      Either a regular string containing information to be output to a stream
+        and/or log file depending on what \p verblvl is set to and
+        configurations or a formatted string.  <b>If a regular string is
+       give, optional arguments, even if given will be ignored and not used.
+        </b>
+
+      If a formatted string is given, optional arguments will no longer be
+        optional.  They will be required in order to get the desired output.
+    \endparblock
 
 
 ```c
