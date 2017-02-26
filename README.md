@@ -1,7 +1,20 @@
 # lgr
-**lgr** is verbose logger with the ability to log to a respected stream,
-*stdout*, *stderr* and/or a file depending on the situtation and
+<b>lgr</b> is verbose logger with the ability to log to a respected stream,
+<em>stdout</em>, <em>stderr</em> and/or a file depending on the situtation and
 configurations.
+
+#### This list below contains the valid verbose levels
+  * `FATAL`
+  * `ERROR`
+  * `WARNING`
+  * `INFO`
+  * `DEBUG`
+
+  There are also some internal verbose level as well, but they are just used
+  during debugging.  But here they are if you're wondering.
+  * `INTERN_WARNING`
+  * `INTERN_INFO`
+  * `INTERN_DEBUG`
 
 1. Test list 2?
 2. Test list 2 and 3 work but not 1?
