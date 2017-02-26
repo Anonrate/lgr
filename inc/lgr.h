@@ -188,7 +188,7 @@ logllf(enum   verblvls        verblvl,
  *    \endparblock
  */
 extern void
-logltlf(enum   verblvls        verblvl,
+logltlf(enum   verblvls       verblvl,
        const            char  *timestr,
        const  unsigned  int   line,
        const            char  *strfmt, ...);
