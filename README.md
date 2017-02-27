@@ -149,11 +149,13 @@ again, let me explain further.
 
 Lets start with the last function `logltlf()`.
 
-1. The first parameter is *verblvl*.
+1. The first parameter is *verblvl*.  
    This parameter can be any of the log levels described above.  An example one
    would be `WARNING`.
 
- The second parameter is _*timestr_ and if you weren't wondering, it
+2. The second parameter is _*timestr_.  
+ and if you weren't wondering, it
+
    obviously means the time.  Now you don't have to specify the time here if
    you don't want to, you could simply use the date or whatever the fuck you
    wanted to, but for the purpose of this demonstration, we will use *time*
