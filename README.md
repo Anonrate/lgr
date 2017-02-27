@@ -42,7 +42,7 @@ log level format
 Outputs desired information to respected stream and/or to a log file,
 depending on [verbose level](inc/lgr.h#L59) and configuration.
 
-`verblvl`<sup>`[in]`</sup> An enumerator constant declared in enumeration type
+<em>verblvl<sup>[in]</sup></em> An enumerator constant declared in enumeration type
  [verblvls](inc/lgr.h#L59) representing the verbosity level of specified message given in `strfmt`.
 
 `strfmt`<sup>`[in]` Either a regular string containing information to be output to a stream
@@ -60,7 +60,7 @@ loglf(enum verblvls verblvl, const char *strfmt, ...);
 log level time format
 
 Outputs desired information to respected stream and/or to a log file,
-depending on \link verblvls verbosity level\endlink and configuration.
+depending on [verbose level](inc/lgr.h#L59) and configuration.
 
 `verblvl`<sup>[in]</sup> An enumerator constant declared in enumeration type
  [verblvls](inc/lgr.h#L59) representing the verbosity level of specified message given in `strfmt`.
