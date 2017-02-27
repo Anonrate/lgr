@@ -149,8 +149,8 @@ again, let me explain further.
 
 Lets start with the last function `logltlf()` and take a look at it's
 parameters.
-[//]: # (Need the two trailing spaces in order for a new paragraph to not be
-created)
+<!-- Need the two trailing spaces in order for a new paragraph to not be
+created -->
 1. *verblvl*.  
    This parameter can be any of the log levels described above.  An example one
    would be `WARNING`.
