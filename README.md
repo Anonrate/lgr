@@ -75,11 +75,10 @@ depending on [verbose level](inc/lgr.h#L59) and configuration.
 
       If a formatted string is given, optional arguments will no longer be
         optional.  They will be required in order to get the desired output.
-<code>
-<!-- language: lang-c -->
+<pre><code class="language-c">
 extern void
 logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
-</code>
+</code></pre>
 
 #### [`logllf`](inc/lgr.h#L162)
 ```c
