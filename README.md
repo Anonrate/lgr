@@ -84,7 +84,9 @@ If a formatted string is given, optional arguments will no longer be optional.
   They will be required in order to get the desired output.
 <pre><code class=language-c>
     extern void
-    logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
+    logltf(enum verblvls  verblvl,
+           const char     *timestr,
+           const char     *strfmt, ...);
 </code></pre>
 
 <h3><a href=inc/lgr.h#L162><code>logllf()</code></a></h3>
@@ -142,7 +144,7 @@ If a formatted string is given, optional arguments will no longer be optional.
 <pre><code class=language-c>
     extern void
     logltlf(enum   verblvls       verblvl,
-            const            char  *timestr,
-            const  unsigned  int   line,
-            const            char  *strfmt, ...);
+            const            char *timestr,
+            const  unsigned  int  line,
+            const            char *strfmt, ...);
 </code></pre>
