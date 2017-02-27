@@ -36,7 +36,7 @@ configurations.
 There are a few different functions that log.  The following is their
 correspdonding declarations.
 
-#### [`loglf`](inc/lgr.h#L111)
+#### [`loglf()`](inc/lgr.h#L111)
 log level format
 
 Outputs desired information to respected stream and/or to a log file,
@@ -44,7 +44,8 @@ depending on [verbose level](inc/lgr.h#L59) and configuration.
 
 `verblvl`<sup>`[in]`</sup> An enumerator constant declared in enumeration type
  [verblvls](inc/lgr.h#L59) representing the verbosity level of specified message given in `strfmt`.
-`strfmt``<sup>[in]</sup>` Either a regular string containing information to be output to a stream
+
+`strfmt`<sup>`[in]` Either a regular string containing information to be output to a stream
 and/or log file depending on what \p verblvl is set to and configurations or a formatted string.  
 <b>If a regular string is give, optional arguments, even if given will be ignored and not used.
         </b>
@@ -55,16 +56,16 @@ They will be required in order to get the desired output.
 extern void
 loglf(enum verblvls verblvl, const char *strfmt, ...);
 ```
-#### [`logltf`](inc/lgr.h#L136)
+#### [`logltf()`](inc/lgr.h#L136)
 log level time format
 
-  Outputs desired information to respected stream and/or to a log file,
-    depending on \link verblvls verbosity level\endlink and configuration.
+Outputs desired information to respected stream and/or to a log file,
+depending on \link verblvls verbosity level\endlink and configuration.
 
-  @param[in]  verblvl An enumerator constant declared in enumeration type
-                        #verblvls representing the verbosity level of
-                        specified message given in \p strfmt.
-timestr The time as a string to be output to the logger.
+`verblvl`<sup>[in]</sup> An enumerator constant declared in enumeration type
+ [verblvls](inc/lgr.h#L59) representing the verbosity level of specified message given in `strfmt`.
+
+`timestr` The time as a string to be output to the logger.
 `strfmt`
       Either a regular string containing information to be output to a stream
         and/or log file depending on what \p verblvl is set to and
