@@ -44,11 +44,11 @@ log level format
 Outputs desired information to respected stream and/or to a log file, depending
   on <a href=inc/lgr.h#59>verbose level</a> and configuration.
 
-<em>verblvl</em><sup>[in]</sup>An enumerator constant declared in
+<em>verblvl</em><sup>[in]</sup> An enumerator constant declared in
   enumeration type <a href=inc/lgr.h#L59>verblvls</a> representing the
   verbosity level of specified message given in <em>strfmt</em>.
 
-<em>line</em><sup>[in]</sup>Either a regular string containing
+<em>line</em><sup>[in]</sup>    Either a regular string containing
   information to be output to a stream and/or log file depending on what
   <em>verblvl</em> is set to and configurations or a formatted string.
   <sup>If a regular string is give, optional arguments, even if given will be
@@ -67,14 +67,14 @@ log level time format
 Outputs desired information to respected stream and/or to a log file, depending
   on <a href=inc/lgr.h#L59>verbose level</a> and configuration.
 Hello world!
-<em>verblvl</em><sup>[in]</sup>An enumerator constant declared in
+<em>verblvl</em><sup>[in]</sup> An enumerator constant declared in
   enumeration type <a href=inc/lgr.h#L59>verblvls</a> representing the
   verbosity level of specified message given in <em>strfmt</em>.
 
 <em>timefmt</em><sup>[in]</sup> The time as a string to be output to the
   logger.
 
-<em>strfmt</em><sup>in[in]</sup>Either a regular string containing
+<em>strfmt</em><sup>[in]</sup>  Either a regular string containing
   information to be output to a stream and/or log file depending on what
   <em>verblvl</em> is set to and configurations or a formatted string.
   <sup>If a regular string is give, optional arguments, even if given will be
@@ -95,14 +95,14 @@ log level line format
 Outputs desired information to respected stream and/or to a log file, depending
   on <a href=inc/lgr.h#L59>verbose level</a> and configuration.
 
-<em>verblvl</em><sup>[in]</sup>An enumerator constant declared in
+<em>verblvl</em><sup>[in]</sup> An enumerator constant declared in
   enumeration type <a href=inc/lgr.h#L59>verblvls</a> representing the
   verbosity level of specified message given in <em>strfmt</em>.
 
-<em>line</em><sup>[in]</sup>   The line of which corresponds to the given
+<em>line</em><sup>[in]</sup>    The line of which corresponds to the given
 to by <em>strfmt</em>.
 
-<em>strfmt</em><sup>in[in]</sup>Either a regular string containing
+<em>strfmt</em><sup>[in]</sup>  Either a regular string containing
   information to be output to a stream and/or log file depending on what
   <em>verblvl</em> is set to and configurations or a formatted string.
   <sup>If a regular string is give, optional arguments, even if given will be
@@ -123,19 +123,19 @@ log level line format
 Outputs desired information to respected stream and/or to a log file, depending
   on <a href=inc/lgr.h#L59>verbose level</a> and configuration.
 
-<em>verblvl</em><sup>[in]</sup>An enumerator constant declared in
+<em>verblvl</em><sup>[in]</sup> An enumerator constant declared in
   enumeration type <a href=inc/lgr.h#L59>verblvls</a> representing the
   verbosity level of specified message given in <em>strfmt</em>.
 
 <em>timestr</em><sup>[in]</sup> The time as a string to be output to the
   logger.
 
-<em>line</em><sup>[in]</sup>   The line of which corresponds to the given
+<em>line</em><sup>[in]</sup>    The line of which corresponds to the given
   to by <code>strfmt</code>.
 
-<code>strfmt<sup>in[in]</sup></code>Either a regular string containing
+<code>strfmt<sup>[in]</sup></code>Either a regular string containing
   information to be output to a stream and/or log file depending on what
-  <code>verblvl</code> is set to and configurations or a formatted string.
+  <em>verblvl</em> is set to and configurations or a formatted string.
   <sup>If a regular string is give, optional arguments, even if given will be
   ignored and not used.</sup>
 
