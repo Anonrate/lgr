@@ -160,7 +160,8 @@ parameters.
 <!-- Need the two trailing spaces in order for a new paragraph to not be
 created -->
 
-### The break down - The parameters 
+### The break down - The parameters
+
 1. #### *verblvl*
    This parameter can be any of the log levels described above.  An example one
    would be `WARNING`.
@@ -200,6 +201,7 @@ created -->
        *    but the date as well.
        */
       ```
+
 3. #### *line*
    Now as you can tell that the naming is pretty simple.  If you're aren't able
    to tell what this means well then you should really go back to school.  Like
