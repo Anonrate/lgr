@@ -4,70 +4,83 @@
 configurations.
 
 #### This list below contains the valid verbose levels
-  * `FATAL`   This verbose level depicts that whatever just occured, can not be
-  recovered from, and therefore the application/lib etc..  Needs to be
-  terminate.
-  * [`ERROR`](inc/lgr.h#L67)   This verbose level is kind of
-  along the same lines as `FATAL`except, the application/lib etc, can still run
-  and work a bit, but most likly
-  not.  If you're one that likes to have whatever your coding not terminate
-  whatsoever until the job is completly done...  You could use this level.
-  Another possibly scenario that this level could be used is, if a function
-  fails to do what you had wanted it to do, but returning something else will
-  still make it work just not ideally..  This is your level.
-  * `WARNING` Say the user enters in something stupid that they aren't supposed
-  to, but they either have another chance or you the code is sufficeint enough
-  to fix the problem, you could use this level.
-  * `INFO`    This  is pretty much self expalnitory.  It's purly for
-  informative reasons.  Want to know input given was valid or not?  `INFO` is
-  your verbosity of choice.
-  * `DEBUG`   Finally last but most certainly not lease...  `DEBUG`.  Just use
-  this on everything pretty much, that way when you test your code and it
-  fucks up somehwere you didn't put any other log message too..  You still have
-  something.  It information can be very little.  For example:  I put it at the
-  starting of every function and when something is being returned.
+  * [`FATAL`](inc/lgr.h#L67)   This verbose level depicts that whatever just
+  occured, can not be recovered from, and therefore the application/lib etc..
+  Needs to be terminate.
+  * [`ERROR`](inc/lgr.h#L68)   This verbose level is kind of along the same
+  lines as `FATAL`except, the application/lib etc, can still run and work a bit
+  , but most not.  If you're one that likes to have whatever your coding not
+  terminate whatsoever until the job is completly done...  You could use this
+  level.  Another possibly scenario that this level could be used is, if a
+  function fails to do what you had wanted it to do, but returning something
+  else will still make it work just not ideally..  This is your level.
+  * [`WARNING`](inc/lgr.h#L69)Say the user enters in something stupid that they
+  aren't supposed to, but they either have another chance or you the code is
+  sufficeint enough to fix the problem, you could use this level.
+  * [`INFO`](inc/lgr.h#L70)    This is pretty much self expalnitory.  It's
+  purly for informative reasons.  Want to know input given was valid or not?
+  [`INFO`](inc/lgr.h#L70) is your verbosity of choice.
+  * [`DEBUG`](inc/lgr.h#L71)   Finally last but most certainly not lease...
+  [`DEBUG`](inc/lgr.h#L71).  Just use this on everything pretty much, that way
+  when you test your code and it fucks up somehwere you didn't put any other
+  log message too..  You still has something.  It information can be very
+  little.  For example:  I put it at the starting of every function and when
+  something is being returned.
 
    There are also some internal verbose level as well, but they are just used
    during debugging.  But here they are if you're wondering.
-   * `INTERN_WARNING`
-   * `INTERN_INFO`
-   * `INTERN_DEBUG`
+   * [`INTERN_WARNING`](inc/lgr.h#L76)
+   * [`INTERN_INFO`](inc/lgr.h#L81)
+   * [`INTERN_DEBUG`](inc/lgr.h#L86)
 
 There are a few different functions that log.  The following is their
 correspdonding declarations.
 
-#### log level format
+#### [`loglf`](inc/lgr.h#L111)
 log level format
 
 Outputs desired information to respected stream and/or to a log file,
-depending on \link verblvls verbosity level\endlink and configuration.
+depending on [verbose level](inc/lgr.h#L59) and configuration.
 
-verblvl An enumerator constant declared in enumeration type
- #verblvls representing the verbosity level of
-                        specified message given in \p strfmt.
- @param[in]  strfmt
-    \parblock
-      Either a regular string containing information to be output to a stream
-        and/or log file depending on what \p verblvl is set to and
-        configurations or a formatted string.  <b>If a regular string is
-       give, optional arguments, even if given will be ignored and not used.
+`verblvl`<sup>`[in]`</sup> An enumerator constant declared in enumeration type
+ [verblvls](inc/lgr.h#L59) representing the verbosity level of specified message given in `strfmt`.
+`strfmt``<sup>[in]</sup>` Either a regular string containing information to be output to a stream
+and/or log file depending on what \p verblvl is set to and configurations or a formatted string.  
+<b>If a regular string is give, optional arguments, even if given will be ignored and not used.
         </b>
-
-      If a formatted string is given, optional arguments will no longer be
-        optional.  They will be required in order to get the desired output.
-    \endparblock
-
+If a formatted string is given, optional arguments will no longer beoptional.  
+They will be required in order to get the desired output.
 
 ```c
 extern void
 loglf(enum verblvls verblvl, const char *strfmt, ...);
 ```
+#### [`logltf`](inc/lgr.h#L136)
+log level time format
+
+  Outputs desired information to respected stream and/or to a log file,
+    depending on \link verblvls verbosity level\endlink and configuration.
+
+  @param[in]  verblvl An enumerator constant declared in enumeration type
+                        #verblvls representing the verbosity level of
+                        specified message given in \p strfmt.
+timestr The time as a string to be output to the logger.
+`strfmt`
+      Either a regular string containing information to be output to a stream
+        and/or log file depending on what \p verblvl is set to and
+        configurations or a formatted string.  <b>If a regular string is
+        give, optional arguments, even if given will be ignored and not used.
+        </b>
+
+      If a formatted string is given, optional arguments will no longer be
+        optional.  They will be required in order to get the desired output.
 
 ```c
 extern void
 logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
 ```
 
+#### [`logllf`](inc/lgr.h#L162)
 ```c
 extern void
 logllf(enum   verblvls        verblvl,
@@ -75,6 +88,7 @@ logllf(enum   verblvls        verblvl,
        const            char  *strfmt, ...);
 ```
 
+#### [`logltlf`](inc/lgr.h#L191)
 ```c
 extern void
 logltlf(enum   verblvls       verblvl,
