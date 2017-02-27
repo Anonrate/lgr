@@ -68,6 +68,7 @@ There are 4 functions that can be called to log.  Each function is prefixed
 
 Three of the 4 functions use 2 other letters to differentiate themselves from
 the rest.  Use this table as a general reference.
+
 | letter | meaning |
 |:------:| ------- |
 | t      | time    |
@@ -79,6 +80,7 @@ combines both the letter 't' and 'l' and what do you get?  You guessed it 'tl'.
 If you're not able to guess what the 'tl' stands for...  Leave.  If you do,
 then you can stay.  I will now show you another very simple table of the 4
 functions.
+
 | log level | time | line | format | forms     | meaning                    |
 |:---------:|:----:|:----:|:------:|:---------:| -------------------------- |
 | logl      |      |      | f      | `loglf`   | log level           format |
