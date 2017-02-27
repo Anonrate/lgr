@@ -161,85 +161,85 @@ parameters.
 created -->
 
 ### The break down - The parameters
-#### *verblvl*  
-   This parameter can be any of the log levels described above.  An example one
-   would be `WARNING`.
-#### _*timestr_  
-   If you weren't already wondering, obviously means the time.  Now you don't
-   have to specify the time here if you don't want to, you could simply use the
-   date or whatever the fuck you wanted to, but for the purpose of this
-   demonstration, we will use *time* because that's what in the name.
+#### *verblvl*
+This parameter can be any of the log levels described above.  An example one
+would be `WARNING`.
+#### _*timestr_
+If you weren't already wondering, obviously means the time.  Now you don't
+have to specify the time here if you don't want to, you could simply use the
+date or whatever the fuck you wanted to, but for the purpose of this
+demonstration, we will use *time* because that's what in the name.
 
-   There are a few different ways one can get the time, but the most simple way
-   to do so is to use the Standard macro `__TIME__`.  All that this macro does
-   is expands into the current time.
+There are a few different ways one can get the time, but the most simple way
+to do so is to use the Standard macro `__TIME__`.  All that this macro does
+is expands into the current time.
 
-   Now like I had mentioned before, you could specify the date rather than the
-   time, and to do so is the same principle.  Use the Standard macro
-   `__DATE__`.  Now if you wanted to use both of them, it's still rather
-   simple, but just not as simple as specifying `__TIME__`  `__DATE__`.  That
-   wouldn't work.  So here is a quick code snipet that will demonstrate how to
-   do so.
-      ```c
-      /*
-       *  So the time and date stay the same during parsing.
-       */
-      const char *timestr   = __TIME__;
-      const char *timedate  = __DATE__;
-      int sz = snprintf(0, 0, "%s:%s", timestr, timedate);
-      if (sz < 0) { exit(EXIT_FAILURE); }       /* Don't do failure part */
+Now like I had mentioned before, you could specify the date rather than the
+time, and to do so is the same principle.  Use the Standard macro
+`__DATE__`.  Now if you wanted to use both of them, it's still rather
+simple, but just not as simple as specifying `__TIME__`  `__DATE__`.  That
+wouldn't work.  So here is a quick code snipet that will demonstrate how to
+do so.
+   ```c
+   /*
+    *  So the time and date stay the same during parsing.
+    */
+   const char *timestr   = __TIME__;
+   const char *timedate  = __DATE__;
+   int sz = snprintf(0, 0, "%s:%s", timestr, timedate);
+   if (sz < 0) { exit(EXIT_FAILURE); }       /* Don't do failure part */
 
-      /* Plus one for null byte */
-      char *timedatestr = malloc(sz + 1);
-      if (!timedatestr) { exit(EXIT_FAILURE); } /* Don't do failure part */
+   /* Plus one for null byte */
+   char *timedatestr = malloc(sz + 1);
+   if (!timedatestr) { exit(EXIT_FAILURE); } /* Don't do failure part */
 
-      sz = sprintf(timedatestr, "%s:%s", timestr, datestr);
-      if (sz < 0) { exit(EXIT_FAILURE); }       /* Don't do failure part */
-      /*
-       *  timedatestr is now a valid string that contains not only the time,
-       *    but the date as well.
-       */
-      ```
+   sz = sprintf(timedatestr, "%s:%s", timestr, datestr);
+   if (sz < 0) { exit(EXIT_FAILURE); }       /* Don't do failure part */
+   /*
+    *  timedatestr is now a valid string that contains not only the time,
+    *    but the date as well.
+    */
+   ```
 #### *line*  
-   Now as you can tell that the naming is pretty simple.  If you're aren't able
-   to tell what this means well then you should really go back to school.  Like
-   _*timestr_, *line* is also really easy to specify.  It's just a simple macro
-   as well.  That macro is `__LINE__`.  What this will expand to is the current
-   line of which `__LINE__` is on.  Now this may not give you accurate*is*
-   results, and I will show you why.
-      ```c
-      /* 1 */ char*
-      /* 2 */ gettimedatestr(const char *timestr, const char *datestr)
-      /* 3 */ {
-      /* 4 */     logllf(DEBUG, __LINE__, "%s\n", __func__);
-      /* 5 */     /* ... */
-      /* 6 */ }
-      ```
-   The code above is what I do for every single function (other than the
-   logging functions because that would lead to being recursive).  What it
-   basically does it tells me the function of which is just called.  The macro
-   `__func` expands to the function name in this case `gettimedatestr`.  Note
-   how the definition starts on line 2, but the macro `__LINE__` is on line 4.
-   Being that the macro is on line 4, the output would be be displayed as
-   follows.  
-      `[       4]  DEBUG           gettimedatestr`  
-   This isn't what we want because `gettimedatestr` is not defined on line 4,
-   it is defined on line 2.  So the way to get the correct line number is by
-   doing simple match.  For this specific situation I would just subtract 2
-   like this `__LINE__ -2u`.  The reason why I am using the literal 'u' is
-   because `__LINE__` expands into type `unsigned int` which if you did not
-   know has a range from 0 to `UINT_MAX`.  No negative numbers.
+Now as you can tell that the naming is pretty simple.  If you're aren't able
+to tell what this means well then you should really go back to school.  Like
+_*timestr_, *line* is also really easy to specify.  It's just a simple macro
+as well.  That macro is `__LINE__`.  What this will expand to is the current
+line of which `__LINE__` is on.  Now this may not give you accurate*is*
+results, and I will show you why.
+   ```c
+   /* 1 */ char*
+   /* 2 */ gettimedatestr(const char *timestr, const char *datestr)
+   /* 3 */ {
+   /* 4 */     logllf(DEBUG, __LINE__, "%s\n", __func__);
+   /* 5 */     /* ... */
+   /* 6 */ }
+   ```
+The code above is what I do for every single function (other than the
+logging functions because that would lead to being recursive).  What it
+basically does it tells me the function of which is just called.  The macro
+`__func` expands to the function name in this case `gettimedatestr`.  Note
+how the definition starts on line 2, but the macro `__LINE__` is on line 4.
+Being that the macro is on line 4, the output would be be displayed as
+follows.  
+`[       4]  DEBUG           gettimedatestr`  
+This isn't what we want because `gettimedatestr` is not defined on line 4,
+it is defined on line 2.  So the way to get the correct line number is by
+doing simple match.  For this specific situation I would just subtract 2
+like this `__LINE__ -2u`.  The reason why I am using the literal 'u' is
+because `__LINE__` expands into type `unsigned int` which if you did not
+know has a range from 0 to `UINT_MAX`.  No negative numbers.
 #### _*strfmt_  
-   Have you ever used `printf()`?  You know you're specifying a string with
-   parameters then passing arguments to correspond to those parameters?  This
-   is the exact same process.  You do not need to specify a formatted string.
-   You could simple specify a regular string if you like, just don't pass any
-   arguments afterwards.  Just be sure to use append a new line with `\n`  so
-   the output looks like it should, unless you know you don't need a new line.
+Have you ever used `printf()`?  You know you're specifying a string with
+parameters then passing arguments to correspond to those parameters?  This
+is the exact same process.  You do not need to specify a formatted string.
+You could simple specify a regular string if you like, just don't pass any
+arguments afterwards.  Just be sure to use append a new line with `\n`  so
+the output looks like it should, unless you know you don't need a new line.
 #### *...*  
-   These are the *optional* arguments that will correspond to the formatted
-   string given to the parameter _*strfmt_.  If you aren't using any parameters
-   in _*strfmt_, don't give any arguments because that would be pointless.
+These are the *optional* arguments that will correspond to the formatted
+string given to the parameter _*strfmt_.  If you aren't using any parameters
+in _*strfmt_, don't give any arguments because that would be pointless.
 
 ## Examples
 I promised given an example on how to use each one, and I am going to deliver.
