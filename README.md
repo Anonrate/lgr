@@ -162,7 +162,7 @@ created -->
 
 ### The break down - The parameters
 
-1. #### *verblvl*  
+1. #### _verblvl_  
    This parameter can be any of the log levels described above.  An example one
    would be `WARNING`.
 2. #### _*timestr_
