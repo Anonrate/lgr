@@ -171,6 +171,7 @@ created -->
    simple, but just not as simple as specifying `__TIME__``__DATE__`.  That
    wouldn't work.  So here is a quick code snipet that will demonstrate how to
    do so.
+      ```c
       /*
        *  So the time and date stay the same during parsing.
        */
@@ -189,4 +190,5 @@ created -->
        *  timedatestr is now a valid string that contains not only the time,
        *    but the date as well.
        */
+      ```
    Simple?
