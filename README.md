@@ -1,150 +1,160 @@
-<h1>lgr</h1>
-<b>lgr</b> is verbose logger with the ability to log to a respected stream,
-<em>stdout</em>, <em>stderr</em> and/or a file depending on the situation and
+# lgr
+**lgr** is a verbose logger that allows the user to output useful information
+to a respected stream and/or file depending on the level given and
 configurations.
 
-<h3>This list below contains the valid verbose levels</h3>
-* <a href=inc/lgr.h#L67><code>FATAL</code></a>  This verbose level depicts that
-whatever just occurred, can not be recovered from, and therefore the
-application/lib etc.. Needs to be terminate.
-* <a href=inc/lgr.h#L68><code>ERROR</code></a>  This verbose level is kind of
-along the same lines as `FATAL`except, the application/lib etc, can still run
-and work a bit, but most not.  If you're one that likes to have whatever your
-coding not terminate whatsoever until the job is completely done...  You could
-use this level.  Another possibly scenario that this level could be used is, if
-a function fails to do what you had wanted it to do, but returning something
-else will still make it work just not ideally..  This is your level.
-* <a href=inc/lgr.h#L69><code>WARNING</code></a>Say the user enters in
-something stupid that they aren't supposed to, but they either have another
-chance or you the code is sufficient enough to fix the problem, you could use
-this level.
-* <a href=inc/lgr.h#L70><code>INFO</code></a>    This is pretty much self
-explanatory.  It's purely for informative reasons.  Want to know input given
-was valid or not?  <a href=inc/lgr.h#L70><code>INFO</code></a>is your verbosity
-of choice.
-* <a href=inc/lgr.h#71><code>DEBUG</code></a>   Finally last but most
-certainly not lease...  <a href=inc/lgr.h#L71><code>DEBUG</code></a>.
-Just use this on everything pretty much, that way when you test your code and
-it fucks up somewhere you didn't put any other log message too..  You still has
-something.  It information can be very little.  For example:  I put it at the
-starting of every function and when something is being returned.
+To everyone logging levels can be used for different situations as compared to
+others.  There is really no *official* way to use each level, it's just more of
+common sense as to when, where and how to use each level.
 
-There are also some internal verbose level as well, but they are just used
-  during debugging.  But here they are if you're wondering.
-* <a href=inc/lgr.h#L76><code>INTERN_WARNING</code></a>
-* <a href=inc/lgr.h#L81><code>INTERN_INFO</code></a>
-* <a href=inc/lgr.h#L86><code>INTERN_DEBUG</code></a>
+Below I will explain how I would usually go about and use each level.
+* `FATAL`   This level is probably one of the most intuitive levels.  I merely
+  use this level if the System fucks something up, or if something detrimental
+  happens and the code will not work correctly if chosen to continue on.  When
+  I use this level, I typically call a function that is marked with the
+  `noreturn` attribute to state to the compiler that something has fucked up
+  and there is no point of return if said function is called.
+* `ERROR`   The `ERROR` level probably has a lot of discrepancy as to how each
+  person utilizes it.  Along with `FATAL`, I do not use this level that often
+  as I don't like my code have to be terminated on the end user and them get
+  frustrated at me saying *"You should have done this.  You should have done
+  that.  You should have made it more efficient so that even if someone types
+  something incorrect or does the wrong 'thing' that the code corrects it by
+  itself"*.  You see, I don't want to deal with that shit, so unless the end
+  user does something real fucked up say like...  To be honest I can't even
+  give an example because the way I code I make it utmost impossible for my
+  code to actually *fail* or run into an `ERROR` minimal.
+  <!--TODO:  Include an example of where `ERROR` can be used.**
+  TODO:  Don't know if I mentioned anything alone the lines of termination,
+  but I must say something along those lines as well -->
+* `WARNING` Now this level is pretty much done and said for it its own name.
+  It's a *warning* that something had gone wrong.  An example would be in the
+  logger itself, during the configuration of setting the priority of verbose,
+  if a level is given that is not valid, a warning will be displayed saying
+  that the given level is no valid and is leaving the priority level as is.
+  The code can continue on exactly how it's intended to, just not as the user
+  intended to because their dumbass didn't specify a level correctly.
 
-There are a few different functions that log.  The following is their
-corresponding declarations.
+  So in short, if a `WARNING` occurs, the code can still continue on as it was
+  intended to, but not as the user intends.
+* `INFO`    I myself have a very hard time trying to choose where to use this
+  level along with `DEBUG`.  I keep telling myself that it's just informative
+  which in all seriousness it is..  The question is to what is it informative?
+  A function call?  Something being valid?  Something needing to be modified?
+  The technical answer is yes.  Yes to all of them.  It's pretty much down to
+  personal preference.  A example from the loggers point of view would be
+  letting the user know if a given level IS valid.  Not invalid, is valid.
+  There really isn't much else to say about that there.
+* `DEBUG`   Now lastly but most certainly not least we have `DEBUG`.  In
+  retrospect...  If something is being done in your code and that it really
+  doesn't matter to the user what the fuck it is because they probably wont
+  understand...  Use `DEBUG`.  Use `DEBUG` to you know.. debug your code.
+  Calling a function?  Put a message at the top right before it's starts doing
+  shit so you know what is happening while you're debugging your code and
+  reading a shit load of *useless* information.
 
-<h3><a href=inc/lgr.h#L111><code>loglf()</code></a></h3>
-log level format
+Now there are also some internal verbose levels that just the logger uses (I
+use to see what the fuck is going on and if something fucks up).  But if you're
+nosey and want to know what they are, here they are anyways.  I use them as
+described above.  Just take out the word "INTERN\_" and that's what ya gotta
+read upon above.
+* `INTERN_WARNING`
+* `INTERN_INFO`
+* `INTERN_DEBUG`
 
-Outputs desired information to respected stream and/or to a log file, depending
-  on <a href=inc/lgr.h#59>verbose level</a> and configuration.
+There are 4 functions that can be called to log.  Each function is prefixed
+`logl` and suffixed with `f`.  The 'l' in `logl` stands for *level*, and the
+'f' stands for *format*.
 
-<em>verblvl</em><sup>[in]</sup> An enumerator constant declared in
-  enumeration type <a href=inc/lgr.h#L59>verblvls</a> representing the
-  verbosity level of specified message given in <em>strfmt</em>.
+Three of the 4 functions use 2 other letters to differentiate themselves from
+the rest.  Use this table as a general reference.
+| letter | meaning |
+|:------:| ------- |
+| t      | time    |
+| l      | line    |
 
-<em>line</em><sup>[in]</sup>    Either a regular string containing
-  information to be output to a stream and/or log file depending on what
-  <em>verblvl</em> is set to and configurations or a formatted string.
-  <sup>If a regular string is give, optional arguments, even if given will be
-  ignored and not used.</sup>
+Taken note of the very simple table above, you may notice that I did say
+*three* functions , and I still still stand by what I said.  The last function
+combines both the letter 't' and 'l' and what do you get?  You guessed it 'tl'.
+If you're not able to guess what the 'tl' stands for...  Leave.  If you do,
+then you can stay.  I will now show you another very simple table of the 4
+functions.
+| log level | time | line | format | forms     | meaning                    |
+|:---------:|:----:|:----:|:------:|:---------:| -------------------------- |
+| logl      |      |      | f      | `loglf`   | log level           format |
+| logl      | t    |      | f      | `logltf`  | log level time      format |
+| logl      |      | l    | f      | `logllf`  | log level      line format |
+| logl      | t    | l    | f      | `logltlf` | log level time line format |
 
-If a formatted string is given, optional arguments will no longer be optional.
-  They will be required in order to get the desired output.
-<pre><code class=language-c>
-    extern void
-    loglf(enum verblvls verblvl, const char *strfmt, ...);
-</code></pre>
+There, you now understand quantum physics.  If that table didn't help you
+understand then leave...  For real..  Get the fuck out.  Read a book or
+something.  Actually don't read a book, just read interwebs.
 
-<h3><a href=inc/lgr.h#L136><code>logltf()</code></a></h3>
-log level time format
+I really hope you were able to notice that 'logl' and the 'f' was mandatory in
+each function because that was part of the point..  Anywho, each function have
+the same first parameter, and the same last two parameters.
 
-Outputs desired information to respected stream and/or to a log file, depending
-  on <a href=inc/lgr.h#L59>verbose level</a> and configuration.
-Hello world!
-<em>verblvl</em><sup>[in]</sup> An enumerator constant declared in
-  enumeration type <a href=inc/lgr.h#L59>verblvls</a> representing the
-  verbosity level of specified message given in <em>strfmt</em>.
+I will first show you the declaration for each function, followed by what each
+parameter does, then finally followed by an example of how to use each one.
 
-<em>timefmt</em><sup>[in]</sup> The time as a string to be output to the
-  logger.
+### `loglf()`  log level format
+```c
+extern void
+loglf(enum verblvls verblvl, const char *strfmt, ...);
+```
 
-<em>strfmt</em><sup>[in]</sup>  Either a regular string containing
-  information to be output to a stream and/or log file depending on what
-  <em>verblvl</em> is set to and configurations or a formatted string.
-  <sup>If a regular string is give, optional arguments, even if given will be
-  ignored and not used.</sup>
+### `logltf()` log level time format
+```c
+extern void
+logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
+```
 
-If a formatted string is given, optional arguments will no longer be optional.
-  They will be required in order to get the desired output.
-<pre><code class=language-c>
-    extern void
-    logltf(enum verblvls  verblvl,
-           const char     *timestr,
-           const char     *strfmt, ...);
-</code></pre>
+### `logllf()` log level line format
+```c
+extern void
+logllf(enum   verblvls        verblvl,
+       const  unsigned  int   line,
+       const            char  *strfmt, ...);
+```
 
-<h3><a href=inc/lgr.h#L162><code>logllf()</code></a></h3>
-log level line format
+### `logltf()` log level time line format
+```c
+extern void
+logltlf(enum   verblvls       verblvl,
+        const            char *timestr,
+        const  unsigned  int  line,
+        const            char *strfmt, ...);
+```
 
-Outputs desired information to respected stream and/or to a log file, depending
-  on <a href=inc/lgr.h#L59>verbose level</a> and configuration.
+So now tat you have seen the declaration for each function, lets tell you what
+should have already noticed.
 
-<em>verblvl</em><sup>[in]</sup> An enumerator constant declared in
-  enumeration type <a href=inc/lgr.h#L59>verblvls</a> representing the
-  verbosity level of specified message given in <em>strfmt</em>.
+If you remember, previously I had said this:
+> Anywho, each function have the same first parameter, and the same last two
+> parameters.
 
-<em>line</em><sup>[in]</sup>    The line of which corresponds to the given
-to by <em>strfmt</em>.
+If you're looking at the declaration and you're confused as fuck, look at the
+end of each where the `...` are.  That is in fact a parameter, BUT it is not
+mandatory.  It is in fact optional.
 
-<em><code>strfmt</code></em><sup>[in]</sup>  Either a regular string containing
-  information to be output to a stream and/or log file depending on what
-  <em>verblvl</em> is set to and configurations or a formatted string.
-  <sup>If a regular string is give, optional arguments, even if given will be
-  ignored and not used.</sup>
+Lets break down each declaration so you can understand it more if you're
+confused.
 
-If a formatted string is given, optional arguments will no longer be optional.
-  They will be required in order to get the desired output.
-<pre><code class=language-c>
-    extern void
-    logllf(enum   verblvls        verblvl,
-           const  unsigned  int   line,
-           const            char  *strfmt, ...);
-</code></pre>
+We currently know what each letter means in the function if you actually read
+it above, and that the first and last two parameters are the same for each
+function.  So really if you know one you know them all.  If you're confused yet
+again, let me explain further.
 
-<h3><a href=inc/lgr.h#L191>logltlf()</a></h3>
-log level line format
+Lets start with the last function `logltlf()`.
+1. The first parameter is *verblvl*.
+   This parameter can be any of the log levels described above.  An example one
+   would be `WARNING`.
+2. The second parameter is _*timestr_ and if you weren't wondering, it
+   obviously means the time.  Now you don't have to specify the time here if
+   you don't want to, you could simply use the date or whatever the fuck you
+   wanted to, but for the purpose of this demonstration, we will use *time*
+   because that's what in the name.
 
-Outputs desired information to respected stream and/or to a log file, depending
-  on <a href=inc/lgr.h#L59>verbose level</a> and configuration.
-
-<em>verblvl</em><sup>[in]</sup> An enumerator constant declared in
-  enumeration type <a href=inc/lgr.h#L59>verblvls</a> representing the
-  verbosity level of specified message given in <em>strfmt</em>.
-
-<em>timestr</em><sup>[in]</sup> The time as a string to be output to the
-  logger.
-
-<em>line</em><sup>[in]</sup>    The line of which corresponds to the given
-  to by <code>strfmt</code>.
-
-<code>strfmt<sup>[in]</sup></code>Either a regular string containing
-  information to be output to a stream and/or log file depending on what
-  <em>verblvl</em> is set to and configurations or a formatted string.
-  <sup>If a regular string is give, optional arguments, even if given will be
-  ignored and not used.</sup>
-
-If a formatted string is given, optional arguments will no longer be optional.
-  They will be required in order to get the desired output.
-<pre><code class=language-c>
-    extern void
-    logltlf(enum   verblvls       verblvl,
-            const            char *timestr,
-            const  unsigned  int  line,
-            const            char *strfmt, ...);
-</code></pre>
+   There are a few different ways one can get the time, but the most simple way
+   to do so is to use the standard macro `__TIME__`.  All that this macro does
+   is expands into the current time
