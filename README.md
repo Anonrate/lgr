@@ -161,11 +161,10 @@ parameters.
 created -->
 
 ### The break down - The parameters
-
-#### *verblvl*
+#### *verblvl*  
    This parameter can be any of the log levels described above.  An example one
    would be `WARNING`.
-#### _*timestr_
+#### _*timestr_  
    If you weren't already wondering, obviously means the time.  Now you don't
    have to specify the time here if you don't want to, you could simply use the
    date or whatever the fuck you wanted to, but for the purpose of this
@@ -201,8 +200,7 @@ created -->
        *    but the date as well.
        */
       ```
-
-#### *line*
+#### *line*  
    Now as you can tell that the naming is pretty simple.  If you're aren't able
    to tell what this means well then you should really go back to school.  Like
    _*timestr_, *line* is also really easy to specify.  It's just a simple macro
@@ -231,14 +229,14 @@ created -->
    like this `__LINE__ -2u`.  The reason why I am using the literal 'u' is
    because `__LINE__` expands into type `unsigned int` which if you did not
    know has a range from 0 to `UINT_MAX`.  No negative numbers.
-#### _*strfmt_
+#### _*strfmt_  
    Have you ever used `printf()`?  You know you're specifying a string with
    parameters then passing arguments to correspond to those parameters?  This
    is the exact same process.  You do not need to specify a formatted string.
    You could simple specify a regular string if you like, just don't pass any
    arguments afterwards.  Just be sure to use append a new line with `\n`  so
    the output looks like it should, unless you know you don't need a new line.
-#### *...*
+#### *...*  
    These are the *optional* arguments that will correspond to the formatted
    string given to the parameter _*strfmt_.  If you aren't using any parameters
    in _*strfmt_, don't give any arguments because that would be pointless.
