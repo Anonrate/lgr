@@ -36,17 +36,16 @@ configurations.
 There are a few different functions that log.  The following is their
 correspdonding declarations.
 
-<h4><a href="inc/lgr.h#L111"><code>loglf()</code></a></h4>
-#### [<code>loglf()</code>](inc/lgr.h#L111)
+<h3><a href="inc/lgr.h#L111"><code>loglf()</code></a></h3>
 log level format
 
 Outputs desired information to respected stream and/or to a log file,
-depending on [verbose level](inc/lgr.h#L59) and configuration.
+depending on <a href=inc/lgr.h#59>verbose level</a> and configuration.
 
 <code>verblvl<sup>[in]</sup></code>An enumerator constant declared in enumeration type
- [verblvls](inc/lgr.h#L59) representing the verbosity level of specified message given in `strfmt`.
+<a href=inc/lgr.h#L59>verblvls</a> representing the verbosity level of specified message given in <code>strfmt</code>
 
-`strfmt`<sup>`[in]` Either a regular string containing information to be output to a stream
+<code>strfmt<sup>in[in]</sup></code>Either a regular string containing information to be output to a stream
 and/or log file depending on what \p verblvl is set to and configurations or a formatted string.  
 <b>If a regular string is give, optional arguments, even if given will be ignored and not used.
         </b>
@@ -76,11 +75,11 @@ depending on [verbose level](inc/lgr.h#L59) and configuration.
 
       If a formatted string is given, optional arguments will no longer be
         optional.  They will be required in order to get the desired output.
-
-```c
+<!-- language: lang-c -->
+<code>
 extern void
 logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
-```
+</code>
 
 #### [`logllf`](inc/lgr.h#L162)
 ```c
