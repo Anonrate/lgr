@@ -102,7 +102,7 @@ Outputs desired information to respected stream and/or to a log file, depending
 <em>line</em><sup>[in]</sup>    The line of which corresponds to the given
 to by <em>strfmt</em>.
 
-<em>strfmt</em><sup>[in]</sup>  Either a regular string containing
+<em><code>strfmt</code></em><sup>[in]</sup>  Either a regular string containing
   information to be output to a stream and/or log file depending on what
   <em>verblvl</em> is set to and configurations or a formatted string.
   <sup>If a regular string is give, optional arguments, even if given will be
