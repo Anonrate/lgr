@@ -82,7 +82,7 @@ then you can stay.  I will now show you another very simple table of the 4
 functions.
 
 | log level | time | line | format | forms     | meaning                    |
-|:---------:|:----:|:----:|:------:|:---------:| -------------------------- |
+|:---------:|:----:|:----:|:------:| --------- | -------------------------- |
 | logl      |      |      | f      | `loglf`   | log level           format |
 | logl      | t    |      | f      | `logltf`  | log level time      format |
 | logl      |      | l    | f      | `logllf`  | log level      line format |
@@ -149,7 +149,7 @@ again, let me explain further.
 
 Lets start with the last function `logltlf()`.
 
- The first parameter is *verblvl*.
+1. The first parameter is *verblvl*.
    This parameter can be any of the log levels described above.  An example one
    would be `WARNING`.
 
