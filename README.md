@@ -147,19 +147,19 @@ it above, and that the first and last two parameters are the same for each
 function.  So really if you know one you know them all.  If you're confused yet
 again, let me explain further.
 
-Lets start with the last function `logltlf()`.
-
-1. The first parameter is *verblvl*.  
+Lets start with the last function `logltlf()` and take a look at it's
+parameters.
+[//]: # (Need the two trailing spaces in order for a new paragraph to not be
+created)
+1. *verblvl*.  
    This parameter can be any of the log levels described above.  An example one
    would be `WARNING`.
 
-2. The second parameter is _*timestr_.  
- and if you weren't wondering, it
-
-   obviously means the time.  Now you don't have to specify the time here if
-   you don't want to, you could simply use the date or whatever the fuck you
-   wanted to, but for the purpose of this demonstration, we will use *time*
-   because that's what in the name.
+2. _*timestr_.  
+   If you weren't already wondering, obviously means the time.  Now you don't
+   have to specify the time here if you don't want to, you could simply use the
+   date or whatever the fuck you wanted to, but for the purpose of this
+   demonstration, we will use *time* because that's what in the name.
 
    There are a few different ways one can get the time, but the most simple way
    to do so is to use the standard macro `__TIME__`.  All that this macro does
