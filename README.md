@@ -162,5 +162,31 @@ created -->
    demonstration, we will use *time* because that's what in the name.
 
    There are a few different ways one can get the time, but the most simple way
-   to do so is to use the standard macro `__TIME__`.  All that this macro does
-   is expands into the current time
+   to do so is to use the Standard macro `__TIME__`.  All that this macro does
+   is expands into the current time.
+
+   Now like I had mentioned before, you could specify the date rather than the
+   time, and to do so is the same principle.  Use the Standard macro
+   `__DATE__`.  Now if you wanted to use both of them, it's still rather
+   simple, but just not as simple as specifying `__TIME__``__DATE__`.  That
+   wouldn't work.  So here is a quick code snipet that will demonstrate how to
+   do so.
+      /*
+       *  So the time and date stay the same during parsing.
+       */
+      const char *timestr   = __TIME__;
+      const char *timedate  = __DATE__;
+      int sz = snprintf(0, 0, "%s:%s", timestr, timedate);
+      if (sz < 0) { exit(EXIT_FAILURE); }       /* Don't do failure part */
+
+      /* Plus one for null byte */
+      char *timedatestr = malloc(sz + 1);
+      if (!timedatestr) { exit(EXIT_FAILURE); } /* Don't do failure part */
+
+      sz = sprintf(timedatestr, "%s:%s", timestr, datestr);
+      if (sz < 0) { exit(EXIT_FAILURE); }       /* Don't do failure part */
+      /*
+       *  timedatestr is now a valid string that contains not only the time,
+       *    but the date as well.
+       */
+   Simple?
