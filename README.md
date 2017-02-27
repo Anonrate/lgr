@@ -53,10 +53,10 @@ Outputs desired information to respected stream and/or to a log file, depending
 
 If a formatted string is given, optional arguments will no longer be optional.
   They will be required in order to get the desired output.
-<pre><code class=language-c>
+<code class=language-c>
     extern void
     loglf(enum verblvls verblvl, const char *strfmt, ...);
-</code></pre>
+</code>
 
 <h3><a href=inc/lgr.h#L136><code>logltf()</code></a></h3>
 log level time format
