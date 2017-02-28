@@ -59,7 +59,7 @@ Below I will explain how I would usually go about and use each level.
 Now there are also some internal verbose levels that just the logger uses (I
 use to see what the fuck is going on and if something fucks up).  But if you're
 nosey and want to know what they are, here they are anyways.  I use them as
-described above.  Just take out the word "INTERN\_" and that's what ya gotta
+described above.  Just take out the word "INTERN_" and that's what ya gotta
 read upon above.
 * `INTERN_WARNING`
 * `INTERN_INFO`
@@ -164,7 +164,7 @@ created -->
 #### *verblvl*
 This parameter can be any of the log levels described above.  An example one
 would be `WARNING`.
-#### _*timestr_
+#### _\*timestr_
 If you weren't already wondering, obviously means the time.  Now you don't have
 to specify the time here if you don't want to, you could simply use the date or
 whatever the fuck you wanted to, but for the purpose of this demonstration, we
@@ -202,7 +202,7 @@ if (sz < 0) { exit(EXIT_FAILURE); }       /* Don't do failure part */
 #### *line*
 Now as you can tell that the naming is pretty simple.  If you're aren't able to
 tell what this means well then you should really go back to school.  Like
-_*timestr_, *line* is also really easy to specify.  It's just a simple macro as
+_\*timestr_, *line* is also really easy to specify.  It's just a simple macro as
 well.  That macro is `__LINE__`.  What this will expand to is the current line
 of which `__LINE__` is on.  Now this may not give you accurate*ish* results,
 and I will show you why.
@@ -227,7 +227,7 @@ simple match.  For this specific situation I would just subtract 2 like this
 `__LINE__ -2u`.  The reason why I am using the literal 'u' is because
 `__LINE__` expands into type `unsigned int` which if you did not know has a
 range from 0 to `UINT_MAX`.  No negative numbers.
-#### _*strfmt_
+#### _\*strfmt_
 Have you ever used `printf()`?  You know you're specifying a string with
 parameters then passing arguments to correspond to those parameters?  This is
 the exact same process.  You do not need to specify a formatted string. You
@@ -236,8 +236,8 @@ arguments afterwards.  Just be sure to use append a new line with `\n`  so the
 output looks like it should, unless you know you don't need a new line.
 #### *...*
 These are the *optional* arguments that will correspond to the formatted string
-given to the parameter _*strfmt_.  If you aren't using any parameters in
-_*strfmt_, don't give any arguments because that would be pointless.
+given to the parameter _\*strfmt_.  If you aren't using any parameters in
+_\*strfmt_, don't give any arguments because that would be pointless.
 ## Examples
 I promised given an example on how to use each one, and I am going to deliver.
 So here are an example on how to use each one.
