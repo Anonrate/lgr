@@ -366,3 +366,6 @@ actually was.  See?  Taking time and actually reading shit can help..  Most of
 the time.  Depends on how it's explained and what you're learning curve is.  I
 have a real fucked up learning curve and also a very bad way of explaining
 shit.
+
+## Setting verbose level
+Setting the verbose level
