@@ -59,7 +59,7 @@ Below I will explain how I would usually go about and use each level.
 Now there are also some internal verbose levels that just the logger uses (I
 use to see what the fuck is going on and if something fucks up).  But if you're
 nosey and want to know what they are, here they are anyways.  I use them as
-described above.  Just take out the word "INTERN_" and that's what ya gotta
+described above.  Just take out the word "INTERN\_" and that's what ya gotta
 read upon above.
 * `INTERN_WARNING`
 * `INTERN_INFO`
@@ -164,7 +164,7 @@ created -->
 #### *verblvl*
 This parameter can be any of the log levels described above.  An example one
 would be `WARNING`.
-#### _\*timestr_
+#### _*timestr_
 If you weren't already wondering, obviously means the time.  Now you don't have
 to specify the time here if you don't want to, you could simply use the date or
 whatever the fuck you wanted to, but for the purpose of this demonstration, we
@@ -178,7 +178,7 @@ Now like I had mentioned before, you could specify the date rather than the
 time, and to do so is the same principle.  Use the Standard macro `__DATE__`.
 Now if you wanted to use both of them, it's still rather simple, but just not
 as simple as specifying `__TIME__`  `__DATE__`.  That wouldn't work.  So here
-is a quick code snipet that will demonstrate how to do so.
+is a quick code snippet that will demonstrate how to do so.
 ```c
 /*
  *  So the time and date stay the same during parsing.
@@ -202,7 +202,7 @@ if (sz < 0) { exit(EXIT_FAILURE); }       /* Don't do failure part */
 #### *line*
 Now as you can tell that the naming is pretty simple.  If you're aren't able to
 tell what this means well then you should really go back to school.  Like
-_\*timestr_, *line* is also really easy to specify.  It's just a simple macro as
+_*timestr_, *line* is also really easy to specify.  It's just a simple macro as
 well.  That macro is `__LINE__`.  What this will expand to is the current line
 of which `__LINE__` is on.  Now this may not give you accurate*ish* results,
 and I will show you why.
@@ -227,7 +227,7 @@ simple match.  For this specific situation I would just subtract 2 like this
 `__LINE__ -2u`.  The reason why I am using the literal 'u' is because
 `__LINE__` expands into type `unsigned int` which if you did not know has a
 range from 0 to `UINT_MAX`.  No negative numbers.
-#### _\*strfmt_
+#### _*strfmt_
 Have you ever used `printf()`?  You know you're specifying a string with
 parameters then passing arguments to correspond to those parameters?  This is
 the exact same process.  You do not need to specify a formatted string. You
@@ -236,8 +236,8 @@ arguments afterwards.  Just be sure to use append a new line with `\n`  so the
 output looks like it should, unless you know you don't need a new line.
 #### *...*
 These are the *optional* arguments that will correspond to the formatted string
-given to the parameter _\*strfmt_.  If you aren't using any parameters in
-_\*strfmt_, don't give any arguments because that would be pointless.
+given to the parameter _*strfmt_.  If you aren't using any parameters in
+_*strfmt_, don't give any arguments because that would be pointless.
 ## Examples
 I promised given an example on how to use each one, and I am going to deliver.
 So here are an example on how to use each one.
@@ -246,6 +246,14 @@ function `isverblvl()` and just added a few extra lines.  Yes I am that
 lazy.</sup>**
 
 ### `loglf()`
+Here is a demonstration on how to use the simplistic function of them all.  All
+that this one simple does is logs "Hello world" to the `stdout` stream because
+in the example, the verbose level `INTERN_DEBUG` is being used.  The way "Hello
+world" is being out to the stream is using a formatted string.  The formatted
+string is `"%s\n"`.  I'm really hoping you know what that means.  If you don't,
+you really need to learn more before even trying to use this code.  After the
+function `loglf()` is completed, we are returning `EXIT_SUCCESS` which means
+the code has terminated successfully.
 ```c
 int
 main(void)
@@ -257,6 +265,17 @@ main(void)
 ```
 
 ### `logltf()`
+This code example is a bit more complex, not by that much though.  It does the
+same this as the previous example does, except create a few extra variables,
+checks/validates them using a ternary, followed by logging the results with
+ether verbose level `INTERN_INFO` or `INTERN_WARNING`.  If the ternary
+statement is true, verbose level `INTERN_INFO` will be used.  If not, a
+*statement sequence<sup>(?)</sup>* will be used and will set `tmpvlvl` to
+`INTERN_WARNING`.  The time will also be out to the stream via the `__TIME__`
+macro.  You can't really see the formatted string here, and as I'm typing this
+out, I realize that it's a bad example.  So being so I can't really explain
+much without actually not being lazy, so I will just leave this as it is right
+now.
 ```c
 int
 main(void)
@@ -285,6 +304,14 @@ main(void)
 ```
 
 ### `logllf()`
+The following example should be really straight forward if you have actually
+coded in `C` and have a bit of knowledge.  The example shows the macro
+`__LINE__` being used, then subtracting `2u` (The `u` is a literal for
+`unsigned`) from the line number because that's where the function `main()` is
+defined on.  Then we have just a regular string, not a formatted string that
+outs the name of the function `main`.  We could have also used the macro
+`__func__`, but for some reason I wanted to demonstrate the approach in this
+way.
 ```c
 /* 1 */ int
 /* 2 */ main(void)
@@ -296,6 +323,13 @@ main(void)
 ```
 
 ### `logtlf()`
+Finally I'm on the last example.  This almost does the same as the previous
+code snippets except with the last example we didn't use the macro `__func__`
+to get the name of the function.  Last time we literally just gave it manually.
+Another main difference here and the point of this example is to show the usage
+of function `logltlf()`.  As you may have been able to tell, each log function
+is really similar and easy to use.  Instead of using just either the macro
+`__TIME__` or `__LINE__`, we are using both this time.  See how simple it is?
 ```c
 int
 main(void)
@@ -325,3 +359,10 @@ main(void)
     return tmplvl;
 }
 ```
+
+Now if you actually read any of that, and were scared at first thinking that
+this was going to be hard, I bet you're a lot at ease right now on how easy it
+actually was.  See?  Taking time and actually reading shit can help..  Most of
+the time.  Depends on how it's explained and what you're learning curve is.  I
+have a real fucked up learning curve and also a very bad way of explaining
+shit.
