@@ -367,5 +367,161 @@ the time.  Depends on how it's explained and what you're learning curve is.  I
 have a real fucked up learning curve and also a very bad way of explaining
 shit.
 
-## Setting verbose level
-Setting the verbose level
+## Functions
+There are a few different functions that can be used to get extra information
+either for your needs or whatever they may be.  Some of them are also used for
+configuring the logger.  I will do my best in explaining what each one does.
+
+### Setting verbose level
+Setting the verbose level could not be any easier as this one function.  The
+function is called `setverblvl()`.  Couldn't be anymore obvious could it?  Here
+is its declaration.
+
+#### Setting verbose level declaration
+Yes it's really that simple!
+```c
+extern int
+setverblvl(enum verblvls verblvl);
+```
+
+#### `setverblvl()` the break down
+Even though to some people and myself, the usage of this function is very
+simple, but still for some new people it may be difficult to understand and
+that's okay.  I will do my best to explain what and how it works.
+
+##### *verblvl*
+*verblvl* is of the type `enum verblvls`.  The name was very cleverly chosen as
+you can tell.  The valid arguments of which are valid for this parameter are
+displayed at the top of this markdown.
+
+#### `setverblvl()` example
+The very simple example below will demonstrate how to set the verbose level to
+`WARNING`.
+```c
+setverblvl(WARNING);
+```
+
+Can't get any easier...  Well it could, but I'm not going to make it any
+easier.
+
+### Getting verbose level
+Just like in setting the verbose level, getting it is even more simple because
+you literally do not need to specify any arguments.  The function is called
+`getverblvl()`.
+
+#### Getting verbose level declaration
+There really isn't much to say about this function as it's pretty self
+explanatory.
+```c
+extern enum verblvls
+getverblvl(void);
+```
+
+#### `getverblvl()` the break down
+Once again, not much to say about this.  You call the function and it returns
+what the current verbose level is set to.
+
+#### `getverblvl()` example
+The following example will demonstrate on how to get the verbose level
+currently set.
+```c
+/* temp verbose level */
+enum verblvls tmpverblvl  = getverblvl();
+```
+
+Just gets the current verbose level set like mentioned above, and assigns it to
+the variable *tmpverblvl*.
+
+### Getting verbose level name
+If you're curious as to how to get the name of a corresponding verbose level,
+and don't want to create your own way of doing so, there is already of way to
+do so.  There is not only a function called `getverblvlname()`, but also for
+each level there is a macro that represents it in a string form.
+
+#### `getverblvlname()` declaration
+If you were curious,  here is the declaration for the function
+`getverblvlname()`.
+```c
+extern char*
+getverblvlname(enum verblvls verblvl);
+```
+
+#### `getverblvlname()` the breakdown
+These function are so simple, that a there isn't much to say about them, and I
+have said this all before, but just for the purpose of learning I am going to
+explain shit over and over about the same thing just on a different function.
+That means that I will copying and pasting shit just like I did with the
+parameter below.
+
+##### *verblvl*
+*verblvl* is of the type `enum verblvls`.  The name was very cleverly chosen as
+you can tell.  The valid arguments of which are valid for this parameter are
+displayed at the top of this markdown.
+
+#### `getverblvlname()` example
+The code snippet below will show you how to get the string representation of
+the level `FATAL`.
+```c
+/* verbose level name */
+char *verblvlname = getverblvlname(FATAL);
+```
+
+#### Verbose level macro (\_STR) definitions
+If you want to know what the macro name for getting the string representation
+of say `DEBUG`, all you would simple do is append `\_STR` at the end which you
+then get `DEBUG_STR`.  And that's how you do that.  But I will show each
+definition anyways for your convenience.
+
+##### `FATAL` string
+Definition for getting a string representation of the level `FATAL`.
+```c
+#define FATAL_STR           "FATAL"
+```
+
+##### `ERROR` string
+Definition for getting a string representation of the level `ERROR`.
+```c
+#define ERROR_STR           "ERROR"
+```
+
+##### `ERROR` string
+Definition for getting a string representation of the level `WARNING`.
+```c
+#define WARNING_STR         "WARNING"
+```
+
+##### `INFO` string
+Definition for getting a string representation of the level `INFO`.
+```c
+#define INFO_STR            "INFO"
+```
+
+##### `DEBUG` string
+Definition for getting a string representation of the level `DEBUG`.
+```c
+#define DEBUG_STR           "DEBUG"
+```
+
+#### Internal verbose level (\_STR) definitions
+Now there are macros for the internal log levels and just like shown above for
+them, shown below will be the macros for those levels.
+
+##### `INTERN_WARNING` string
+Definition for getting a string representation of the level `INTERN_WARNING`.
+```c
+#define INTERN_WARNING_STR  "INTERN_WARNING"
+```
+
+##### `INTERN_INFO` string
+Definition for getting a string representation of the level `INTERN_INFO`.
+```c
+#define INTERN_INFO_STR     "INTERN_INFO"
+```
+
+##### `INTERN_DEBUG` string
+Definition for getting a string representation of the level `INTERN_DEBUG`.
+```c
+#define INTERN_DEBUG_STR    "INTERN_DEBUG"
+```
+If you specify a value that is not of a correct level, you will get
+`NVALID_VERB_LVL_STR` as a return value.
