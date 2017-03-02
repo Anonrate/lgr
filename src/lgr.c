@@ -358,7 +358,7 @@ fatal(const           char  *timestr,
  *        If a formatted string is given, optional arguments will no longer be
  *          optional.  They will be required in order to get the desired
  *          output.
- *      \endparblock'
+ *      \endparblock
  *  \endinternal
  */
 static void
