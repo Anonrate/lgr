@@ -309,7 +309,7 @@ static int errwarn  = 0;
  *    The filename of which logs are output to.
  *  \endinternal
  */
-static char *fout;
+static FILE *fout;
 
 /**
  *  \internal
