@@ -315,4 +315,18 @@ setfileprio(enum verblvls fileprio);
  */
 extern int
 seterrwarn(int treatwarnerr);
+
+/**
+ *  Sets the filename used for when out putting the log information to a file.
+ *
+ *  @param[in]  filename  The filename itself not including the path.  The
+ *                          filename name will be prefixed with the current
+ *                          date and time.
+ *
+ *  @return If successful, the name of \p filename will be returned.\n
+ *          If not successful, \c 0 will be returned and logging to a file will
+ *            be disabled.
+ */
+extern char*
+setfilename(char *filename)
 #endif  /* LGR_H */
