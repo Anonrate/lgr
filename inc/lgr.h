@@ -328,5 +328,5 @@ seterrwarn(int treatwarnerr);
  *            be disabled.
  */
 extern char*
-setfilename(char *filename)
+setfilename(char *filename);
 #endif  /* LGR_H */
