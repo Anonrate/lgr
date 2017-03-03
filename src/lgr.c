@@ -304,6 +304,25 @@ static int errwarn  = 0;
 
 /**
  *  \internal
+ *    @brief  file out
+ *
+ *    The filename of which logs are output to.
+ *  \endinternal
+ */
+static char *fout;
+
+/**
+ *  \internal
+ *    @brief  file name
+ *
+ *    Preferably the name of what's being executed, but doesn't necessarily
+ *      have to be.
+ *  \endinternal
+ */
+static char *fname;
+
+/**
+ *  \internal
  *    Outputs the message specified to by \p str, to the #stderr stream, along
  *      with #error and its meaning, followed by exiting with code
  *      #EXIT_FAILURE.
