@@ -606,7 +606,7 @@ mallstr(char *stra, char **pstrb, char *strbn)
                 strbn,
                 tmpstrasz);
 
-        if (!(*strb = malloc(tmpstrasz + 1ul))) {
+        if (!(*pstrb = malloc(tmpstrasz + 1ul))) {
             fatal(__TIME__,
                   __FILE__,
                   __func__,
