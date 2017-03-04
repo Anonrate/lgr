@@ -200,14 +200,14 @@
  *    reallocation needed
  *  \endinternal
  */
-#define REALLOC_NEEDED    "'vlvln' needs reallocation...\n"
+#define REALLOC_NEEDED    "'%s' needs reallocation...\n"
 
 /**
  *  \internal
  *    reallocation message
  *  \endinternal
  */
-#define REALLOC_MSG       "Reallocating 'vlvln' to %lu + 1...\n"
+#define REALLOC_MSG       "Reallocating '%s' to %lu + 1...\n"
 
 /**
  *  \internal
@@ -812,8 +812,13 @@ setfilename(char *filename)
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
     if (!filename)
     {
-        
+        logltf(WARNING, __TIME__, FN_Z);
+
+        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, fname);
+        return fname;
     }
+
+
     /*
      *  So the date is the same after calculating the allocation space.
      */
