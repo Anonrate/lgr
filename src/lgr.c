@@ -635,12 +635,13 @@ setvlvln(enum verblvls verblvl)
         {
             logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, vlvln, tmpvlvlnsz);
             logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, tmpvlvln, tmptvlvlnsz);
-            logltf(INTERN_DEBUG, __TIME__, REALLOC_NEEDED);
+            logltf(INTERN_DEBUG, __TIME__, REALLOC_NEEDED, "vlvln");
 
             logltlf(INTERN_DEBUG,
                     __TIME__,
                     __LINE__ + 3u,
                     REALLOC_MSG,
+                    "vlvln",
                     tmptvlvlnsz);
 
             if (!(vlvln = malloc(tmptvlvlnsz + 1ul))) {
