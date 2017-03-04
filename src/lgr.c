@@ -258,6 +258,13 @@
  */
 #define FN_NSET           "Filename is not set!\n"
 
+/**
+ *  \internal
+ *    file name zero
+ *  \endinternal
+ */
+#define FN_Z              "Filename is 0!\n"
+
 #ifdef  LGR_DEV
 int
 main(int argc, char **argv)
@@ -803,6 +810,21 @@ char*
 setfilename(char *filename)
 {
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    if (!filename)
+    {
+        
+    }
+    /*
+     *  So the date is the same after calculating the allocation space.
+     */
+    const char *date    = __DATE__;
 
+    /*
+     *  So time is the same after calculating the allocation space.
+     *
+     *  time string */
+    const char *timestr = __TIME__;
+
+    /* temp file name */
     
 }
