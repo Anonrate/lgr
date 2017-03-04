@@ -581,6 +581,44 @@ isverblvl(unsigned char lvl)
     return tmplvl;
 }
 
+static void
+mallstr(char *stra, char **pstrb, char *strbn)
+{
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, *pstrb);
+    /* temp strb size */
+    size_t tmpstrbsz   = strlen(*pstrb);
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, stra);
+    /* temp stra size */
+    size_t tmpstrasz  = strlen(stra);
+    if (tmpstrbsz != tmpstrasz)
+    {
+        logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, *pstrb, tmpstrbsz);
+        logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, stra, tmpstrasz);
+        logltf(INTERN_DEBUG, __TIME__, REALLOC_NEEDED, strbn);
+
+        logltlf(INTERN_DEBUG,
+                __TIME__,
+                __LINE__ + 3u,
+                REALLOC_MSG,
+                strbn,
+                tmpstrasz);
+
+        if (!(*strb = malloc(tmpstrasz + 1ul))) {
+            fatal(__TIME__,
+                  __FILE__,
+                  __func__,
+                  __LINE__ - 4u,
+                  MALLOC_FAIL,
+                  0);
+        }
+
+        logltf(INTERN_DEBUG, __TIME__, REALLOC_WIN);
+    }
+}
+
 /**
  *  \internal
  *    @brief  set verbose level name
@@ -624,12 +662,13 @@ setvlvln(enum verblvls verblvl)
     {
         logltf(INTERN_INFO, __TIME__, VALID_VERB_LVL_N, tmpvlvln);
 
+        logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
+        mallstr(tmpvlvln, &vlvln, "vlvln");
+/*
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, vlvln);
-        /* temp verbose level size */
         size_t tmpvlvlnsz   = strlen(vlvln);
 
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, tmpvlvln);
-        /* temp temp verbose level size (tmpt(mp)vlvln) */
         size_t tmptvlvlnsz  = strlen(tmpvlvln);
         if (tmpvlvlnsz != tmptvlvlnsz)
         {
@@ -655,7 +694,7 @@ setvlvln(enum verblvls verblvl)
 
             logltf(INTERN_DEBUG, __TIME__, REALLOC_WIN);
         }
-
+*/
         logltlf(INTERN_INFO, __TIME__, __LINE__ + 1u, SET_VERB_LVL_N);
         vlvln = tmpvlvln;
 
