@@ -27,7 +27,8 @@
 
 #include  <stdio.h>
 #include  <stdlib.h>
-#include  <stdarg.h> #include  <stdnoreturn.h>
+#include  <stdarg.h>
+#include  <stdnoreturn.h>
 #include  <errno.h>
 #include  <string.h>
 
@@ -249,6 +250,13 @@
  *  \endinternal
  */
 #define SET_ERRWARN       "%s treat WARNING as ERROR...\n"
+
+/**
+ *  \internal
+ *    file name not set
+ *  \endinternal
+ */
+#define FN_NSET           "Filename is not set!\n"
 
 #ifdef  LGR_DEV
 int
@@ -794,5 +802,7 @@ seterrwarn(int treatwarnerr)
 char*
 setfilename(char *filename)
 {
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
 
+    
 }
