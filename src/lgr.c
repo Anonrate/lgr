@@ -668,8 +668,8 @@ setvlvln(enum verblvls verblvl)
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_N_CH_CHCK);
     if (!strcmp(vlvln, tmpvlvln))
     {
-        logltf(INTERN_INFO, __TIME__, VERB_LVL_N_ASET, vlvln, vlvl);
-        logltf(INTERN_INFO, __TIME__, VERB_LVL_N_NOCH);
+        logltf(INTERN_INFO,   __TIME__, VERB_LVL_N_ASET, vlvln, vlvl);
+        logltf(INTERN_INFO,   __TIME__, VERB_LVL_N_NOCH);
 
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
         return vlvln;
@@ -678,7 +678,7 @@ setvlvln(enum verblvls verblvl)
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_N_CHCK, tmpvlvln);
     if (strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
     {
-        logltf(INTERN_INFO, __TIME__, VALID_VERB_LVL_N, tmpvlvln);
+        logltf(INTERN_INFO,   __TIME__, VALID_VERB_LVL_N, tmpvlvln);
 
         logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
         mallstr(tmpvlvln, &vlvln, "vlvln");
@@ -713,16 +713,16 @@ setvlvln(enum verblvls verblvl)
             logltf(INTERN_DEBUG, __TIME__, REALLOC_WIN);
         }
 */
-        logltlf(INTERN_INFO, __TIME__, __LINE__ + 1u, SET_VERB_LVL_N);
+        logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_VERB_LVL_N);
         vlvln = tmpvlvln;
 
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
         return vlvln;
     }
 
-    logltf(INTERN_WARNING, __TIME__, NVALID_VERB_LVL_N, tmpvlvln);
+    logltf(INTERN_WARNING,  __TIME__, NVALID_VERB_LVL_N, tmpvlvln);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
+    logltlf(INTERN_DEBUG,   __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
     return vlvln;
 }
 
@@ -745,7 +745,7 @@ setvlvl(unsigned char verblvl)
 {
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
 
-    logltlf(INTERN_INFO, __TIME__, __LINE__ + 1u, SET_VERB_LVL);
+    logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_VERB_LVL);
     vlvl = verblvl;
 
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
@@ -788,7 +788,7 @@ setverblvl(enum verblvls verblvl)
                   VALIDATE_FAIL, ti);
         }
 
-        logltf(INTERN_DEBUG, __TIME__, VALIDATE_WIN);
+        logltf(INTERN_DEBUG,  __TIME__, VALIDATE_WIN);
 
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
         return vlvl;
@@ -841,7 +841,7 @@ setfileprio(enum verblvls fileprio)
            tmpvlvl ? " " : " not ",
            getverblvlname(fileprio));
 
-    logltlf(INTERN_INFO, __TIME__, __LINE__ + 1u, SET_FPRIO);
+    logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_FPRIO);
     fprio = fileprio;
 
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, fprio);
@@ -869,7 +869,11 @@ setfout(void)
 {
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
 
-    if (!fname) { logltf(WARNING, __TIME__, FN_Z); }
+    if (!fname)
+    {
+        logltf(WARNING, __TIME__, FN_Z);
+        logltf(NOTICE,  __TIME__, FN_ZMSG);
+    }
 
     const unsigned int timestrbuf = 1023u;
 
