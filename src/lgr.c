@@ -265,6 +265,13 @@
  */
 #define FN_Z              "Filename is 0!\n"
 
+/**
+ *  \internal
+ *    setting filename
+ *  \endinternal
+ */
+#define SET_FN            "Updating filename...\n"
+
 #ifdef  LGR_DEV
 int
 main(int argc, char **argv)
@@ -857,6 +864,10 @@ setfilename(char *filename)
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, fname);
         return fname;
     }
+
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
+    mallstr(filename, &fname, "fname");
+
 
 
     /*
