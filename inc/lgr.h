@@ -44,6 +44,7 @@
 #define FATAL_STR           "FATAL"           /**< #FATAL          string */
 #define ERROR_STR           "ERROR"           /**< #ERROR          string */
 #define WARNING_STR         "WARNING"         /**< #WARNING        string */
+#define NOTICE_STR          "NOTICE"          /**< #NOTICE         string */
 #define INFO_STR            "INFO"            /**< #INFO           string */
 #define DEBUG_STR           "DEBUG"           /**< #DEBUG          string */
 #define TRACE_STR           "TRACE"           /**< #TRACE          string */
@@ -69,24 +70,25 @@ verblvls
     FATAL   = 0x1,  /**< Fatal messages.        */
     ERROR   = 0x2,  /**< Error messages.        */
     WARNING = 0x3,  /**< Warning messages.      */
-    INFO    = 0x4,  /**< Informative messages.  */
-    DEBUG   = 0x5,  /**< Display everything!    */
-    TRACE   = 0x6,  /**< Trace messages.        */
+    NOTICE  = 0x4,  /**< Notice messages.       */
+    INFO    = 0x5,  /**< Informative messages.  */
+    DEBUG   = 0x6,  /**< Display everything!    */
+    TRACE   = 0x7,  /**< Trace messages.        */
 
     /**
      *  Used to enable the #WARNING messages of the logger itself.
      */
-    INTERN_WARNING  = 0x7,  /**< @brief internal warning      */
+    INTERN_WARNING  = 0x8,  /**< @brief internal warning      */
 
     /**
      *  Used to enable the #INFO messages of the logger itself.
      */
-    INTERN_INFO     = 0x8,  /**< @brief internal information  */
+    INTERN_INFO     = 0x9,  /**< @brief internal information  */
 
     /**
      *  Used to enable the #DEBUG messages of the logger itself.
      */
-    INTERN_DEBUG    = 0x9,  /**< @brief internal debug        */
+    INTERN_DEBUG    = 0xa,  /**< @brief internal debug        */
 
     /**
      *  Used to enable the #TRACE messages of the logger itself.
