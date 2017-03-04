@@ -46,9 +46,11 @@
 #define WARNING_STR         "WARNING"         /**< #WARNING        string */
 #define INFO_STR            "INFO"            /**< #INFO           string */
 #define DEBUG_STR           "DEBUG"           /**< #DEBUG          string */
+#define TRACE_STR           "TRACE"           /**< #TRACE          string */
 #define INTERN_WARNING_STR  "INTERN_WARNING"  /**< #INTERN_WARNING string */
 #define INTERN_INFO_STR     "INTERN_INFO"     /**< #INTERN_INFO    string */
 #define INTERN_DEBUG_STR    "INTERN_DEBUG"    /**< #INTERN_DEBUG   string */
+#define INTERN_TRACE_STR    "INTERN_TRACE"    /**< #INTERN_TRACE   string */
 
 /**
  *  @brief   verbosity levels
@@ -69,21 +71,27 @@ verblvls
     WARNING = 0x3,  /**< Warning messages.      */
     INFO    = 0x4,  /**< Informative messages.  */
     DEBUG   = 0x5,  /**< Display everything!    */
+    TRACE   = 0x6,  /**< Trace messages.        */
 
     /**
      *  Used to enable the #WARNING messages of the logger itself.
      */
-    INTERN_WARNING  = 0x6,  /**< @brief internal warning      */
+    INTERN_WARNING  = 0x7,  /**< @brief internal warning      */
 
     /**
      *  Used to enable the #INFO messages of the logger itself.
      */
-    INTERN_INFO     = 0x7,  /**< @brief internal information  */
+    INTERN_INFO     = 0x8,  /**< @brief internal information  */
 
     /**
      *  Used to enable the #DEBUG messages of the logger itself.
      */
-    INTERN_DEBUG    = 0x8   /**< @brief internal debug        */
+    INTERN_DEBUG    = 0x9,  /**< @brief internal debug        */
+
+    /**
+     *  Used to enable the #TRACE messages of the logger itself.
+     */
+    INTERN_TRACE    = 0xa   /**< @brief internal trace        */
 };
 
 /**
