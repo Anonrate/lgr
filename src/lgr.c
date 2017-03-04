@@ -283,6 +283,20 @@
  */
 #define SET_FN            "Updating filename...\n"
 
+/**
+ *  \internal
+ *    string time zero
+ *  \endinternal
+ */
+#define STR_TZ            "Length of time string can not be 0!\n"
+
+/**
+ *  \internal
+ *    parse time string
+ *  \endinternal
+ */
+#define PARSE_TSTR        "Parsing time string...\n"
+
 #ifdef  LGR_DEV
 int
 main(int argc, char **argv)
@@ -886,21 +900,33 @@ setfout(void)
 
     const unsigned int timestrbuf = 1023u;
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "time(0)\n");
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 2u, "time(0)\n");
+    /* time */
     time_t t      = time(0);
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "localtime(&t)\n");
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 2u, "localtime(&t)\n");
+    /* time info */
     struct tm *ti = localtime(&t);
     if (!ti) {
         fatal(__TIME__,
               __FILE__,
               __func__,
-              __LINE__ - 6u,
+              __LINE__ - 5u,
               strerror(errno),
               errno);
     }
 
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, PARSE_TSTR);
+    /* time string size */
     size_t timestrsz  = strftime(0, timestrbuf, "%F", ti);
+    if (!timestrsz) {
+        fatal(__TIME__,
+              __FILE__,
+              __func__,
+              __LINE__ - 5u,
+              STR_TZ,
+              0);
+    }
 
     /* temp filename out */
     char *tmpfno  = snprintf(0, 0, "")
