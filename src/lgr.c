@@ -613,6 +613,19 @@ isverblvl(unsigned char lvl)
     return tmplvl;
 }
 
+/**
+ *  \internal
+ *    @brief  malloc string
+ *
+ *    If the length of \p stra and \p pstrb are not equal, \p pstrb will be
+ *      allocated/reallocated to the length of \p stra.
+ *
+ *    @param[in]  stra  The string to match length of for \p pstrb.
+ *    @param[out] pstrb The string that if needed to be allocated/reallocated
+ *                        to match the string length of \p stra.
+ *    @param[in]  strbn The name of \p pstrb.  (Used for logging)
+ *  \endinternal
+ */
 static void
 mallstr(char *stra, char **pstrb, char *strbn)
 {
@@ -887,6 +900,18 @@ seterrwarn(int treatwarnerr)
     return errwarn;
 }
 
+/**
+ *  \internal
+ *    @brief  set file out
+ *
+ *    Sets the global variable \p fout to the corresponding file to be used
+ *      when logging to file.
+ *
+ *    @return If successful, the filename used in \p fout will be returned as a
+ *              string.\n
+ *            If unsuccessful, \c 0 will be returned.
+ *  \endinternal
+ */
 static char*
 setfout(void)
 {
@@ -897,8 +922,6 @@ setfout(void)
         logltf(WARNING, __TIME__, FN_Z);
         logltf(NOTICE,  __TIME__, FN_ZMSG);
     }
-
-    const unsigned int timestrbuf = 1023u;
 
     logltlf(INTERN_TRACE, __TIME__, __LINE__ + 2u, "time(0)\n");
     /* time */
@@ -916,6 +939,9 @@ setfout(void)
               errno);
     }
 
+    /* time string buf */
+    const unsigned int timestrbuf = 1023u;
+
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, PARSE_TSTR);
     /* time string size */
     size_t timestrsz  = strftime(0, timestrbuf, "%F", ti);
@@ -928,8 +954,22 @@ setfout(void)
               0);
     }
 
+    logltlf(INTERN_DEBUG,
+            __TIME__,
+            __LINE__ + 5u,
+            REALLOC_MSG,
+            "tmpfno",
+            timestrsz);
     /* temp filename out */
-    char *tmpfno  = snprintf(0, 0, "")
+    char *tmpfno  = malloc(timestrsz + 1ul);
+    if (!tmpfno) {
+        fatal(__TIME__,
+              __FILE__,
+              __func__,
+              __LINE__ - 5u,
+              MALLOC_FAIL,
+              0);
+    }
 }
 
 char*
