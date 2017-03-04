@@ -663,6 +663,7 @@ setvlvln(enum verblvls verblvl)
 {
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
 
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 2u, "%s\n", __func__);
     /* temp verbose level name */
     char *tmpvlvln = getverblvlname(verblvl);
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_N_CH_CHCK);
@@ -772,11 +773,16 @@ setverblvl(enum verblvls verblvl)
         return vlvl;
     }
 
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
     if (isverblvl(verblvl))
     {
+        logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
         setvlvl(verblvl);
+
+        logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
         setvlvln(verblvl);
 
+        logltlf(INTERN_TRACE, __TIME__, __LINE__ + 3u, "%s\n", __func__);
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, VALIDATING_MSG);
         /* temp int */
         int ti = strcmp(vlvln, getverblvlname(vlvl));
@@ -794,6 +800,7 @@ setverblvl(enum verblvls verblvl)
         return vlvl;
     }
 
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
     logltf(WARNING, __TIME__, VERB_SET_FAIL, verblvl, getverblvlname(verblvl));
     logltf(WARNING, __TIME__, VERB_LVLN_NOCH, vlvl, vlvln);
 
@@ -833,7 +840,9 @@ setfileprio(enum verblvls fileprio)
 {
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
 
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
     unsigned char tmpvlvl = isverblvl(fileprio);
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 6u, "%s\n", __func__);
     logltf(tmpvlvl ? INTERN_INFO : WARNING,
            __TIME__,
            XVALID_VERB_LVL,
@@ -880,7 +889,7 @@ setfout(void)
     logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "time(0)\n");
     time_t t      = time(0);
 
-    logltlf(ITNERN_TRACE, __TIME__, __LINE__ + 1u, "localtime(&t)\n");
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "localtime(&t)\n");
     struct tm *ti = localtime(&t);
     if (!ti) {
         fatal(__TIME__,
@@ -903,7 +912,8 @@ setfilename(char *filename)
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
     if (!filename)
     {
-        logltf(WARNING, __TIME__, FN_Z);
+        logltf(WARNING,       __TIME__, FN_Z);
+        logltf(NOTICE,        __TIME__, FN_ZMSG);
 
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, fname);
         return fname;
