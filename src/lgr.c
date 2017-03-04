@@ -27,8 +27,7 @@
 
 #include  <stdio.h>
 #include  <stdlib.h>
-#include  <stdarg.h>
-#include  <stdnoreturn.h>
+#include  <stdarg.h> #include  <stdnoreturn.h>
 #include  <errno.h>
 #include  <string.h>
 
@@ -790,4 +789,10 @@ seterrwarn(int treatwarnerr)
 
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_D, errwarn);
     return errwarn;
+}
+
+char*
+setfilename(char *filename)
+{
+
 }
