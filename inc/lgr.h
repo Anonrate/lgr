@@ -329,4 +329,14 @@ seterrwarn(int treatwarnerr);
  */
 extern char*
 setfilename(char *filename);
+
+/**
+ *  Gets the current filename used when logging to a file.
+ *
+ *  @return If there is a filename set for when logging to a file, the filename
+ *            is returned.\n
+ *          If there is no filename set, \c 0 will be returned.
+ */
+extern char*
+getfilename(void);
 #endif  /* LGR_H */
