@@ -297,6 +297,13 @@
  */
 #define PARSE_TSTR        "Parsing time string...\n"
 
+/**
+ *  \internal
+ *    parse file string
+ *  \endinternal
+ */
+#define PARSE_FSTR        "Parsing file string...\n"
+
 #ifdef  LGR_DEV
 int
 main(int argc, char **argv)
@@ -970,6 +977,8 @@ setfout(void)
               MALLOC_FAIL,
               0);
     }
+
+
 }
 
 char*
