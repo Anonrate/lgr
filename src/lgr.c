@@ -31,6 +31,7 @@
 #include  <stdnoreturn.h>
 #include  <errno.h>
 #include  <string.h>
+#include  <time.h>
 
 #include  "../inc/lgr.h"
 
@@ -264,6 +265,16 @@
  *  \endinternal
  */
 #define FN_Z              "Filename is 0!\n"
+
+/**
+ *  \internal
+ *    file name zero message
+ *  \endinternal
+ */
+#define FN_ZMSG                                                             \
+    "Filename being 0 will result in unexpected results causing logs that " \
+    "correspond to a different process to be merged as there is no way to " \
+    "differentiate them...\n"
 
 /**
  *  \internal
@@ -853,6 +864,35 @@ seterrwarn(int treatwarnerr)
     return errwarn;
 }
 
+static char*
+setfout(void)
+{
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+
+    if (!fname) { logltf(WARNING, __TIME__, FN_Z); }
+
+    const unsigned int timestrbuf = 1023u;
+
+    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "time(0)\n");
+    time_t t      = time(0);
+
+    logltlf(ITNERN_TRACE, __TIME__, __LINE__ + 1u, "localtime(&t)\n");
+    struct tm *ti = localtime(&t);
+    if (!ti) {
+        fatal(__TIME__,
+              __FILE__,
+              __func__,
+              __LINE__ - 6u,
+              strerror(errno),
+              errno);
+    }
+
+    size_t timestrsz  = strftime(0, timestrbuf, "%F", ti);
+
+    /* temp filename out */
+    char *tmpfno  = snprintf(0, 0, "")
+}
+
 char*
 setfilename(char *filename)
 {
@@ -868,19 +908,8 @@ setfilename(char *filename)
     logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
     mallstr(filename, &fname, "fname");
 
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, SET_FN);
+    fname = filename;
 
-
-    /*
-     *  So the date is the same after calculating the allocation space.
-     */
-    const char *date    = __DATE__;
-
-    /*
-     *  So time is the same after calculating the allocation space.
-     *
-     *  time string */
-    const char *timestr = __TIME__;
-
-    /* temp file name */
     
 }
