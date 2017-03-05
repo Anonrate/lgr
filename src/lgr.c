@@ -229,7 +229,6 @@
  */
 #define MALLOC_FAIL       "malloc returned"
 
-
 /**
  *  \internal
  *    set error warning
@@ -740,7 +739,11 @@ setvlvln(enum verblvls verblvl)
             logltf(INTERN_DEBUG, __TIME__, REALLOC_WIN);
         }
 */
-        logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_VERB_LVL_N);
+        logltlf(INTERN_INFO,
+                __TIME__,
+                __LINE__ + 3u,
+                SET_STR,
+                "verbose level name");
         vlvln = tmpvlvln;
 
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
@@ -941,7 +944,7 @@ setfout(void)
     logltlf(INTERN_DEBUG,
             __TIME__,
             __LINE__ + 5u,
-            ALLOC_XX,
+            ALLOC_STR_SZ,
             "tmpfno",
             NAME_MAX);
     /* temp file name out */
