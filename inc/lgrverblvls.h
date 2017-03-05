@@ -93,6 +93,6 @@ verblvls
     /**
      *  Used to enable the #TRACE messages of the logger itself.
      */
-    INTERN_TRACE    = 0xa   /**< @brief internal trace        */
+    INTERN_TRACE    = 0xb   /**< @brief internal trace        */
 };
 #endif  /* LGRVERBLVLS_H */
