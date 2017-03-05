@@ -36,7 +36,7 @@
 #include  "../inc/lgr.h"
 
 #ifndef NAME_MAX
-#define NAME_MAX  0xff
+#define NAME_MAX  0xfe
 #endif  /* NAME_MAX */
 
 #define LGR_DEV
@@ -258,10 +258,10 @@
 
 /**
  *  \internal
- *    file name not set
+ *    string not set
  *  \endinternal
  */
-#define FN_NSET           "Filename is not set!\n"
+#define STR_NSET           "%s is not set!\n"
 
 /**
  *  \internal
@@ -282,47 +282,31 @@
 
 /**
  *  \internal
- *    setting filename
+ *    setting string
  *  \endinternal
  */
-#define SET_FN            "Updating filename...\n"
+#define SET_STR            "Updating %s...\n"
 
 /**
  *  \internal
  *    string time zero
  *  \endinternal
  */
-#define STR_TZ            "Length of time string can not be 0!\n"
+#define STR_Z            "Length of %s string can not be %lu!\n"
 
 /**
  *  \internal
- *    calculating time string
+ *    parse string
  *  \endinternal
  */
-#define CALC_TSTR         "Calculating time string...\n"
+#define PARSE_STR        "Parsing %s string...\n"
 
 /**
  *  \internal
- *    parse time string
+ *    allocating string size
  *  \endinternal
  */
-#define PARSE_TSTR        "Parsing time string...\n"
-
-/**
- *  \internal
- *    parse file string
- *  \endinternal
- */
-#define PARSE_FSTR        "Parsing file string...\n"
-
-/**
- *  \internal
- *    @brief  allocating xx
- *
- *    Allocating  first x (variable name) to second x (size).
- *  \endinternal
- */
-#define ALLOC_XX          "Allocating %s to %lu...\n"
+#define ALLOC_STR_SZ          "Allocating %s to %lu...\n"
 
 #ifdef  LGR_DEV
 int
@@ -973,40 +957,29 @@ setfout(void)
               errno);
     }
 
-    /* time string buf */
-    const unsigned int timestrbuf = 1023u;
-
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_TSTR);
-    /* temp size */
-    size_t tmpsz  = strftime(0, timestrbuf, fnsfxfmt, ti);
-    if (!tmpsz) {
-        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, STR_TZ, 0);
-    }
-
     logltlf(INTERN_DEBUG,
             __TIME__,
             __LINE__ + 5u,
-            REALLOC_MSG,
+            ALLOC_XX,
             "tmpfno",
-            tmpsz);
-    /* temp filename out */
-    char *tmpfno  = malloc(tmpsz + 1ul);
-    if (!tmpfno) {
-        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, MALLOC_FAIL, 0);
-    }
-
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_TSTR);
-    
-
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_FSTR);
-    tmpsz = snprintf(0, 0, "%s");
-
+            NAME_MAX);
+    /* temp file name out */
     char *tmpfno  = malloc(NAME_MAX);
     if (!tmpfno) {
         fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, MALLOC_FAIL, 0);
     }
 
-    size_t fmpfnosz = strftime()
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_TSTR);
+    size_t fmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
+    if (!tmpsz) {
+        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, STR_TZ, 0);
+    }
+
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_FSTR);
+    tmpsz = snprintf(tmpfno, NAME_MAX, "%s-%s", tmpfno, fname);
+    if (!tmpsz) {
+        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, STR_TZ, 0);
+    }
 }
 
 char*
