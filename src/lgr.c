@@ -56,7 +56,7 @@
  */
 
 #ifdef  LGR_DEV
-static char           *vlvln    = INTERN_TRACE_STR
+static char           *vlvln    = INTERN_TRACE_STR;
 static enum verblvls  vlvl      = INTERN_TRACE;
 #else
 static char           *vlvln    = WARNING_STR;
@@ -90,15 +90,6 @@ static char           *fnsfxfmt = "%y%m%d%H%M%S";
 
 /**
  *  \internal
- *    @brief  file out
- *
- *    The filename of which logs are output to.
- *  \endinternal
- */
-static FILE           *fout;
-
-/**
- *  \internal
  *    @brief  file name
  *
  *    Preferably the name of what's being executed, but doesn't necessarily
@@ -106,6 +97,24 @@ static FILE           *fout;
  *  \endinternal
  */
 static char           *fname;
+
+/**
+ *  \internal
+ *    @brief  file name out
+ *
+ *    The filename of which is used by #fout.
+ *  \endinternal
+ */
+static char           *fnout;
+
+/**
+ *  \internal
+ *    @brief  file out
+ *
+ *    The filename of which logs are output to.
+ *  \endinternal
+ */
+static FILE           *fout;
 
 /**
  *  \internal
@@ -161,8 +170,8 @@ lgrf(enum   verblvls        verblvl,
         ((errwarn && verblvl == WARNING) ? ERROR : verblvl);
 
     if (tmpvlvl > vlvl) { return; }
-    FILE *fpstrm  =
-        ((errwarn)
+    FILE *fpstrm  = fout ? fout : stdout;
+/*        ((errwarn)
          ? ((verblvl == INTERN_WARNING
                  || verblvl <= WARNING)
              ? stderr
@@ -170,6 +179,7 @@ lgrf(enum   verblvls        verblvl,
          : ((verblvl <= ERROR)
              ? stderr
              : stdout));
+*/
 
     if (timestr || line)
     {
@@ -179,12 +189,20 @@ lgrf(enum   verblvls        verblvl,
         else if (line)        { fprintf(fpstrm, "%7u", line); }
         fprintf(fpstrm, "]  ");
     }
-
+    char *tvlvln    = verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
+                    : verblvl == INTERN_INFO    ? INTERN_INFO_STR
+                    : verblvl == INTERN_WARNING ? INTERN_WARNING_STR
+                    : verblvl == DEBUG          ? DEBUG_STR
+                    : verblvl == INFO           ? INFO_STR
+                    : verblvl == WARNING        ? WARNING_STR
+                    : verblvl == ERROR          ? ERROR_STR
+                    : verblvl == FATAL          ? FATAL_STR
+                    : NVALID_VERB_LVL_STR;
     /* WHY THE FUCK IS THIS SET TO VLVLN?  I NEEDS TO NOT */
-    fprintf(fpstrm, "%-14s  ", vlvln);
+    fprintf(fpstrm, "%-14s  ", tvlvln);
     va_list ap;
     va_start(ap, strfmt);
-    vfprintf(stdout, strfmt, ap);
+    vfprintf(fpstrm, strfmt, ap);
     va_end(ap);
 }
 
@@ -199,7 +217,9 @@ lgrf(enum   verblvls        verblvl,
 int
 main(int argc, char **argv)
 {
-    loglf(INTERN_DEBUG, "Hello world%d\n", 0);
+    setfilename("lgr");
+    printf("%s\n", fnout);
+    fclose(fout);
     return EXIT_SUCCESS;
 }
 #endif  /* LGR_DEV */
@@ -268,11 +288,14 @@ getverblvlname(enum verblvls verblvl)
      *          definition.
      *
      * temp verbose level name */
-    char *tmpvlvln  = verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
+    char *tmpvlvln  = verblvl == INTERN_TRACE   ? INTERN_TRACE_STR
+                    : verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
                     : verblvl == INTERN_INFO    ? INTERN_INFO_STR
                     : verblvl == INTERN_WARNING ? INTERN_WARNING_STR
+                    : verblvl == TRACE          ? TRACE_STR
                     : verblvl == DEBUG          ? DEBUG_STR
                     : verblvl == INFO           ? INFO_STR
+                    : verblvl == NOTICE         ? NOTICE_STR
                     : verblvl == WARNING        ? WARNING_STR
                     : verblvl == ERROR          ? ERROR_STR
                     : verblvl == FATAL          ? FATAL_STR
@@ -352,12 +375,12 @@ isverblvl(unsigned char lvl)
 static void
 mallstr(char *stra, char **pstrb, char *strbn)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s:%s\n", __func__, *pstrb);
 
     logltlf(INTERN_DEBUG, CALC_STR, *pstrb);
     /* temp strb size */
     size_t tmpstrbsz   = strlen(*pstrb);
-
+    assert(tmpstrbsz);
     logltlf(INTERN_DEBUG, CALC_STR, stra);
     /* temp stra size */
     size_t tmpstrasz  = strlen(stra);
@@ -370,7 +393,7 @@ mallstr(char *stra, char **pstrb, char *strbn)
         logltlf(INTERN_DEBUG, REALLOC_MSG, strbn, tmpstrasz);
 
         if (!(*pstrb = malloc(tmpstrasz + 1ul))) {
-            fatal(MALLOC_FAIL, 0);
+            fatalstr(MALLOC_FAIL);
         }
 
         logltstr(INTERN_DEBUG, REALLOC_WIN);
@@ -496,7 +519,7 @@ setverblvl(enum verblvls verblvl)
         logltlstr(INTERN_DEBUG, VALIDATING_MSG);
         /* temp int */
         int ti = strcmp(vlvln, getverblvlname(vlvl));
-        if (ti) { fatal(VALIDATE_FAIL, ti); }
+        if (ti) { fatalf(VALIDATE_FAIL, ti); }
 
         logltstr(INTERN_DEBUG, VALIDATE_WIN);
 
@@ -599,33 +622,38 @@ setfout(void)
 
     logltlstr(INTERN_TRACE, "time(0)\n");
     /* time */
-    time_t t      = time(0);
+    time_t t        = time(0);
 
     logltlstr(INTERN_TRACE, "localtime(&t)\n");
     /* time info */
-    struct tm *ti = localtime(&t);
+    struct tm *ti   = localtime(&t);
     if (!ti) { fatalstr(strerror(errno)); }
 
     logltlf(INTERN_DEBUG, ALLOC_STR_SZ, "tmpfno", NAME_MAX);
     /* temp file name out */
-    char *tmpfno  = malloc(NAME_MAX);
-    if (!tmpfno) { fatal(MALLOC_FAIL, 0); }
+    char *tmpfno    = malloc(NAME_MAX);
+    if (!tmpfno) { fatalstr(MALLOC_FAIL); }
 
     logltlf(INTERN_DEBUG, PARSE_STR, "time");
+    /* temp file name out size */
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
-    assert(tmpfnosz);
+    if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz); }
 
     logltlf(INTERN_DEBUG, PARSE_STR, "file");
-    tmpfnosz = snprintf(tmpfno, NAME_MAX, "%s-%s", tmpfno, fname);
-    assert(tmpfnosz);
+    tmpfnosz        = snprintf(tmpfno, NAME_MAX, "./%s-%s", tmpfno, fname);
+    if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz) }
 
     logltlf(INTERN_DEBUG, REALLOC_MSG, tmpfno, tmpfnosz);
-    if (!realloc(tmpfno, tmpfnosz))
-    {
-        
-    }
+    if (!realloc(tmpfno, tmpfnosz + 1)) { fatalstr(REALLOC_FAIL); }
 
-    return "klhdf";
+    logltf(INTERN_INFO, "%s\n", tmpfno);
+    mallstr(tmpfno, &fnout, "fnout");
+
+    fout = fopen(fnout, "a");
+    assert(fout);
+
+    logltlf(INTERN_DEBUG, RMSG_S, fnout);
+    return fnout;
 }
 
 char*
@@ -646,6 +674,7 @@ setfilename(char *filename)
 
     logltlf(INTERN_DEBUG, SET_STR, "filename");
     fname = filename;
+    setfout();
 
-    return "ljsdf";
+    return fname;
 }
