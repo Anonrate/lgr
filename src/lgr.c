@@ -32,6 +32,7 @@
 #include  <errno.h>
 #include  <string.h>
 #include  <time.h>
+#include  <assert.h>
 
 #include  "../inc/lgr.h"
 
@@ -228,26 +229,6 @@
  */
 #define MALLOC_FAIL       "malloc returned"
 
-/**
- *  \internal
- *    setting verbose level name
- *  \endinternal
- */
-#define SET_VERB_LVL_N    "Updating verbose level name...\n"
-
-/**
- *  \internal
- *    setting verbose level
- *  \endinternal
- */
-#define SET_VERB_LVL      "Updating verbose level...\n"
-
-/**
- *  \internal
- *    setting file priority
- *  \endinternal
- */
-#define SET_FPRIO         "Updating file priority...\n"
 
 /**
  *  \internal
@@ -261,7 +242,7 @@
  *    string not set
  *  \endinternal
  */
-#define STR_NSET           "%s is not set!\n"
+#define STR_NSET          "%s is not set!\n"
 
 /**
  *  \internal
@@ -285,28 +266,28 @@
  *    setting string
  *  \endinternal
  */
-#define SET_STR            "Updating %s...\n"
+#define SET_STR           "Updating %s...\n"
 
 /**
  *  \internal
- *    string time zero
+ *    string not zero
  *  \endinternal
  */
-#define STR_Z            "Length of %s string can not be %lu!\n"
+#define STR_NZ            "Length of %s string can not be %lu!\n"
 
 /**
  *  \internal
  *    parse string
  *  \endinternal
  */
-#define PARSE_STR        "Parsing %s string...\n"
+#define PARSE_STR         "Parsing %s string...\n"
 
 /**
  *  \internal
  *    allocating string size
  *  \endinternal
  */
-#define ALLOC_STR_SZ          "Allocating %s to %lu...\n"
+#define ALLOC_STR_SZ      "Allocating %s to %lu...\n"
 
 #ifdef  LGR_DEV
 int
@@ -364,7 +345,7 @@ static int errwarn  = 0;
  *    file name suffix format
  *  \endinternal
  */
-static char *fnsfxfmt  = "%y%m%d%H%M%S"
+static char *fnsfxfmt  = "%y%m%d%H%M%S";
 
 /**
  *  \internal
@@ -791,7 +772,7 @@ setvlvl(unsigned char verblvl)
 {
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
 
-    logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_VERB_LVL);
+    logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_STR, "verbose level");
     vlvl = verblvl;
 
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
@@ -895,7 +876,7 @@ setfileprio(enum verblvls fileprio)
            tmpvlvl ? " " : " not ",
            getverblvlname(fileprio));
 
-    logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_FPRIO);
+    logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_STR, "file priority");
     fprio = fileprio;
 
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, fprio);
@@ -969,17 +950,13 @@ setfout(void)
         fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, MALLOC_FAIL, 0);
     }
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_TSTR);
-    size_t fmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
-    if (!tmpsz) {
-        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, STR_TZ, 0);
-    }
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_STR, "time");
+    size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
+    assert(tmpfnosz);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_FSTR);
-    tmpsz = snprintf(tmpfno, NAME_MAX, "%s-%s", tmpfno, fname);
-    if (!tmpsz) {
-        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, STR_TZ, 0);
-    }
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_STR, "file");
+    tmpfnosz = snprintf(tmpfno, NAME_MAX, "%s-%s", tmpfno, fname);
+    assert(tmpfnosz);
 }
 
 char*
@@ -998,7 +975,7 @@ setfilename(char *filename)
     logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
     mallstr(filename, &fname, "fname");
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, SET_FN);
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, SET_STR, "filename");
     fname = filename;
 
     
