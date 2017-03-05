@@ -35,6 +35,10 @@
 
 #include  "../inc/lgr.h"
 
+#ifndef NAME_MAX
+#define NAME_MAX  0xff
+#endif  /* NAME_MAX */
+
 #define LGR_DEV
 
 /**
@@ -361,6 +365,13 @@ static enum verblvls fprio = ERROR;
  *  \endinternal
  */
 static int errwarn  = 0;
+
+/**
+ *  \internal
+ *    file name suffix format
+ *  \endinternal
+ */
+static char *fnsfxfmt  = "%y%m%d%H%M%S"
 
 /**
  *  \internal
@@ -956,16 +967,11 @@ setfout(void)
     /* time string buf */
     const unsigned int timestrbuf = 1023u;
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, PARSE_TSTR);
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_TSTR);
     /* temp size */
-    size_t tmpsz  = strftime(0, timestrbuf, "%y%m%d%H%M%S", ti);
-    if (!timestrsz) {
-        fatal(__TIME__,
-              __FILE__,
-              __func__,
-              __LINE__ - 5u,
-              STR_TZ,
-              0);
+    size_t tmpsz  = strftime(0, timestrbuf, fnsfxfmt, ti);
+    if (!tmpsz) {
+        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, STR_TZ, 0);
     }
 
     logltlf(INTERN_DEBUG,
@@ -977,16 +983,16 @@ setfout(void)
     /* temp filename out */
     char *tmpfno  = malloc(tmpsz + 1ul);
     if (!tmpfno) {
-        fatal(__TIME__,
-              __FILE__,
-              __func__,
-              __LINE__ - 5u,
-              MALLOC_FAIL,
-              0);
+        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, MALLOC_FAIL, 0);
     }
 
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_TSTR);
+    
+
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_FSTR);
-    tmpsz = snprintf(0, 0, "%s")
+    tmpsz = snprintf(0, 0, "%s");
+
+    char *tmpfno  = malloc(NAME_MAX);
 }
 
 char*
