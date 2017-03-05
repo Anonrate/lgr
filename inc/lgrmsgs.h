@@ -28,7 +28,6 @@
 #ifndef LGRMSGS_H
 #define LGRMSGS_H /**< Include guard for 'lgrmsgs.h'  */
 
-
 /**
  *  \internal
  *    return message decimal
@@ -165,7 +164,7 @@
  *    Validation was unsuccessful!
  *  \endinternal
  */
-#define VALIDATE_FAIL     "Validation was unsuccessful!  strcmp returned %d"
+#define VALIDATE_FAIL     "Validation was unsuccessful!  strcmp returned %d\n"
 
 /**
  *  \internal
@@ -214,7 +213,7 @@
  *    memory allocation fail
  *  \endinternal
  */
-#define MALLOC_FAIL       "malloc returned %d"
+#define MALLOC_FAIL       "malloc returned 0!\n"
 
 /**
  *  \internal
