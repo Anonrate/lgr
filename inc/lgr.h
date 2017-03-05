@@ -95,7 +95,7 @@
  *                        stream and/or log file depending on what \p verblvl
  *                        is set to and configurations.
  */
-#define logltstr(verblvl, st)               \
+#define logltstr(verblvl, str)              \
     (                                       \
         lgrf((verblvl), __TIME__, 0, (str)) \
     )
