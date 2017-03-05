@@ -65,6 +65,13 @@ static enum verblvls  vlvl      = WARNING;
 
 /**
  *  \internal
+ *    log to file
+ *  \endinternal
+ */
+static int            ltf       = 0;
+
+/**
+ *  \internal
  *    @brief  file priority
  *
  *    Priority for logging to file.
@@ -96,7 +103,7 @@ static char           *fnsfxfmt = "%y%m%d%H%M%S";
  *      have to be.
  *  \endinternal
  */
-static char           *fname;
+static char           *fname    = "x";
 
 /**
  *  \internal
@@ -105,7 +112,7 @@ static char           *fname;
  *    The filename of which is used by #fout.
  *  \endinternal
  */
-static char           *fnout;
+static char           *fnout    = "g";
 
 /**
  *  \internal
@@ -161,7 +168,7 @@ lgrf(enum   verblvls        verblvl,
      const            char  *strfmt, ...)
 {
     if (!(verblvl > 0
-                && verblvl <= INTERN_DEBUG)
+                && verblvl <= INTERN_TRACE)
             ? verblvl
             : NVALID_VERB_LVL) { return; }
 
@@ -170,8 +177,8 @@ lgrf(enum   verblvls        verblvl,
         ((errwarn && verblvl == WARNING) ? ERROR : verblvl);
 
     if (tmpvlvl > vlvl) { return; }
-    FILE *fpstrm  = fout ? fout : stdout;
-/*        ((errwarn)
+    FILE *fpstrm  =
+        ((errwarn)
          ? ((verblvl == INTERN_WARNING
                  || verblvl <= WARNING)
              ? stderr
@@ -179,21 +186,25 @@ lgrf(enum   verblvls        verblvl,
          : ((verblvl <= ERROR)
              ? stderr
              : stdout));
-*/
+
 
     if (timestr || line)
     {
         fprintf(fpstrm, "[");
         if (timestr)          { fprintf(fpstrm, "%s", timestr); }
-        if (timestr && line)  { fprintf(fpstrm, ":%7u", line); }
-        else if (line)        { fprintf(fpstrm, "%7u", line); }
-        fprintf(fpstrm, "]  ");
+        if (timestr && line)  { fprintf(fpstrm, ":%7u]  ", line); }
+        else if (line)        { fprintf(fpstrm, "%7u]  ", line); }
+        else { fprintf(fpstrm, "%9s  ", "]"); }
     }
-    char *tvlvln    = verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
+
+    char *tvlvln    = verblvl == INTERN_TRACE   ? INTERN_TRACE_STR
+                    : verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
                     : verblvl == INTERN_INFO    ? INTERN_INFO_STR
                     : verblvl == INTERN_WARNING ? INTERN_WARNING_STR
+                    : verblvl == TRACE          ? TRACE_STR
                     : verblvl == DEBUG          ? DEBUG_STR
                     : verblvl == INFO           ? INFO_STR
+                    : verblvl == NOTICE         ? NOTICE_STR
                     : verblvl == WARNING        ? WARNING_STR
                     : verblvl == ERROR          ? ERROR_STR
                     : verblvl == FATAL          ? FATAL_STR
@@ -378,9 +389,12 @@ mallstr(char *stra, char **pstrb, char *strbn)
     logltlf(INTERN_DEBUG, "%s:%s\n", __func__, *pstrb);
 
     logltlf(INTERN_DEBUG, CALC_STR, *pstrb);
+
+    if (!*pstrb) { (*pstrb) = malloc(1); }
+
     /* temp strb size */
     size_t tmpstrbsz   = strlen(*pstrb);
-    assert(tmpstrbsz);
+
     logltlf(INTERN_DEBUG, CALC_STR, stra);
     /* temp stra size */
     size_t tmpstrasz  = strlen(stra);
@@ -638,9 +652,10 @@ setfout(void)
     /* temp file name out size */
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
     if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz); }
+    logltf(INTERN_INFO, "%s\n", tmpfno);
 
     logltlf(INTERN_DEBUG, PARSE_STR, "file");
-    tmpfnosz        = snprintf(tmpfno, NAME_MAX, "./%s-%s", tmpfno, fname);
+    tmpfnosz        = sprintf(tmpfno, "%s-%s", tmpfno, fname);
     if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz) }
 
     logltlf(INTERN_DEBUG, REALLOC_MSG, tmpfno, tmpfnosz);
@@ -648,7 +663,7 @@ setfout(void)
 
     logltf(INTERN_INFO, "%s\n", tmpfno);
     mallstr(tmpfno, &fnout, "fnout");
-
+    fnout = tmpfno;
     fout = fopen(fnout, "a");
     assert(fout);
 
