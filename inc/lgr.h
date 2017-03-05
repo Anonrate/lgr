@@ -29,74 +29,6 @@
 #define LGR_H /**< Include guard for 'lgr.h'. */
 
 /**
- *  #NVALID_VERB_LVL string
- */
-#define NVALID_VERB_LVL_STR "NVALID_VERB_LVL"
-
-/*
- *  Each same line document in the following definitions, do not have a 'valid'
- *    'tabstop' after the word 'string' because even if to do so, that would
- *    make the comment closer at column 80, and that is greater than 79
- *    (Obviously), and my coding style is to keep everything under or at max 79
- *    characters long for each line as said so in the GNU formatting docs.  Yes
- *    I follow a lot of the conventions there, but not all.
- */
-#define FATAL_STR           "FATAL"           /**< #FATAL          string */
-#define ERROR_STR           "ERROR"           /**< #ERROR          string */
-#define WARNING_STR         "WARNING"         /**< #WARNING        string */
-#define NOTICE_STR          "NOTICE"          /**< #NOTICE         string */
-#define INFO_STR            "INFO"            /**< #INFO           string */
-#define DEBUG_STR           "DEBUG"           /**< #DEBUG          string */
-#define TRACE_STR           "TRACE"           /**< #TRACE          string */
-#define INTERN_WARNING_STR  "INTERN_WARNING"  /**< #INTERN_WARNING string */
-#define INTERN_INFO_STR     "INTERN_INFO"     /**< #INTERN_INFO    string */
-#define INTERN_DEBUG_STR    "INTERN_DEBUG"    /**< #INTERN_DEBUG   string */
-#define INTERN_TRACE_STR    "INTERN_TRACE"    /**< #INTERN_TRACE   string */
-
-/**
- *  @brief   verbosity levels
- *
- *  Enumerator containing constants specifying each verbosity level.
- */
-enum
-verblvls
-{
-    /**
-     *  Used when a verbose level is given, and it is not a valid \link
-     *    verblvls verbose level\endlink.
-     */
-    NVALID_VERB_LVL = 0x0,  /**< @brief invalid verbose level */
-
-    FATAL   = 0x1,  /**< Fatal messages.        */
-    ERROR   = 0x2,  /**< Error messages.        */
-    WARNING = 0x3,  /**< Warning messages.      */
-    NOTICE  = 0x4,  /**< Notice messages.       */
-    INFO    = 0x5,  /**< Informative messages.  */
-    DEBUG   = 0x6,  /**< Display everything!    */
-    TRACE   = 0x7,  /**< Trace messages.        */
-
-    /**
-     *  Used to enable the #WARNING messages of the logger itself.
-     */
-    INTERN_WARNING  = 0x8,  /**< @brief internal warning      */
-
-    /**
-     *  Used to enable the #INFO messages of the logger itself.
-     */
-    INTERN_INFO     = 0x9,  /**< @brief internal information  */
-
-    /**
-     *  Used to enable the #DEBUG messages of the logger itself.
-     */
-    INTERN_DEBUG    = 0xa,  /**< @brief internal debug        */
-
-    /**
-     *  Used to enable the #TRACE messages of the logger itself.
-     */
-    INTERN_TRACE    = 0xa   /**< @brief internal trace        */
-};
-
-/**
  *  @brief log level format
  *
  *  Outputs desired information to respected stream and/or to a log file,
@@ -104,8 +36,8 @@ verblvls
  *
  *  @param[in]  verblvl An enumerator constant declared in enumeration type
  *                        #verblvls representing the verbosity level of
- *                        specified message given in \p strfmt.
- *  @param[in]  strfmt
+ *                        specified message given in \p fmt.
+ *  @param[in]  fmt
  *    \parblock
  *      Either a regular string containing information to be output to a stream
  *        and/or log file depending on what \p verblvl is set to and
@@ -117,8 +49,8 @@ verblvls
  *        optional.  They will be required in order to get the desired output.
  *    \endparblock
  */
-extern void
-loglf(enum verblvls verblvl, const char *strfmt, ...);
+#define loglf(verblvl, fmt, ...)  \
+    (lgrf((verblvl), 0, 0, (fmt), __VA_ARGS__))
 
 /**
  *  @brief log level time format
@@ -128,9 +60,9 @@ loglf(enum verblvls verblvl, const char *strfmt, ...);
  *
  *  @param[in]  verblvl An enumerator constant declared in enumeration type
  *                        #verblvls representing the verbosity level of
- *                        specified message given in \p strfmt.
+ *                        specified message given in \p fmt.
  *  @param[in]  timestr The time as a string to be output to the logger.
- *  @param[in]  strfmt
+ *  @param[in]  fmt
  *    \parblock
  *      Either a regular string containing information to be output to a stream
  *        and/or log file depending on what \p verblvl is set to and
@@ -142,9 +74,8 @@ loglf(enum verblvls verblvl, const char *strfmt, ...);
  *        optional.  They will be required in order to get the desired output.
  *    \endparblock
  */
-extern void
-logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
-
+#define logltf(verblvl, fmt, ...) \
+    (lgrf((verblvl), __TIME__, 0, (fmt), __VA_ARGS__))
 /**
  *  @brief log level line format
  *
@@ -153,10 +84,8 @@ logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
  *
  *  @param[in]  verblvl An enumerator constant declared in enumeration type
  *                        #verblvls representing the verbosity level of
- *                        specified message given in \p strfmt.
- *  @param[in]  line    The line of which corresponds to the given to by \p
- *                        strfmt.
- *  @param[in]  strfmt
+ *                        specified message given in \p fmt.
+ *  @param[in]  fmt
  *    \parblock
  *      Either a regular string containing information to be output to a stream
  *        and/or log file depending on what \p verblvl is set to and
@@ -168,10 +97,8 @@ logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...);
  *        optional.  They will be required in order to get the desired output.
  *    \endparblock
  */
-extern void
-logllf(enum   verblvls        verblvl,
-       const  unsigned  int   line,
-       const            char  *strfmt, ...);
+#define logllf(verblvl, fmt, ...) \
+    (lgrf((verblvl), 0, __LINE__, (fmt), __VA_ARGS__))
 
 /**
  *  @brief log level time line format
@@ -181,11 +108,8 @@ logllf(enum   verblvls        verblvl,
  *
  *  @param[in]  verblvl An enumerator constant declared in enumeration type
  *                        #verblvls representing the verbosity level of
- *                        specified message given in \p strfmt.
- *  @param[in]  timestr The time as a string to be output to the logger.
- *  @param[in]  line    The line of which corresponds to the given to by \p
- *                        strfmt.
- *  @param[in]  strfmt
+ *                        specified message given in \p fmt.
+ *  @param[in]  fmt
  *    \parblock
  *      Either a regular string containing information to be output to a stream
  *        and/or log file depending on what \p verblvl is set to and
@@ -197,12 +121,8 @@ logllf(enum   verblvls        verblvl,
  *        optional.  They will be required in order to get the desired output.
  *    \endparblock
  */
-extern void
-logltlf(enum   verblvls       verblvl,
-       const            char  *timestr,
-       const  unsigned  int   line,
-       const            char  *strfmt, ...);
-
+#define logltlf(verblvl, fmt, ...)  \
+    (lgrf((verblvl), __TIME__, __LINE__, (fmt), __VA_ARGS__))
 /**
  *  @brief get verbose level name
  *
