@@ -292,6 +292,13 @@
 
 /**
  *  \internal
+ *    calculating time string
+ *  \endinternal
+ */
+#define CALC_TSTR         "Calculating time string...\n"
+
+/**
+ *  \internal
  *    parse time string
  *  \endinternal
  */
@@ -950,8 +957,8 @@ setfout(void)
     const unsigned int timestrbuf = 1023u;
 
     logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, PARSE_TSTR);
-    /* time string size */
-    size_t timestrsz  = strftime(0, timestrbuf, "%F", ti);
+    /* temp size */
+    size_t tmpsz  = strftime(0, timestrbuf, "%y%m%d%H%M%S", ti);
     if (!timestrsz) {
         fatal(__TIME__,
               __FILE__,
@@ -966,9 +973,9 @@ setfout(void)
             __LINE__ + 5u,
             REALLOC_MSG,
             "tmpfno",
-            timestrsz);
+            tmpsz);
     /* temp filename out */
-    char *tmpfno  = malloc(timestrsz + 1ul);
+    char *tmpfno  = malloc(tmpsz + 1ul);
     if (!tmpfno) {
         fatal(__TIME__,
               __FILE__,
@@ -978,7 +985,8 @@ setfout(void)
               0);
     }
 
-
+    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_FSTR);
+    tmpsz = snprintf(0, 0, "%s")
 }
 
 char*
