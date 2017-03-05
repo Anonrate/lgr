@@ -109,6 +109,19 @@ static char           *fname;
 
 /**
  *  \internal
+ *    @todo Log to file.
+ *    @todo Enabled \e only selected #verblvls.
+ *    @todo Logging level.
+ *    @todo Enabled logging for \e only selected #verblvls.
+ *
+ *    @note Still want #ERROR to be logged even if #vlvl is set to #FATAL.
+ *    @note Eventually want to add an option to enable color and after being
+ *            done so, implement an option for colors to be customized.
+ *  \endinternal
+ */
+
+/**
+ *  \internal
  *    Outputs desired information to respected stream and/or to a log file,
  *      depending on \link verblvls verbosity level\endlink and configuration.
  *
@@ -173,7 +186,6 @@ lgrf(enum   verblvls        verblvl,
     va_start(ap, strfmt);
     vfprintf(stdout, strfmt, ap);
     va_end(ap);
-
 }
 
 #include  "../inc/lgr.h"
@@ -192,6 +204,17 @@ main(int argc, char **argv)
 }
 #endif  /* LGR_DEV */
 
+/**
+ *  \internal
+ *    @brief  fatal format
+ *
+ *    Outputs the message specified to by \p str, to the #stderr stream, along
+ *      with #error and its meaning, followed by exiting with code
+ *      #EXIT_FAILURE.
+ *
+ *    @param[in]  fmt A formatted string containing information.
+ *  \endinternal
+ */
 #define fatalf(fmt, ...)                      \
     {                                         \
         fprintf(stderr,                       \
@@ -204,40 +227,16 @@ main(int argc, char **argv)
         fprintf(stderr, "\n");                \
         exit(EXIT_FAILURE);                   \
     }
+
 /**
  *  \internal
- *    Outputs the message specified to by \p str, to the #stderr stream, along
- *      with #error and its meaning, followed by exiting with code
- *      #EXIT_FAILURE.
+ *    @brief  fatal string
  *
- *    @param[in]  str The string message to be output to the #stderr stream.
+ *    @details  \copydetails  fatalf()
  *
- *    @remark This function is marked \e noreturn meaning that this function
- *              will terminate the process.  (Correct me if my wording for
- *              'process' and use of it, is incorrect.)  It is also used for
- *              optimization.
+ *    @param[in]  str A string containing information.
  *  \endinternal
  */
-/*static noreturn void
-fatal(const           char  *timestr,
-      const           char  *filestr,
-      const           char  *funcstr,
-      const unsigned  int   line,
-      const           char  *msg,
-      const           int   rcode)
-{
-    fprintf(stderr,
-            "\n[%s:%s:%s:%u]  FATAL:  %s %d\n",
-            timestr,
-            filestr,
-            funcstr,
-            line,
-            msg,
-            rcode);
-
-    exit(EXIT_FAILURE);
-}
-*/
 #define fatalstr(str)                         \
     {                                         \
         fprintf(stderr,                       \
@@ -249,24 +248,6 @@ fatal(const           char  *timestr,
         fprintf(stderr, "%s\n", (str));       \
         exit(EXIT_FAILURE);                   \
     }
-
-
-
-
-
-/**
- *  \internal
- *    @todo Log to file.
- *    @todo Enabled \e only selected #verblvls.
- *    @todo Logging level.
- *    @todo Enabled logging for \e only selected #verblvls.
- *    @todo Implement option for 'timestamps'.
- *
- *    @note Still want #ERROR to be logged even if #vlvl is set to #FATAL.
- *    @note Eventually want to add an option to enable color and after being
- *            done so, implement an option for colors to be customized.
- *  \endinternal
- */
 
 char*
 getverblvlname(enum verblvls verblvl)
@@ -442,37 +423,7 @@ setvlvln(enum verblvls verblvl)
 
         logltlf(INTERN_TRACE, "%s\n", __func__);
         mallstr(tmpvlvln, &vlvln, "vlvln");
-/*
-        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, vlvln);
-        size_t tmpvlvlnsz   = strlen(vlvln);
 
-        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, tmpvlvln);
-        size_t tmptvlvlnsz  = strlen(tmpvlvln);
-        if (tmpvlvlnsz != tmptvlvlnsz)
-        {
-            logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, vlvln, tmpvlvlnsz);
-            logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, tmpvlvln, tmptvlvlnsz);
-            logltf(INTERN_DEBUG, __TIME__, REALLOC_NEEDED, "vlvln");
-
-            logltlf(INTERN_DEBUG,
-                    __TIME__,
-                    __LINE__ + 3u,
-                    REALLOC_MSG,
-                    "vlvln",
-                    tmptvlvlnsz);
-
-            if (!(vlvln = malloc(tmptvlvlnsz + 1ul))) {
-                fatal(__TIME__,
-                      __FILE__,
-                      __func__,
-                      __LINE__ - 4u,
-                      MALLOC_FAIL,
-                      0);
-            }
-
-            logltf(INTERN_DEBUG, __TIME__, REALLOC_WIN);
-        }
-*/
         logltlf(INTERN_INFO, SET_STR, "verbose level name");
         vlvln = tmpvlvln;
 
@@ -627,10 +578,10 @@ seterrwarn(int treatwarnerr)
  *  \internal
  *    @brief  set file out
  *
- *    Sets the global variable \p fout to the corresponding file to be used
- *      when logging to file.
+ *    Sets the global variable #fout to the corresponding file to be used when
+ *      logging to file.
  *
- *    @return If successful, the filename used in \p fout will be returned as a
+ *    @return If successful, the filename used in #fout will be returned as a
  *              string.\n
  *            If unsuccessful, \c 0 will be returned.
  *  \endinternal
@@ -653,16 +604,7 @@ setfout(void)
     logltlstr(INTERN_TRACE, "localtime(&t)\n");
     /* time info */
     struct tm *ti = localtime(&t);
-    if (!ti) {
-        /*fatal(__TIME__,
-              __FILE__,
-              __func__,
-              __LINE__ - 5u,
-              strerror(errno),
-              errno);
-              */
-        fatal(strerror(errno));
-    }
+    if (!ti) { fatalstr(strerror(errno)); }
 
     logltlf(INTERN_DEBUG, ALLOC_STR_SZ, "tmpfno", NAME_MAX);
     /* temp file name out */
