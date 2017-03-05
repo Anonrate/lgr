@@ -34,6 +34,144 @@
 #include  <time.h>
 #include  <assert.h>
 
+#include  "../inc/lgrverblvls.h"
+/** \var  static char *vlvln
+ *  \internal
+ *    @brief  verbose level name
+ *
+ *    Contains the name representation that of what the current verbose \link
+ *      vlvl level\endlink is set to.
+ *  \endinternal
+ */
+
+/** \var  static enum verblvls vlvl
+ *  \internal
+ *    @brief  verbose level
+ *
+ *    Level of which verbosity is currently set at.
+ *  \endinternal
+ */
+#ifdef  LGR_DEV
+static char           *vlvln  = INTERN_DEBUG_STR;
+static enum verblvls  vlvl    = INTERN_DEBUG;
+#else
+static char           *vlvln  = WARNING_STR;
+static enum verblvls  vlvl    = WARNING;
+#endif  /* LGR_DEV */
+
+/**
+ *  \internal
+ *    @brief  file priority
+ *
+ *    Priority for logging to file.
+ *  \endinternal
+ */
+static enum verblvls fprio = ERROR;
+
+/**
+ *  \internal
+ *    @brief  error warning
+ *
+ *    Treat #WARNING and #INTERN_WARNING as #ERROR.
+ *  \endinternal
+ */
+static int errwarn  = 0;
+
+/**
+ *  \internal
+ *    file name suffix format
+ *  \endinternal
+ */
+static char *fnsfxfmt  = "%y%m%d%H%M%S";
+
+/**
+ *  \internal
+ *    @brief  file out
+ *
+ *    The filename of which logs are output to.
+ *  \endinternal
+ */
+static FILE *fout;
+
+/**
+ *  \internal
+ *    @brief  file name
+ *
+ *    Preferably the name of what's being executed, but doesn't necessarily
+ *      have to be.
+ *  \endinternal
+ */
+static char *fname;
+
+/**
+ *  \internal
+ *    Outputs desired information to respected stream and/or to a log file,
+ *      depending on \link verblvls verbosity level\endlink and configuration.
+ *
+ *    @param[in]  verblvl An enumerator constant declared in enumeration type
+ *                          #verblvls representing the verbosity level of
+ *                          specified message given in \p strfmt.
+ *    @param[in]  timestr The time as a string to be output to the logger.
+ *    @param[in]  line    The line of which corresponds to the given to by \p
+ *                          strfmt.
+ *    @param[in]  strfmt
+ *      \parblock
+ *        Either a regular string containing information to be output to a
+ *          stream and/or log file depending on what \p verblvl is set to and
+ *          configurations or a formatted string.  <b>If a regular string is
+ *          give, optional arguments, even if given will be ignored and not
+ *          used.</b>
+ *
+ *        If a formatted string is given, optional arguments will no longer be
+ *          optional.  They will be required in order to get the desired
+ *          output.
+ *      \endparblock
+ *  \endinternal
+ */
+static void
+lgrf(enum   verblvls        verblvl,
+     const            char  *timestr,
+     const  unsigned  int   line,
+     const            char  *strfmt, ...)
+{
+    if (!(verblvl > 0
+                && verblvl <= INTERN_DEBUG)
+            ? verblvl
+            : NVALID_VERB_LVL) { return; }
+
+    /* temp verbose level */
+    const unsigned char tmpvlvl =
+        ((errwarn && verblvl == WARNING) ? ERROR : verblvl);
+
+    if (tmpvlvl > vlvl) { return; }
+    FILE *fpstrm  =
+        ((errwarn)
+         ? ((verblvl == INTERN_WARNING
+                 || verblvl <= WARNING)
+             ? stderr
+             : stdout)
+         : ((verblvl <= ERROR)
+             ? stderr
+             : stdout));
+
+    if (timestr || line)
+    {
+        fprintf(fpstrm, "[");
+        if (timestr)          { fprintf(fpstrm, "%s", timestr); }
+        if (timestr && line)  { fprintf(fpstrm, ":%7u", line); }
+        else if (line)        { fprintf(fpstrm, "%7u", line); }
+        fprintf(fpstrm, "]  ");
+    }
+
+    /* WHY THE FUCK IS THIS SET TO VLVLN?  I NEEDS TO NOT */
+    fprintf(fpstrm, "%-14s  ", vlvln);
+    va_list ap;
+    va_start(ap, strfmt);
+    vfprintf(stdout, strfmt, ap);
+    va_end(ap);
+
+}
+
 #include  "../inc/lgr.h"
 
 #ifndef NAME_MAX
@@ -178,7 +316,7 @@
  *    Validation was unsuccessful!
  *  \endinternal
  */
-#define VALIDATE_FAIL     "Validation was unsuccessful!  strcmp returned"
+#define VALIDATE_FAIL     "Validation was unsuccessful!  strcmp returned %d"
 
 /**
  *  \internal
@@ -227,7 +365,7 @@
  *    memory allocation fail
  *  \endinternal
  */
-#define MALLOC_FAIL       "malloc returned"
+#define MALLOC_FAIL       "malloc returned %d"
 
 /**
  *  \internal
@@ -292,79 +430,23 @@
 int
 main(int argc, char **argv)
 {
-    logltf(INTERN_DEBUG, __TIME__, "TT");
+    loglf(INTERN_DEBUG, "Hello world%d\n", 0);
     return EXIT_SUCCESS;
 }
 #endif  /* LGR_DEV */
 
-/** \var  static char *vlvln
- *  \internal
- *    @brief  verbose level name
- *
- *    Contains the name representation that of what the current verbose \link
- *      vlvl level\endlink is set to.
- *  \endinternal
- */
-
-/** \var  static enum verblvls vlvl
- *  \internal
- *    @brief  verbose level
- *
- *    Level of which verbosity is currently set at.
- *  \endinternal
- */
-#ifdef  LGR_DEV
-static char           *vlvln  = INTERN_DEBUG_STR;
-static enum verblvls  vlvl    = INTERN_DEBUG;
-#else
-static char           *vlvln  = WARNING_STR;
-static enum verblvls  vlvl    = WARNING;
-#endif  /* LGR_DEV */
-
-/**
- *  \internal
- *    @brief  file priority
- *
- *    Priority for logging to file.
- *  \endinternal
- */
-static enum verblvls fprio = ERROR;
-
-/**
- *  \internal
- *    @brief  error warning
- *
- *    Treat #WARNING and #INTERN_WARNING as #ERROR.
- *  \endinternal
- */
-static int errwarn  = 0;
-
-/**
- *  \internal
- *    file name suffix format
- *  \endinternal
- */
-static char *fnsfxfmt  = "%y%m%d%H%M%S";
-
-/**
- *  \internal
- *    @brief  file out
- *
- *    The filename of which logs are output to.
- *  \endinternal
- */
-static FILE *fout;
-
-/**
- *  \internal
- *    @brief  file name
- *
- *    Preferably the name of what's being executed, but doesn't necessarily
- *      have to be.
- *  \endinternal
- */
-static char *fname;
-
+#define fatalf(fmt, ...)                      \
+    {                                         \
+        fprintf(stderr,                       \
+                "\n[%s:%s:%s:%u]  FATAL:  ",  \
+                __TIME__,                     \
+                __FILE__,                     \
+                __func__,                     \
+                __LINE__);                    \
+        fprintf(stderr, (fmt), __VA_ARGS__);  \
+        fprintf(stderr, "\n");                \
+        exit(EXIT_FAILURE);                   \
+    }
 /**
  *  \internal
  *    Outputs the message specified to by \p str, to the #stderr stream, along
@@ -379,7 +461,7 @@ static char *fname;
  *              optimization.
  *  \endinternal
  */
-static noreturn void
+/*static noreturn void
 fatal(const           char  *timestr,
       const           char  *filestr,
       const           char  *funcstr,
@@ -398,71 +480,22 @@ fatal(const           char  *timestr,
 
     exit(EXIT_FAILURE);
 }
-
-/**
- *  \internal
- *    Outputs desired information to respected stream and/or to a log file,
- *      depending on \link verblvls verbosity level\endlink and configuration.
- *
- *    @param[in]  verblvl An enumerator constant declared in enumeration type
- *                          #verblvls representing the verbosity level of
- *                          specified message given in \p strfmt.
- *    @param[in]  timestr The time as a string to be output to the logger.
- *    @param[in]  line    The line of which corresponds to the given to by \p
- *                          strfmt.
- *    @param[in]  strfmt
- *      \parblock
- *        Either a regular string containing information to be output to a
- *          stream and/or log file depending on what \p verblvl is set to and
- *          configurations or a formatted string.  <b>If a regular string is
- *          give, optional arguments, even if given will be ignored and not
- *          used.</b>
- *
- *        If a formatted string is given, optional arguments will no longer be
- *          optional.  They will be required in order to get the desired
- *          output.
- *      \endparblock
- *  \endinternal
- */
-static void
-lgrf(enum   verblvls        verblvl,
-     const            char  *timestr,
-     const  unsigned  int   line,
-     const            char  *strfmt,
-            va_list         vargs)
-{
-    if (!(verblvl > 0
-                && verblvl <= INTERN_DEBUG)
-            ? verblvl
-            : NVALID_VERB_LVL) { return; }
-
-    /* temp verbose level */
-    const unsigned char tmpvlvl =
-        ((errwarn && verblvl == WARNING) ? ERROR : verblvl);
-
-    if (tmpvlvl > vlvl) { return; }
-    FILE *fpstrm  =
-        ((errwarn)
-         ? ((verblvl == INTERN_WARNING
-                 || verblvl <= WARNING)
-             ? stderr
-             : stdout)
-         : ((verblvl <= ERROR)
-             ? stderr
-             : stdout));
-
-    if (timestr || line)
-    {
-        fprintf(fpstrm, "[");
-        if (timestr)          { fprintf(fpstrm, "%s", timestr); }
-        if (timestr && line)  { fprintf(fpstrm, ":%7u", line); }
-        else if (line)        { fprintf(fpstrm, "%7u", line); }
-        fprintf(fpstrm, "]  ");
+*/
+#define fatalstr(str)                         \
+    {                                         \
+        fprintf(stderr,                       \
+                "\n[%s:%s:%s:%u]  FATAL:  ",  \
+                __TIME__,                     \
+                __FILE__,                     \
+                __func__,                     \
+                __LINE__);                    \
+        fprintf(stderr, "%s\n", (str));       \
+        exit(EXIT_FAILURE);                   \
     }
 
-    fprintf(fpstrm, "%-14s  ", vlvln);
-    vfprintf(fpstrm, strfmt, vargs);
-}
+
+
+
 
 /**
  *  \internal
@@ -477,55 +510,11 @@ lgrf(enum   verblvls        verblvl,
  *            done so, implement an option for colors to be customized.
  *  \endinternal
  */
-void
-loglf(enum verblvls verblvl, const char *strfmt, ...)
-{
-    /* argument pointer */
-    va_list ap;
-    va_start(ap, strfmt);
-    lgrf(verblvl, 0, 0, strfmt, ap);
-    va_end(ap);
-}
-
-void
-logltf(enum verblvls verblvl, const char *timestr, const char *strfmt, ...)
-{
-    /* argument pointer */
-    va_list ap;
-    va_start(ap, strfmt);
-    lgrf(verblvl, timestr, 0, strfmt, ap);
-    va_end(ap);
-}
-
-void
-logllf(enum   verblvls        verblvl,
-       const  unsigned  int   line,
-       const            char  *strfmt, ...)
-{
-    /* argument pointer */
-    va_list ap;
-    va_start(ap, strfmt);
-    lgrf(verblvl, 0, line, strfmt, ap);
-    va_end(ap);
-}
-
-void
-logltlf(enum   verblvls        verblvl,
-        const            char  *timestr,
-        const  unsigned  int   line,
-        const            char  *strfmt, ...)
-{
-    /* argument pointer */
-    va_list ap;
-    va_start(ap, strfmt);
-    lgrf(verblvl, timestr, line, strfmt, ap);
-    va_end(ap);
-}
 
 char*
 getverblvlname(enum verblvls verblvl)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
     /* temp verbose level */
     unsigned char tmpvlvl = INTERN_INFO;
@@ -577,20 +566,19 @@ getverblvlname(enum verblvls verblvl)
      *          'isverblvl()' as a method of validation.
      */
     logltf(tmpvlvl,
-           __TIME__,
            XVALID_VERB_LVL_N,
            verblvl,
            !strcmp(tmpvlvln, NVALID_VERB_LVL_STR) ? " not " : " ",
            tmpvlvln);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, tmpvlvln);
+    logltlf(INTERN_DEBUG, RMSG_S, tmpvlvln);
     return tmpvlvln;
 }
 
 int
 isverblvl(unsigned char lvl)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
     /* temp verbose level */
     unsigned char tmpvlvl = INTERN_INFO;
@@ -602,12 +590,11 @@ isverblvl(unsigned char lvl)
          : (tmpvlvl = INTERN_WARNING, NVALID_VERB_LVL));
 
     logltf(tmpvlvl,
-           __TIME__,
            XVALID_VERB_LVL,
            lvl,
            tmplvl ? " " : " not ");
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_D, tmplvl);
+    logltlf(INTERN_DEBUG, RMSG_D, tmplvl);
     return tmplvl;
 }
 
@@ -627,38 +614,34 @@ isverblvl(unsigned char lvl)
 static void
 mallstr(char *stra, char **pstrb, char *strbn)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, *pstrb);
+    logltlf(INTERN_DEBUG, CALC_STR, *pstrb);
     /* temp strb size */
     size_t tmpstrbsz   = strlen(*pstrb);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, stra);
+    logltlf(INTERN_DEBUG, CALC_STR, stra);
     /* temp stra size */
     size_t tmpstrasz  = strlen(stra);
     if (tmpstrbsz != tmpstrasz)
     {
-        logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, *pstrb, tmpstrbsz);
-        logltf(INTERN_DEBUG, __TIME__, STR_LEN_MSG, stra, tmpstrasz);
-        logltf(INTERN_DEBUG, __TIME__, REALLOC_NEEDED, strbn);
+        logltf(INTERN_DEBUG, STR_LEN_MSG, *pstrb, tmpstrbsz);
+        logltf(INTERN_DEBUG, STR_LEN_MSG, stra, tmpstrasz);
+        logltf(INTERN_DEBUG, REALLOC_NEEDED, strbn);
 
-        logltlf(INTERN_DEBUG,
-                __TIME__,
-                __LINE__ + 3u,
-                REALLOC_MSG,
-                strbn,
-                tmpstrasz);
+        logltlf(INTERN_DEBUG, REALLOC_MSG, strbn, tmpstrasz);
 
         if (!(*pstrb = malloc(tmpstrasz + 1ul))) {
-            fatal(__TIME__,
+            /*fatal(__TIME__,
                   __FILE__,
                   __func__,
                   __LINE__ - 4u,
                   MALLOC_FAIL,
-                  0);
+                  0);*/
+            fatal(MALLOC_FAIL, 0);
         }
 
-        logltf(INTERN_DEBUG, __TIME__, REALLOC_WIN);
+        logltstr(INTERN_DEBUG, REALLOC_WIN);
     }
 }
 
@@ -686,27 +669,27 @@ mallstr(char *stra, char **pstrb, char *strbn)
 static char*
 setvlvln(enum verblvls verblvl)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 2u, "%s\n", __func__);
+    logltlf(INTERN_TRACE, "%s\n", __func__);
     /* temp verbose level name */
     char *tmpvlvln = getverblvlname(verblvl);
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_N_CH_CHCK);
+    logltlstr(INTERN_DEBUG, VERB_LVL_N_CH_CHCK);
     if (!strcmp(vlvln, tmpvlvln))
     {
-        logltf(INTERN_INFO,   __TIME__, VERB_LVL_N_ASET, vlvln, vlvl);
-        logltf(INTERN_INFO,   __TIME__, VERB_LVL_N_NOCH);
+        logltf(INTERN_INFO, VERB_LVL_N_ASET, vlvln, vlvl);
+        logltstr(INTERN_INFO, VERB_LVL_N_NOCH);
 
-        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
+        logltlf(INTERN_DEBUG, RMSG_S, vlvln);
         return vlvln;
     }
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_N_CHCK, tmpvlvln);
+    logltlf(INTERN_DEBUG, VERB_LVL_N_CHCK, tmpvlvln);
     if (strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
     {
-        logltf(INTERN_INFO,   __TIME__, VALID_VERB_LVL_N, tmpvlvln);
+        logltf(INTERN_INFO, VALID_VERB_LVL_N, tmpvlvln);
 
-        logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
+        logltlf(INTERN_TRACE, "%s\n", __func__);
         mallstr(tmpvlvln, &vlvln, "vlvln");
 /*
         logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, CALC_STR, vlvln);
@@ -739,20 +722,16 @@ setvlvln(enum verblvls verblvl)
             logltf(INTERN_DEBUG, __TIME__, REALLOC_WIN);
         }
 */
-        logltlf(INTERN_INFO,
-                __TIME__,
-                __LINE__ + 3u,
-                SET_STR,
-                "verbose level name");
+        logltlf(INTERN_INFO, SET_STR, "verbose level name");
         vlvln = tmpvlvln;
 
-        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
+        logltlf(INTERN_DEBUG, RMSG_S, vlvln);
         return vlvln;
     }
 
-    logltf(INTERN_WARNING,  __TIME__, NVALID_VERB_LVL_N, tmpvlvln);
+    logltf(INTERN_WARNING, NVALID_VERB_LVL_N, tmpvlvln);
 
-    logltlf(INTERN_DEBUG,   __TIME__, __LINE__ + 1u, RMSG_S, vlvln);
+    logltlf(INTERN_DEBUG, RMSG_S, vlvln);
     return vlvln;
 }
 
@@ -773,21 +752,21 @@ setvlvln(enum verblvls verblvl)
 static unsigned char
 setvlvl(unsigned char verblvl)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_STR, "verbose level");
+    logltlf(INTERN_INFO, SET_STR, "verbose level");
     vlvl = verblvl;
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
+    logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
     return (verblvl);
 }
 
 int
 setverblvl(enum verblvls verblvl)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, VERB_LVL_CH_CHCK);
+    logltlstr(INTERN_DEBUG, VERB_LVL_CH_CHCK);
     if (vlvl == verblvl)
     {
         /*
@@ -795,110 +774,101 @@ setverblvl(enum verblvls verblvl)
          *    anything lower such as 'INTERN_INFO' is more appropriate so that
          *    the end user will know why the verbosity level went unmodified.
          */
-        logltf(INFO, __TIME__, VERB_LVL_ASET, vlvl, vlvln);
-        logltf(INFO, __TIME__, VERB_LVL_NOCH);
+        logltf(INFO, VERB_LVL_ASET, vlvl, vlvln);
+        logltstr(INFO, VERB_LVL_NOCH);
 
-        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
+        logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
         return vlvl;
     }
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
+    logltlf(INTERN_TRACE, "%s\n", __func__);
     if (isverblvl(verblvl))
     {
-        logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
+        logltlf(INTERN_TRACE, "%s\n", __func__);
         setvlvl(verblvl);
 
-        logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
+        logltlf(INTERN_TRACE, "%s\n", __func__);
         setvlvln(verblvl);
 
-        logltlf(INTERN_TRACE, __TIME__, __LINE__ + 3u, "%s\n", __func__);
-        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 2u, VALIDATING_MSG);
+        logltlf(INTERN_TRACE, "%s\n", __func__);
+        logltlstr(INTERN_DEBUG, VALIDATING_MSG);
         /* temp int */
         int ti = strcmp(vlvln, getverblvlname(vlvl));
-        if (ti) {
-            fatal(__TIME__,
-                  __FILE__,
-                  __func__,
-                  __LINE__ - 5u,
-                  VALIDATE_FAIL, ti);
-        }
+        if (ti) { fatal(VALIDATE_FAIL, ti); }
 
-        logltf(INTERN_DEBUG,  __TIME__, VALIDATE_WIN);
+        logltstr(INTERN_DEBUG, VALIDATE_WIN);
 
-        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
+        logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
         return vlvl;
     }
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
-    logltf(WARNING, __TIME__, VERB_SET_FAIL, verblvl, getverblvlname(verblvl));
-    logltf(WARNING, __TIME__, VERB_LVLN_NOCH, vlvl, vlvln);
+    logltlf(INTERN_TRACE, "%s\n", __func__);
+    logltf(WARNING, VERB_SET_FAIL, verblvl, getverblvlname(verblvl));
+    logltf(WARNING, VERB_LVLN_NOCH, vlvl, vlvln);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
+    logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
     return vlvl;
 }
 
 enum verblvls
 getverblvl()
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, vlvl);
+    logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
     return vlvl;
 }
 
 enum verblvls
 getfileprio(void)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, fprio);
+    logltlf(INTERN_DEBUG, RMSG_HHU, fprio);
     return fprio;
 }
 
 int
 geterrwarn(void)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_D, errwarn);
+    logltlf(INTERN_DEBUG, RMSG_D, errwarn);
     return errwarn;
 }
 
 enum verblvls
 setfileprio(enum verblvls fileprio)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
+    logltlf(INTERN_TRACE, "%s\n", __func__);
     unsigned char tmpvlvl = isverblvl(fileprio);
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 6u, "%s\n", __func__);
+    logltlf(INTERN_TRACE, "%s\n", __func__);
     logltf(tmpvlvl ? INTERN_INFO : WARNING,
-           __TIME__,
            XVALID_VERB_LVL,
            fileprio,
            tmpvlvl ? " " : " not ",
            getverblvlname(fileprio));
 
-    logltlf(INTERN_INFO,  __TIME__, __LINE__ + 1u, SET_STR, "file priority");
+    logltlf(INTERN_INFO, SET_STR, "file priority");
     fprio = fileprio;
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_HHU, fprio);
+    logltlf(INTERN_DEBUG, RMSG_HHU, fprio);
     return fprio;
 }
 
 int
 seterrwarn(int treatwarnerr)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
     logltlf(INTERN_INFO,
-            __TIME__,
-            __LINE__ + 3u,
             SET_ERRWARN,
             treatwarnerr ? "Enabling" : "Disabling");
     errwarn = treatwarnerr;
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_D, errwarn);
+    logltlf(INTERN_DEBUG, RMSG_D, errwarn);
     return errwarn;
 }
 
@@ -917,69 +887,72 @@ seterrwarn(int treatwarnerr)
 static char*
 setfout(void)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
     if (!fname)
     {
-        logltf(WARNING, __TIME__, FN_Z);
-        logltf(NOTICE,  __TIME__, FN_ZMSG);
+        logltstr(WARNING, FN_Z);
+        logltstr(NOTICE, FN_ZMSG);
     }
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 2u, "time(0)\n");
+    logltlstr(INTERN_TRACE, "time(0)\n");
     /* time */
     time_t t      = time(0);
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 2u, "localtime(&t)\n");
+    logltlstr(INTERN_TRACE, "localtime(&t)\n");
     /* time info */
     struct tm *ti = localtime(&t);
     if (!ti) {
-        fatal(__TIME__,
+        /*fatal(__TIME__,
               __FILE__,
               __func__,
               __LINE__ - 5u,
               strerror(errno),
               errno);
+              */
+        fatal(strerror(errno));
     }
 
-    logltlf(INTERN_DEBUG,
-            __TIME__,
-            __LINE__ + 5u,
-            ALLOC_STR_SZ,
-            "tmpfno",
-            NAME_MAX);
+    logltlf(INTERN_DEBUG, ALLOC_STR_SZ, "tmpfno", NAME_MAX);
     /* temp file name out */
     char *tmpfno  = malloc(NAME_MAX);
-    if (!tmpfno) {
-        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, MALLOC_FAIL, 0);
-    }
+    if (!tmpfno) { fatal(MALLOC_FAIL, 0); }
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_STR, "time");
+    logltlf(INTERN_DEBUG, PARSE_STR, "time");
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
     assert(tmpfnosz);
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, PARSE_STR, "file");
+    logltlf(INTERN_DEBUG, PARSE_STR, "file");
     tmpfnosz = snprintf(tmpfno, NAME_MAX, "%s-%s", tmpfno, fname);
     assert(tmpfnosz);
+
+    logltlf(INTERN_DEBUG, REALLOC_MSG, tmpfno, tmpfnosz);
+    if (!realloc(tmpfno, tmpfnosz))
+    {
+        
+    }
+
+    return "klhdf";
 }
 
 char*
 setfilename(char *filename)
 {
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ - 2u, "%s\n", __func__);
+    logltlf(INTERN_DEBUG, "%s\n", __func__);
     if (!filename)
     {
-        logltf(WARNING,       __TIME__, FN_Z);
-        logltf(NOTICE,        __TIME__, FN_ZMSG);
+        logltstr(WARNING, FN_Z);
+        logltstr(NOTICE, FN_ZMSG);
 
-        logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, RMSG_S, fname);
+        logltlf(INTERN_DEBUG, RMSG_S, fname);
         return fname;
     }
 
-    logltlf(INTERN_TRACE, __TIME__, __LINE__ + 1u, "%s\n", __func__);
+    logltlf(INTERN_TRACE, "%s\n", __func__);
     mallstr(filename, &fname, "fname");
 
-    logltlf(INTERN_DEBUG, __TIME__, __LINE__ + 1u, SET_STR, "filename");
+    logltlf(INTERN_DEBUG, SET_STR, "filename");
     fname = filename;
 
-    
+    return "ljsdf";
 }
