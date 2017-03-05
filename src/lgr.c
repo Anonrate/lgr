@@ -34,7 +34,10 @@
 #include  <time.h>
 #include  <assert.h>
 
+#define LGR_DEV
+
 #include  "../inc/lgrverblvls.h"
+
 /** \var  static char *vlvln
  *  \internal
  *    @brief  verbose level name
@@ -51,12 +54,13 @@
  *    Level of which verbosity is currently set at.
  *  \endinternal
  */
+
 #ifdef  LGR_DEV
-static char           *vlvln  = INTERN_DEBUG_STR;
-static enum verblvls  vlvl    = INTERN_DEBUG;
+static char           *vlvln    = INTERN_TRACE_STR
+static enum verblvls  vlvl      = INTERN_TRACE;
 #else
-static char           *vlvln  = WARNING_STR;
-static enum verblvls  vlvl    = WARNING;
+static char           *vlvln    = WARNING_STR;
+static enum verblvls  vlvl      = WARNING;
 #endif  /* LGR_DEV */
 
 /**
@@ -66,7 +70,7 @@ static enum verblvls  vlvl    = WARNING;
  *    Priority for logging to file.
  *  \endinternal
  */
-static enum verblvls fprio = ERROR;
+static enum verblvls  fprio     = ERROR;
 
 /**
  *  \internal
@@ -75,14 +79,14 @@ static enum verblvls fprio = ERROR;
  *    Treat #WARNING and #INTERN_WARNING as #ERROR.
  *  \endinternal
  */
-static int errwarn  = 0;
+static int            errwarn   = 0;
 
 /**
  *  \internal
  *    file name suffix format
  *  \endinternal
  */
-static char *fnsfxfmt  = "%y%m%d%H%M%S";
+static char           *fnsfxfmt = "%y%m%d%H%M%S";
 
 /**
  *  \internal
@@ -91,7 +95,7 @@ static char *fnsfxfmt  = "%y%m%d%H%M%S";
  *    The filename of which logs are output to.
  *  \endinternal
  */
-static FILE *fout;
+static FILE           *fout;
 
 /**
  *  \internal
@@ -101,7 +105,7 @@ static FILE *fout;
  *      have to be.
  *  \endinternal
  */
-static char *fname;
+static char           *fname;
 
 /**
  *  \internal
@@ -173,258 +177,11 @@ lgrf(enum   verblvls        verblvl,
 }
 
 #include  "../inc/lgr.h"
+#include  "../inc/lgrmsgs.h"
 
 #ifndef NAME_MAX
 #define NAME_MAX  0xfe
 #endif  /* NAME_MAX */
-
-#define LGR_DEV
-
-/**
- *  \internal
- *    return message decimal
- *  \endinternal
- */
-#define RMSG_D    "Returning %d...\n"
-
-/**
- *  \internal
- *    return message unsigned char
- *  \endinternal
- */
-#define RMSG_HHU  "Returning %hhu...\n"
-
-/**
- *  \internal
- *    return message string
- *  \endinternal
- */
-#define RMSG_S    "Returning %s...\n"
-
-/**
- *  \internal
- *    return message unsigned int
- *  \endinternal
- */
-#define RMSG_U    "Returning %u...\n"
-
-/**
- *  \internal
- *    verbose level name change check
- *  \endinternal
- */
-#define VERB_LVL_N_CH_CHCK \
-    "Checking if verbose level name change is redundant...\n"
-
-/**
- *  \internal
- *    verbose level name already set
- *  \endinternal
- */
-#define VERB_LVL_N_ASET   "Verbose level name already set to '%s(%hhu)'!\n"
-
-/**
- *  \internal
- *    verbose level name no change
- *  \endinternal
- */
-#define VERB_LVL_N_NOCH   "Leaving verbose level name as is...\n"
-
-/**
- *  \internal
- *    verbose level name check
- *  \endinternal
- */
-#define VERB_LVL_N_CHCK   "Checking if '%s' is a valid verbose level name...\n"
-
-/**
- *  \internal
- *    verbose level check
- *  \endinternal
- */
-#define VERB_LVL_CH_CHCK  \
-    "Checking if verbose level change is redundant...\n"
-
-/**
- *  \internal
- *    verbose level already set
- *  \endinternal
- */
-#define VERB_LVL_ASET     "Verbose level already set to '%hhu(%s)'!\n"
-
-/**
- *  \internal
- *    verbose level no change
- *  \endinternal
- */
-#define VERB_LVL_NOCH     "Leaving verbose level as is...\n"
-
-/**
- *  \internal
- *    verbose level (and) name no change
- *
- *    @remark This is not the same as #VERB_LVL_N_NOCH.  This is used in
- *              function #setverblvl().
- *  \endinternal
- */
-#define VERB_LVLN_NOCH    "Verbose level unchanged (%hhu(%s))...\n"
-
-/**
- *  \internal
- *    verbose set fail
- *  \endinternal
- */
-#define VERB_SET_FAIL     "Failed to set verbose level to '%hhu(%s)'!\n"
-
-/**
- *  \internal
- *    x valid verbose level name
- *  \endinternal
- */
-#define XVALID_VERB_LVL_N "'%s' is%sa valid verbose level name(%hhu)!\n"
-
-/**
- *  \internal
- *    x valid verbose level
- *  \endinternal
- */
-#define XVALID_VERB_LVL   "'%hhu' is%sa valid verbose level(%s)!\n"
-
-/**
- *  \internal
- *    not valid verbose level name
- *  \endinternal
- */
-#define NVALID_VERB_LVL_N "'%s' is not a valid verbose level name...\n"
-
-/**
- *  \internal
- *    validating message
- *  \endinternal
- */
-#define VALIDATING_MSG    "Validating...\n"
-
-/**
- *  \internal
- *    Validation was successful!
- *  \endinternal
- */
-#define VALIDATE_WIN      "Validation was successful!\n"
-
-/**
- *  \internal
- *    Validation was unsuccessful!
- *  \endinternal
- */
-#define VALIDATE_FAIL     "Validation was unsuccessful!  strcmp returned %d"
-
-/**
- *  \internal
- *    valid verbose level name
- *  \endinternal
- */
-#define VALID_VERB_LVL_N  "'%s' is a valid verbose level name!\n"
-
-/**
- *  \internal
- *    calculate string
- *  \endinternal
- */
-#define CALC_STR          "Calculating length of '%s'...\n"
-
-/**
- *  \internal
- *    string length message
- *  \endinternal
- */
-#define STR_LEN_MSG       "'%-14s' has a length of %lu\n"
-
-/**
- *  \internal
- *    reallocation needed
- *  \endinternal
- */
-#define REALLOC_NEEDED    "'%s' needs reallocation...\n"
-
-/**
- *  \internal
- *    reallocation message
- *  \endinternal
- */
-#define REALLOC_MSG       "Reallocating '%s' to %lu + 1...\n"
-
-/**
- *  \internal
- *    reallocation win
- *  \endinternal
- */
-#define REALLOC_WIN       "Reallocation was successful!\n"
-
-/**
- *  \internal
- *    memory allocation fail
- *  \endinternal
- */
-#define MALLOC_FAIL       "malloc returned %d"
-
-/**
- *  \internal
- *    set error warning
- *  \endinternal
- */
-#define SET_ERRWARN       "%s treat WARNING as ERROR...\n"
-
-/**
- *  \internal
- *    string not set
- *  \endinternal
- */
-#define STR_NSET          "%s is not set!\n"
-
-/**
- *  \internal
- *    file name zero
- *  \endinternal
- */
-#define FN_Z              "Filename is 0!\n"
-
-/**
- *  \internal
- *    file name zero message
- *  \endinternal
- */
-#define FN_ZMSG                                                             \
-    "Filename being 0 will result in unexpected results causing logs that " \
-    "correspond to a different process to be merged as there is no way to " \
-    "differentiate them...\n"
-
-/**
- *  \internal
- *    setting string
- *  \endinternal
- */
-#define SET_STR           "Updating %s...\n"
-
-/**
- *  \internal
- *    string not zero
- *  \endinternal
- */
-#define STR_NZ            "Length of %s string can not be %lu!\n"
-
-/**
- *  \internal
- *    parse string
- *  \endinternal
- */
-#define PARSE_STR         "Parsing %s string...\n"
-
-/**
- *  \internal
- *    allocating string size
- *  \endinternal
- */
-#define ALLOC_STR_SZ      "Allocating %s to %lu...\n"
 
 #ifdef  LGR_DEV
 int
@@ -632,12 +389,6 @@ mallstr(char *stra, char **pstrb, char *strbn)
         logltlf(INTERN_DEBUG, REALLOC_MSG, strbn, tmpstrasz);
 
         if (!(*pstrb = malloc(tmpstrasz + 1ul))) {
-            /*fatal(__TIME__,
-                  __FILE__,
-                  __func__,
-                  __LINE__ - 4u,
-                  MALLOC_FAIL,
-                  0);*/
             fatal(MALLOC_FAIL, 0);
         }
 
