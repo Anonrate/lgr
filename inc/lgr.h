@@ -37,92 +37,141 @@
  *  @param[in]  verblvl An enumerator constant declared in enumeration type
  *                        #verblvls representing the verbosity level of
  *                        specified message given in \p fmt.
- *  @param[in]  fmt
- *    \parblock
- *      Either a regular string containing information to be output to a stream
- *        and/or log file depending on what \p verblvl is set to and
- *        configurations or a formatted string.  <b>If a regular string is
- *        give, optional arguments, even if given will be ignored and not used.
- *        </b>
- *
- *      If a formatted string is given, optional arguments will no longer be
- *        optional.  They will be required in order to get the desired output.
- *    \endparblock
+ *  @param[in]  fmt     A formatted string containing information to be output
+ *                        to a stream and/or log file depending on what \p
+ *                        verblvl is set to and configurations.
  */
-#define loglf(verblvl, fmt, ...)  \
-    (lgrf((verblvl), 0, 0, (fmt), __VA_ARGS__))
+#define loglf(verblvl, fmt, ...)                  \
+    (                                             \
+        lgrf((verblvl), 0, 0, (fmt), __VA_ARGS__) \
+    )
+
+/**
+ *  @brief log level string
+ *
+ *  @details  \copydetails  loglf()
+ *
+ *  @param[in]  verblvl An enumerator constant declared in enumeration type
+ *                        #verblvls representing the verbosity level of
+ *                        specified message given in \p fmt.
+ *  @param[in]  str     A string containing information to be output to a
+ *                        stream and/or log file depending on what \p verblvl
+ *                        is set to and configurations.
+ */
+#define loglstr(verblvl, str)         \
+    (                                 \
+        lgrf((verblvl), 0, 0, (str))  \
+    )
 
 /**
  *  @brief log level time format
  *
- *  Outputs desired information to respected stream and/or to a log file,
- *    depending on \link verblvls verbosity level\endlink and configuration.
+ *  Outputs desired information including the current time when this function
+ *    was called, to respected stream and/or to a log file, depending on \link
+ *    verblvls verbosity level\endlink and configuration.
  *
  *  @param[in]  verblvl An enumerator constant declared in enumeration type
  *                        #verblvls representing the verbosity level of
  *                        specified message given in \p fmt.
  *  @param[in]  timestr The time as a string to be output to the logger.
- *  @param[in]  fmt
- *    \parblock
- *      Either a regular string containing information to be output to a stream
- *        and/or log file depending on what \p verblvl is set to and
- *        configurations or a formatted string.  <b>If a regular string is
- *        give, optional arguments, even if given will be ignored and not used.
- *        </b>
- *
- *      If a formatted string is given, optional arguments will no longer be
- *        optional.  They will be required in order to get the desired output.
- *    \endparblock
+ *  @param[in]  fmt     A formatted string containing information to be output
+ *                        to a stream and/or log file depending on what \p
+ *                        verblvl is set to and configurations.
  */
-#define logltf(verblvl, fmt, ...) \
-    (lgrf((verblvl), __TIME__, 0, (fmt), __VA_ARGS__))
+#define logltf(verblvl, fmt, ...)                         \
+    (                                                     \
+        lgrf((verblvl), __TIME__, 0, (fmt), __VA_ARGS__)  \
+    )
+
+/**
+ *  @brief log level time string
+ *
+ *  @details  \copydetails  logltf()
+ *
+ *  @param[in]  verblvl An enumerator constant declared in enumeration type
+ *                        #verblvls representing the verbosity level of
+ *                        specified message given in \p fmt.
+ *  @param[in]  str     A string containing information to be output to a
+ *                        stream and/or log file depending on what \p verblvl
+ *                        is set to and configurations.
+ */
+#define logltstr(verblvl, st)               \
+    (                                       \
+        lgrf((verblvl), __TIME__, 0, (str)) \
+    )
+
 /**
  *  @brief log level line format
  *
- *  Outputs desired information to respected stream and/or to a log file,
- *    depending on \link verblvls verbosity level\endlink and configuration.
+ *  Outputs desired information including the line from which called this
+ *    function, to respected stream and/or to a log file, depending on \link
+ *    verblvls verbosity level\endlink and configuration.
  *
  *  @param[in]  verblvl An enumerator constant declared in enumeration type
  *                        #verblvls representing the verbosity level of
  *                        specified message given in \p fmt.
- *  @param[in]  fmt
- *    \parblock
- *      Either a regular string containing information to be output to a stream
- *        and/or log file depending on what \p verblvl is set to and
- *        configurations or a formatted string.  <b>If a regular string is
- *        give, optional arguments, even if given will be ignored and not used.
- *        </b>
- *
- *      If a formatted string is given, optional arguments will no longer be
- *        optional.  They will be required in order to get the desired output.
- *    \endparblock
+ *  @param[in]  fmt     A formatted string containing information to be output
+ *                        to a stream and/or log file depending on what \p
+ *                        verblvl is set to and configurations.
  */
-#define logllf(verblvl, fmt, ...) \
-    (lgrf((verblvl), 0, __LINE__, (fmt), __VA_ARGS__))
+#define logllf(verblvl, fmt, ...)                         \
+    (                                                     \
+        lgrf((verblvl), 0, __LINE__, (fmt), __VA_ARGS__)  \
+    )
 
+/**
+ *  @brief log level line string
+ *
+ *  @details  \copydetails  logllf()
+ *
+ *  @param[in]  verblvl An enumerator constant declared in enumeration type
+ *                        #verblvls representing the verbosity level of
+ *                        specified message given in \p fmt.
+ *  @param[in]  str     A string containing information to be output to a
+ *                        stream and/or log file depending on what \p verblvl
+ *                        is set to and configurations.
+ */
+#define logllstr(verblvl, str)              \
+    (                                       \
+        lgrf((verblvl), 0, __LINE__, (str)) \
+    )
 /**
  *  @brief log level time line format
  *
- *  Outputs desired information to respected stream and/or to a log file,
- *    depending on \link verblvls verbosity level\endlink and configuration.
+ *  Outputs desired information including the current time when this function
+ *    was called and the line from which called this function, to respected
+ *    stream and/or to a log file, depending on \link verblvls verbosity
+ *    level\endlink and configuration.
  *
  *  @param[in]  verblvl An enumerator constant declared in enumeration type
  *                        #verblvls representing the verbosity level of
  *                        specified message given in \p fmt.
- *  @param[in]  fmt
- *    \parblock
- *      Either a regular string containing information to be output to a stream
- *        and/or log file depending on what \p verblvl is set to and
- *        configurations or a formatted string.  <b>If a regular string is
- *        give, optional arguments, even if given will be ignored and not used.
- *        </b>
- *
- *      If a formatted string is given, optional arguments will no longer be
- *        optional.  They will be required in order to get the desired output.
- *    \endparblock
+ *  @param[in]  fmt     A formatted string containing information to be output
+ *                        to a stream and/or log file depending on what \p
+ *                        verblvl is set to and configurations.
  */
-#define logltlf(verblvl, fmt, ...)  \
-    (lgrf((verblvl), __TIME__, __LINE__, (fmt), __VA_ARGS__))
+#define logltlf(verblvl, fmt, ...)                              \
+    (                                                           \
+        lgrf((verblvl), __TIME__, __LINE__, (fmt), __VA_ARGS__) \
+    )
+
+/**
+ *  @brief log level time line string
+ *
+ *  @details  \copydetails  logltlf()
+ *
+ *  @param[in]  verblvl An enumerator constant declared in enumeration type
+ *                        #verblvls representing the verbosity level of
+ *                        specified message given in \p fmt.
+ *  @param[in]  str     A string containing information to be output to a
+ *                        stream and/or log file depending on what \p verblvl
+ *                        is set to and configurations.
+ */
+#define logltlstr(verblvl, str)                     \
+    (                                               \
+        lgrf((verblvl), __TIME__, __LINE__, (str))  \
+    )
+
 /**
  *  @brief get verbose level name
  *
