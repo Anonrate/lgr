@@ -315,6 +315,15 @@
  */
 #define PARSE_FSTR        "Parsing file string...\n"
 
+/**
+ *  \internal
+ *    @brief  allocating xx
+ *
+ *    Allocating  first x (variable name) to second x (size).
+ *  \endinternal
+ */
+#define ALLOC_XX          "Allocating %s to %lu...\n"
+
 #ifdef  LGR_DEV
 int
 main(int argc, char **argv)
@@ -993,6 +1002,11 @@ setfout(void)
     tmpsz = snprintf(0, 0, "%s");
 
     char *tmpfno  = malloc(NAME_MAX);
+    if (!tmpfno) {
+        fatal(__TIME__, __FILE__, __func__, __LINE__ - 2u, MALLOC_FAIL, 0);
+    }
+
+    size_t fmpfnosz = strftime()
 }
 
 char*
