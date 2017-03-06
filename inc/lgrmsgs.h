@@ -26,7 +26,7 @@
  */
 
 #ifndef LGRMSGS_H
-#define LGRMSGS_H /**< Include guard for 'lgrmsgs.h'  */
+#define LGRMSGS_H
 
 #define RMSG_D    "Returning %d...\n"
 
