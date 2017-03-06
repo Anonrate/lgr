@@ -131,7 +131,6 @@ main(int argc, char **argv)
 }
 #endif  /* LGR_DEV */
 
-
 #define fatalf(fmt, ...)                      \
     {                                         \
         fprintf(stderr,                       \
@@ -178,20 +177,12 @@ getverblvlname(enum verblvls verblvl)
 
                     : (tmpvlvl = WARNING, NVALID_VERB_LVL_STR);
 
-    logltf(tmpvlvl,
-           XVALID_VERB_LVL_N,
-           verblvl,
-           !strcmp(tmpvlvln, NVALID_VERB_LVL_STR) ? " not " : " ",
-           tmpvlvln);
-
-    logltlf(INTERN_DEBUG, RMSG_S, tmpvlvln);
     return tmpvlvln;
 }
 
 int
 isverblvl(unsigned char lvl)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
     unsigned char tmpvlvl = INTERN_INFO;
 
@@ -200,260 +191,165 @@ isverblvl(unsigned char lvl)
          ? lvl
          : (tmpvlvl = INTERN_WARNING, NVALID_VERB_LVL));
 
-    logltf(tmpvlvl,
-           XVALID_VERB_LVL,
-           lvl,
-           tmplvl ? " " : " not ");
-
-    logltlf(INTERN_DEBUG, RMSG_D, tmplvl);
     return tmplvl;
 }
 
 static void
 mallstr(char *stra, char **pstrb, char *strbn)
 {
-    logltlf(INTERN_DEBUG, "%s:%s\n", __func__, *pstrb);
-
-    logltlf(INTERN_DEBUG, CALC_STR, *pstrb);
-
     if (!*pstrb) { (*pstrb) = malloc(1); }
 
     size_t tmpstrbsz   = strlen(*pstrb);
 
-    logltlf(INTERN_DEBUG, CALC_STR, stra);
     size_t tmpstrasz  = strlen(stra);
     if (tmpstrbsz != tmpstrasz)
     {
-        logltf(INTERN_DEBUG, STR_LEN_MSG, *pstrb, tmpstrbsz);
-        logltf(INTERN_DEBUG, STR_LEN_MSG, stra, tmpstrasz);
-        logltf(INTERN_DEBUG, REALLOC_NEEDED, strbn);
-
-        logltlf(INTERN_DEBUG, REALLOC_MSG, strbn, tmpstrasz);
-
         if (!(*pstrb = malloc(tmpstrasz + 1ul))) {
             fatalstr(MALLOC_FAIL);
         }
 
-        logltstr(INTERN_DEBUG, REALLOC_WIN);
     }
 }
 
 static char*
 setvlvln(enum verblvls verblvl)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_TRACE, "%s\n", __func__);
     char *tmpvlvln = getverblvlname(verblvl);
-    logltlstr(INTERN_DEBUG, VERB_LVL_N_CH_CHCK);
     if (!strcmp(vlvln, tmpvlvln))
     {
-        logltf(INTERN_INFO, VERB_LVL_N_ASET, vlvln, vlvl);
-        logltstr(INTERN_INFO, VERB_LVL_N_NOCH);
 
-        logltlf(INTERN_DEBUG, RMSG_S, vlvln);
         return vlvln;
     }
 
-    logltlf(INTERN_DEBUG, VERB_LVL_N_CHCK, tmpvlvln);
     if (strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
     {
-        logltf(INTERN_INFO, VALID_VERB_LVL_N, tmpvlvln);
 
-        logltlf(INTERN_TRACE, "%s\n", __func__);
         mallstr(tmpvlvln, &vlvln, "vlvln");
 
-        logltlf(INTERN_INFO, SET_STR, "verbose level name");
         vlvln = tmpvlvln;
 
-        logltlf(INTERN_DEBUG, RMSG_S, vlvln);
         return vlvln;
     }
 
-    logltf(INTERN_WARNING, NVALID_VERB_LVL_N, tmpvlvln);
 
-    logltlf(INTERN_DEBUG, RMSG_S, vlvln);
     return vlvln;
 }
 
 static unsigned char
 setvlvl(unsigned char verblvl)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_INFO, SET_STR, "verbose level");
     vlvl = verblvl;
 
-    logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
     return (verblvl);
 }
 
 int
 setverblvl(enum verblvls verblvl)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlstr(INTERN_DEBUG, VERB_LVL_CH_CHCK);
     if (vlvl == verblvl)
     {
-        logltf(INFO, VERB_LVL_ASET, vlvl, vlvln);
-        logltstr(INFO, VERB_LVL_NOCH);
-
-        logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
         return vlvl;
     }
 
-    logltlf(INTERN_TRACE, "%s\n", __func__);
     if (isverblvl(verblvl))
     {
-        logltlf(INTERN_TRACE, "%s\n", __func__);
         setvlvl(verblvl);
 
-        logltlf(INTERN_TRACE, "%s\n", __func__);
         setvlvln(verblvl);
 
-        logltlf(INTERN_TRACE, "%s\n", __func__);
-        logltlstr(INTERN_DEBUG, VALIDATING_MSG);
         int ti = strcmp(vlvln, getverblvlname(vlvl));
         if (ti) { fatalf(VALIDATE_FAIL, ti); }
 
-        logltstr(INTERN_DEBUG, VALIDATE_WIN);
 
-        logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
         return vlvl;
     }
 
-    logltlf(INTERN_TRACE, "%s\n", __func__);
-    logltf(WARNING, VERB_SET_FAIL, verblvl, getverblvlname(verblvl));
-    logltf(WARNING, VERB_LVLN_NOCH, vlvl, vlvln);
-
-    logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
     return vlvl;
 }
 
 enum verblvls
 getverblvl()
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_DEBUG, RMSG_HHU, vlvl);
     return vlvl;
 }
 
 enum verblvls
 getfileprio(void)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_DEBUG, RMSG_HHU, fprio);
     return fprio;
 }
 
 int
 geterrwarn(void)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
-
-    logltlf(INTERN_DEBUG, RMSG_D, errwarn);
     return errwarn;
 }
 
 enum verblvls
 setfileprio(enum verblvls fileprio)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_TRACE, "%s\n", __func__);
     unsigned char tmpvlvl = isverblvl(fileprio);
-    logltlf(INTERN_TRACE, "%s\n", __func__);
-    logltf(tmpvlvl ? INTERN_INFO : WARNING,
-           XVALID_VERB_LVL,
-           fileprio,
-           tmpvlvl ? " " : " not ",
-           getverblvlname(fileprio));
-
-    logltlf(INTERN_INFO, SET_STR, "file priority");
     fprio = fileprio;
 
-    logltlf(INTERN_DEBUG, RMSG_HHU, fprio);
     return fprio;
 }
 
 int
 seterrwarn(int treatwarnerr)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
-    logltlf(INTERN_INFO,
-            SET_ERRWARN,
-            treatwarnerr ? "Enabling" : "Disabling");
     errwarn = treatwarnerr;
 
-    logltlf(INTERN_DEBUG, RMSG_D, errwarn);
     return errwarn;
 }
 
 static char*
 setfout(void)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
 
     if (!fname)
     {
-        logltstr(WARNING, FN_Z);
-        logltstr(NOTICE, FN_ZMSG);
     }
 
-    logltlstr(INTERN_TRACE, "time(0)\n");
     time_t t        = time(0);
 
-    logltlstr(INTERN_TRACE, "localtime(&t)\n");
     struct tm *ti   = localtime(&t);
     if (!ti) { fatalstr(strerror(errno)); }
 
-    logltlf(INTERN_DEBUG, ALLOC_STR_SZ, "tmpfno", NAME_MAX);
     char *tmpfno    = malloc(NAME_MAX);
     if (!tmpfno) { fatalstr(MALLOC_FAIL); }
 
-    logltlf(INTERN_DEBUG, PARSE_STR, "time");
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
     if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz); }
-    logltf(INTERN_INFO, "%s\n", tmpfno);
 
-    logltlf(INTERN_DEBUG, PARSE_STR, "file");
     tmpfnosz        = sprintf(tmpfno, "%s-%s", tmpfno, fname);
     if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz) }
 
-    logltlf(INTERN_DEBUG, REALLOC_MSG, tmpfno, tmpfnosz);
     if (!realloc(tmpfno, tmpfnosz + 1)) { fatalstr(REALLOC_FAIL); }
 
-    logltf(INTERN_INFO, "%s\n", tmpfno);
     mallstr(tmpfno, &fnout, "fnout");
     fnout = tmpfno;
     fout = fopen(fnout, "a");
-    assert(fout);
 
-    logltlf(INTERN_DEBUG, RMSG_S, fnout);
     return fnout;
 }
 
 char*
 setfilename(char *filename)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
     if (!filename)
     {
-        logltstr(WARNING, FN_Z);
-        logltstr(NOTICE, FN_ZMSG);
-
-        logltlf(INTERN_DEBUG, RMSG_S, fname);
         return fname;
     }
 
-    logltlf(INTERN_TRACE, "%s\n", __func__);
     mallstr(filename, &fname, "fname");
 
-    logltlf(INTERN_DEBUG, SET_STR, "filename");
     fname = filename;
     setfout();
 
