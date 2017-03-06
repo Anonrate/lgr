@@ -28,20 +28,13 @@
 #ifndef LOGLFNXF_H
 #define LOGLFNXF_H
 
-#define loglfnlf(verblvl, fmt, ...) \
-    (                               \
-        lgrf((verblvl),             \
-             getvlvln(verblvl),     \
-             0,                     \
-             0,                     \
-             __func__,              \
-             __LINE__,              \
-             (fmt),                 \
-             __VA_ARGS__)           \
+#define loglfnlf(verblvl, fmt, ...)                                   \
+    (                                                                 \
+        lgrf((verblvl), 0, 0, __func__, __LINE__, (fmt), __VA_ARGS__) \
     )
 
-#define loglfnlstr(verblvl, str)                                            \
-    (                                                                       \
-        lgrf((verblvl), getvlvln(verblvl), 0, 0, __func__, __LINE__, (str)) \
+#define loglfnlstr(verblvl, str)                          \
+    (                                                     \
+        lgrf((verblvl), 0, 0, __func__, __LINE__, (str))  \
     )
 #endif  /* LOGLFNXF_H */
