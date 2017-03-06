@@ -37,10 +37,22 @@
 #define INFO_STR            "INFO"
 #define DEBUG_STR           "DEBUG"
 #define TRACE_STR           "TRACE"
+
+#ifdef  ENABLE_INTERN_WARNING
 #define INTERN_WARNING_STR  "INTERN_WARNING"
+#endif  /* ENABLE_INTERN_WARNING  */
+
+#ifdef  ENABLE_INTERN_INFO
 #define INTERN_INFO_STR     "INTERN_INFO"
+#endif  /* ENABLE_INTERN_INFO     */
+
+#ifdef  ENABLE_INTERN_DEBUG
 #define INTERN_DEBUG_STR    "INTERN_DEBUG"
+#endif  /* ENABLE_INTERN_DEBUG    */
+
+#ifdef  ENABLE_INTERN_TRACE
 #define INTERN_TRACE_STR    "INTERN_TRACE"
+#endif  /* ENABLE_INTERN_TRACE    */
 
 enum
 verblvls
@@ -53,11 +65,22 @@ verblvls
     NOTICE  = 0x4,
     INFO    = 0x5,
     DEBUG   = 0x6,
-    TRACE   = 0x7,
+    TRACE   = 0x7
 
-    INTERN_WARNING  = 0x8,
-    INTERN_INFO     = 0x9,
-    INTERN_DEBUG    = 0xa,
-    INTERN_TRACE    = 0xb
+#ifdef  ENABLE_INTERN_WARNING
+  , INTERN_WARNING  = 0x8,
+#endif  /* ENABLE_INTERN_WARNING  */
+
+#ifdef  ENABLE_INTERN_INFO
+  , INTERN_INFO     = 0x9,
+#endif  /* ENABLE_INTERN_INFO     */
+
+#ifdef  ENABLE_INTERN_DEBUG
+  , INTERN_DEBUG    = 0xa,
+#endif  /* ENABLE_INTERN_DEBUG    */
+
+#ifdef  ENABLE__INTERN_TRACE
+  , INTERN_TRACE    = 0xb
+#endif  /* ENABLE_INTERN_TRACE    */
 };
 #endif  /* LGRVERBLVLS_H */
