@@ -30,32 +30,32 @@
 
 #define logltf(verblvl, fmt, ...)                               \
     (                                                           \
-        lgrf((verblvl), __TIME__, 0, 0, 0, (fmt), __VA_ARGS__)  \
+        lgrf((verblvl), __TIME__, 0, 0, 0u, (fmt), __VA_ARGS__) \
     )
 
-#define logltstr(verblvl, str)                    \
-    (                                             \
-        lgrf((verblvl), __TIME__, 0, 0, 0, (str)) \
+#define logltstr(verblvl, str)                      \
+    (                                               \
+        lgrf((verblvl), __TIME__, 0, 0, 0u, (str))  \
     )
 
-#define logltff(verblvl, fmt, ...)                                    \
-    (                                                                 \
-        lgrf((verblvl), __TIME__, __FILE__, 0, 0, (fmt), __VA_ARGS__) \
+#define logltff(verblvl, fmt, ...)                                      \
+    (                                                                   \
+        lgrf((verblvl), __TIME__, __FILE__, 0, 0u, (fmt), __VA_ARGS__)  \
     )
 
 #define logltfstr(verblvl, str)                           \
     (                                                     \
-        lgrf((verblvl), __TIME__, __FILE__, 0, 0, (str))  \
+        lgrf((verblvl), __TIME__, __FILE__, 0, 0u, (str)) \
     )
 
-#define logltfnf(verblvl, fmt, ...)                                   \
-    (                                                                 \
-        lgrf((verblvl), __TIME__, 0, __func__, 0, (fmt), __VA_ARGS__) \
+#define logltfnf(verblvl, fmt, ...)                                     \
+    (                                                                   \
+        lgrf((verblvl), __TIME__, 0, __func__, 0u, (fmt), __VA_ARGS__)  \
     )
 
 #define logltfnstr(verblvl, str)                          \
     (                                                     \
-        lgrf((verblvl), __TIME__, 0, __func__, 0, (str))  \
+        lgrf((verblvl), __TIME__, 0, __func__, 0u, (str)) \
     )
 
 #define logltlf(verblvl, fmt, ...)                                    \
@@ -63,19 +63,19 @@
         lgrf((verblvl), __TIME__, 0, 0, __LINE__, (fmt), __VA_ARGS__) \
     )
 
-#define logltlstr(verblvl, str)                                             \
-    (                                                                       \
-        lgrf((verblvl), __TIME__, 0, 0, __LINE__, (str)) \
+#define logltlstr(verblvl, str)                           \
+    (                                                     \
+        lgrf((verblvl), __TIME__, 0, 0, __LINE__, (str))  \
     )
 
 #define logltffnf(verblvl, fmt, ...)                                          \
     (                                                                         \
-        lgrf((verblvl), __TIME__, __FILE__, __func__, 0, (fmt), __VA_ARGS__)  \
+        lgrf((verblvl), __TIME__, __FILE__, __func__, 0u, (fmt), __VA_ARGS__) \
     )
 
-#define logltffnstr(verblvl, str)                               \
-    (                                                           \
-        lgrf((verblvl), __TIME__, __FILE__, __func__, 0, (str)) \
+#define logltffnstr(verblvl, str)                                 \
+    (                                                             \
+        lgrf((verblvl), __TIME__, __FILE__, __func__, 0u, (str))  \
     )
 
 #define logltflf(verblvl, fmt, ...)                                           \
