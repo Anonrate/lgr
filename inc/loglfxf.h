@@ -30,22 +30,22 @@
 
 #define loglff(verblvl, fmt, ...)                               \
     (                                                           \
-        lgrf((verblvl), 0, __FILE__, 0, 0, (fmt), __VA_ARGS__)  \
+        lgrf((verblvl), 0, __FILE__, 0, 0u, (fmt), __VA_ARGS__) \
     )
 
-#define loglfstr(verblvl, str)                    \
-    (                                             \
-        lgrf((verblvl), 0, __FILE__, 0, 0, (str)) \
+#define loglfstr(verblvl, str)                      \
+    (                                               \
+        lgrf((verblvl), 0, __FILE__, 0, 0u, (str))  \
     )
 
-#define loglffnf(verblvl, fmt, ...)                                   \
-    (                                                                 \
-        lgrf((verblvl), 0, __FILE__, __func__, 0, (fmt), __VA_ARGS__) \
+#define loglffnf(verblvl, fmt, ...)                                     \
+    (                                                                   \
+        lgrf((verblvl), 0, __FILE__, __func__, 0u, (fmt), __VA_ARGS__)  \
     )
 
-#define loglffnstr(verblvl, str)                                            \
-    (                                                                       \
-        lgrf((verblvl), 0, __FILE__, __func__, 0, (str)) \
+#define loglffnstr(verblvl, str)                          \
+    (                                                     \
+        lgrf((verblvl), 0, __FILE__, __func__, 0u, (str)) \
     )
 
 #define loglflf(verblvl, fmt, ...)                                    \
