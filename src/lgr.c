@@ -1,7 +1,7 @@
 /**
  *  @file     lgr.c
  *  @brief    lgr.c
- *  @version  v.1
+ *  @version  v.4
  *  @date     02/15/2017 18:08:02
  *  @author   Anonrate
  *  @copyright
@@ -35,8 +35,37 @@
 #include  <assert.h>
 
 #define LGR_DEV
+#define ENABLE_INTERN_TRACE
+#define ENABLE_INTERN_DEBUG
+#define ENABLE_INTERN_INFO
+#define ENABLE_INTERN_WARNING
 
 #include  "../inc/lgrverblvls.h"
+
+static const char*
+getvlvln(enum verblvls verblvl)
+{
+    return  ((verblvl ==          FATAL)  ? FATAL_STR
+           : (verblvl ==          ERROR)  ? ERROR_STR
+           : (verblvl ==        WARNING)  ? WARNING_STR
+           : (verblvl ==         NOTICE)  ? NOTICE_STR
+           : (verblvl ==           INFO)  ? INFO_STR
+           : (verblvl ==          DEBUG)  ? DEBUG_STR
+           : (verblvl ==          TRACE)  ? TRACE_STR
+#ifdef  ENABLE_INTERN_WARNING
+           : (verblvl == INTERN_WARNING)  ? INTERN_WARNING_STR
+#endif  /* ENABLE_INTERN_WARNING  */
+#ifdef  ENABLE_INTERN_INFO
+           : (verblvl ==    INTERN_INFO)  ? INTERN_INFO_STR
+#endif  /* ENABLE_INTERN_INFO     */
+#ifdef  ENABLE_INTERN_DEBUG
+           : (verblvl ==   INTERN_DEBUG)  ? INTERN_DEBUG_STR
+#endif  /* ENABLE_INTERN_DEBUG    */
+#ifdef  ENABLE_INTERN_TRACE
+           : (verblvl ==   INTERN_TRACE)  ? INTERN_TRACE_STR
+#endif  /* ENABLE_INTERN_TRACE    */
+           :                                NVALID_VERB_LVL_STR);
+}
 
 #ifdef  LGR_DEV
 static char           *vlvln    = INTERN_TRACE_STR;
@@ -113,8 +142,8 @@ lgrf(enum   verblvls        verblvl,
     va_end(ap);
 }
 
-#include  "../inc/lgr.h"
 #include  "../inc/lgrmsgs.h"
+#include  "../inc/lgr.h"
 
 #ifndef NAME_MAX
 #define NAME_MAX  0xfe
@@ -155,6 +184,7 @@ main(int argc, char **argv)
         fprintf(stderr, "%s\n", (str));       \
         exit(EXIT_FAILURE);                   \
     }
+
 
 char*
 getverblvlname(enum verblvls verblvl)
