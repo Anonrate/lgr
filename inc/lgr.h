@@ -26,46 +26,84 @@
  */
 
 #ifndef LGR_H
-#define LGR_H /**< Include guard for 'lgr.h'. */
+#define LGR_H
 
-#define loglf(verblvl, fmt, ...)                  \
-    (                                             \
-        lgrf((verblvl), 0, 0, (fmt), __VA_ARGS__) \
+#define loglf(verblvl, fmt, ...)                                            \
+    (                                                                       \
+        lgrf((verblvl), getvlvln(verblvl), 0, 0, 0, 0, (fmt), __VA_ARGS__)  \
     )
 
-#define loglstr(verblvl, str)         \
-    (                                 \
-        lgrf((verblvl), 0, 0, (str))  \
+#define loglstr(verblvl, str)                                 \
+    (                                                         \
+        lgrf((verblvl), getvlvln(verblvl), 0, 0, 0, 0, (str)) \
     )
 
-#define logltf(verblvl, fmt, ...)                         \
-    (                                                     \
-        lgrf((verblvl), __TIME__, 0, (fmt), __VA_ARGS__)  \
+#define logltf(verblvl, fmt, ...) \
+    (                             \
+        lgrf((verblvl),           \
+             getvlvln(verblvl),   \
+             __TIME__,            \
+             0,                   \
+             0,                   \
+             0,                   \
+             (fmt),               \
+             __VA_ARGS__)         \
     )
 
-#define logltstr(verblvl, str)              \
-    (                                       \
-        lgrf((verblvl), __TIME__, 0, (str)) \
+#define logltstr(verblvl, str)                                        \
+    (                                                                 \
+        lgrf((verblvl), getvlvln(verblvl), __TIME__, 0, 0, 0, (str))  \
     )
 
-#define logllf(verblvl, fmt, ...)                         \
-    (                                                     \
-        lgrf((verblvl), 0, __LINE__, (fmt), __VA_ARGS__)  \
+#define loglff(verblvl, fmt, ...) \
+    (                             \
+        lgrf((verblvl),           \
+             getvlvln(verblvl),   \
+             0,                   \
+             __FILE__,            \
+             0,                   \
+             0,                   \
+             (fmt),               \
+             __VA_ARGS__)         \
     )
 
-#define logllstr(verblvl, str)              \
-    (                                       \
-        lgrf((verblvl), 0, __LINE__, (str)) \
+#define loglfstr(verblvl, str)                                        \
+    (                                                                 \
+        lgrf((verblvl), getvlvln(verblvl), 0, __FILE__, 0, 0, (str))  \
     )
 
-#define logltlf(verblvl, fmt, ...)                              \
-    (                                                           \
-        lgrf((verblvl), __TIME__, __LINE__, (fmt), __VA_ARGS__) \
+#define loglfnf(verblvl, fmt, ...)  \
+    (                               \
+        lgrf((verblvl),             \
+             getvlvln(verblvl),     \
+             0,                     \
+             0,                     \
+             __func__,              \
+             0,                     \
+             (fmt),                 \
+             __VA_ARGS__)           \
     )
 
-#define logltlstr(verblvl, str)                     \
-    (                                               \
-        lgrf((verblvl), __TIME__, __LINE__, (str))  \
+#define loglfnstr(verblvl, str)                                       \
+    (                                                                 \
+        lgrf((verblvl), getvlvln(verblvl), 0, 0, __func__, 0, (str))  \
+    )
+
+#define logllf(verblvl, fmt, ...) \
+    (                             \
+        lgrf((verblvl),           \
+             getvlvln(verblvl),   \
+             0,                   \
+             0,                   \
+             0,                   \
+             __LINE__,            \
+             (fmt),               \
+             __VA_ARGS__)         \
+    )
+
+#define logllstr(verblvl, str)                                        \
+    (                                                                 \
+        lgrf((verblvl), getvlvln(verblvl), 0, 0, 0, __LINE__, (str))  \
     )
 
 extern char*
