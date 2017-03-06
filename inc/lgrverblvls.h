@@ -26,7 +26,7 @@
  */
 
 #ifndef LGRVERBLVLS_H
-#define LGRVERBLVLS_H /*< Include guard for 'lgrverblvls.h' */
+#define LGRVERBLVLS_H
 
 #define NVALID_VERB_LVL_STR "NVALID_VERB_LVL"
 
