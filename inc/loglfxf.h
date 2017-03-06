@@ -53,9 +53,9 @@
         lgrf((verblvl), 0, __FILE__, 0, __LINE__, (fmt), __VA_ARGS__) \
     )
 
-#define loglflstr(verblvl, str)                                             \
-    (                                                                       \
-        lgrf((verblvl), 0, __FILE__, 0, __LINE__, (str)) \
+#define loglflstr(verblvl, str)                           \
+    (                                                     \
+        lgrf((verblvl), 0, __FILE__, 0, __LINE__, (str))  \
     )
 
 #define logltffnlf(verblvl, fmt, ...)                                         \
