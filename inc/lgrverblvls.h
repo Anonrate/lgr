@@ -57,30 +57,30 @@
 enum
 verblvls
 {
-    NVALID_VERB_LVL = 0x0,
+    NVALID_VERB_LVL = 0x0u,
 
-    FATAL   = 0x1,
-    ERROR   = 0x2,
-    WARNING = 0x3,
-    NOTICE  = 0x4,
-    INFO    = 0x5,
-    DEBUG   = 0x6,
-    TRACE   = 0x7
+    FATAL   = 0x1u,
+    ERROR   = 0x2u,
+    WARNING = 0x3u,
+    NOTICE  = 0x4u,
+    INFO    = 0x5u,
+    DEBUG   = 0x6u,
+    TRACE   = 0x7u
 
 #ifdef  ENABLE_INTERN_WARNING
-  , INTERN_WARNING  = 0x8,
+  , INTERN_WARNING  = 0x8u,
 #endif  /* ENABLE_INTERN_WARNING  */
 
 #ifdef  ENABLE_INTERN_INFO
-  , INTERN_INFO     = 0x9,
+  , INTERN_INFO     = 0x9u,
 #endif  /* ENABLE_INTERN_INFO     */
 
 #ifdef  ENABLE_INTERN_DEBUG
-  , INTERN_DEBUG    = 0xa,
+  , INTERN_DEBUG    = 0xau,
 #endif  /* ENABLE_INTERN_DEBUG    */
 
 #ifdef  ENABLE__INTERN_TRACE
-  , INTERN_TRACE    = 0xb
+  , INTERN_TRACE    = 0xbu
 #endif  /* ENABLE_INTERN_TRACE    */
 };
 #endif  /* LGRVERBLVLS_H */
