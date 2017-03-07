@@ -68,15 +68,15 @@ verblvls
     TRACE   = 0x7u
 
 #ifdef  ENABLE_INTERN_WARNING
-  , INTERN_WARNING  = 0x8u,
+  , INTERN_WARNING  = 0x8u
 #endif  /* ENABLE_INTERN_WARNING  */
 
 #ifdef  ENABLE_INTERN_INFO
-  , INTERN_INFO     = 0x9u,
+  , INTERN_INFO     = 0x9u
 #endif  /* ENABLE_INTERN_INFO     */
 
 #ifdef  ENABLE_INTERN_DEBUG
-  , INTERN_DEBUG    = 0xau,
+  , INTERN_DEBUG    = 0xau
 #endif  /* ENABLE_INTERN_DEBUG    */
 
 #ifdef  ENABLE__INTERN_TRACE
