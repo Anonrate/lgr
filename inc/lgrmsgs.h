@@ -28,7 +28,7 @@
 #ifndef LGRMSGS_H
 #define LGRMSGS_H
 
-#define RMSG_LHHU(l, hhu)           \
+#define R_MSGLHHU(l, hhu)           \
     (                               \
         lgr((l),                    \
             __TIME__,               \
@@ -39,7 +39,7 @@
             (hhu))                  \
     )
 
-#define RMSG_LD(l, d)             \
+#define R_MSGLD(l, d)             \
     (                             \
         lgr((l),                  \
             __TIME__,             \
@@ -50,7 +50,7 @@
             (d))                  \
     )
 
-#define RMSG_LU(l, u)             \
+#define R_MSGLU(l, u)             \
     (                             \
         lgr((l),                  \
             __TIME__,             \
@@ -61,7 +61,7 @@
             (u))                  \
     )
 
-#define RMSG_LS(l, str)           \
+#define R_MSGLS(l, str)           \
     (                             \
         lgr((l),                  \
             __TIME__,             \
