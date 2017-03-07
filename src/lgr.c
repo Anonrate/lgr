@@ -35,10 +35,23 @@
 #include  <assert.h>
 
 #define LGR_DEV
-#define ENABLE_INTERN_TRACE
-#define ENABLE_INTERN_DEBUG
-#define ENABLE_INTERN_INFO
+#ifdef  LGR_DEV
+#ifndef ENABLE_INTERN_WARNING
 #define ENABLE_INTERN_WARNING
+#endif  /* ENABLE_INTERN_WARNING  */
+
+#ifndef ENABLE_INTERN_INFO
+#define ENABLE_INTERN_INFO
+#endif  /* ENABLE_INTERN_INFO     */
+
+#ifndef ENABLE_INTERN_DEBUG
+#define ENABLE_INTERN_DEBUG
+#endif  /* ENABLE_INTERN_DEBUG    */
+
+#ifndef ENABLE_INTERN_TRACE
+#define ENABLE_INTERN_TRACE
+#endif  /* ENABLE_INTERN_TRACE    */
+#endif  /* LGR_DEV                */
 
 #include  "../inc/lgrverblvls.h"
 
@@ -55,15 +68,19 @@ getvlvln(enum verblvls verblvl)
 #ifdef  ENABLE_INTERN_WARNING
            : (verblvl == INTERN_WARNING)  ? INTERN_WARNING_STR
 #endif  /* ENABLE_INTERN_WARNING  */
+
 #ifdef  ENABLE_INTERN_INFO
            : (verblvl ==    INTERN_INFO)  ? INTERN_INFO_STR
 #endif  /* ENABLE_INTERN_INFO     */
+
 #ifdef  ENABLE_INTERN_DEBUG
            : (verblvl ==   INTERN_DEBUG)  ? INTERN_DEBUG_STR
 #endif  /* ENABLE_INTERN_DEBUG    */
+
 #ifdef  ENABLE_INTERN_TRACE
            : (verblvl ==   INTERN_TRACE)  ? INTERN_TRACE_STR
 #endif  /* ENABLE_INTERN_TRACE    */
+
            :                                NVALID_VERB_LVL_STR);
 }
 
@@ -91,6 +108,8 @@ static FILE           *fout;
 static void
 lgrf(enum   verblvls        verblvl,
      const            char  *timestr,
+     const            char  *filestr,
+     const            char  *funcstr,
      const  unsigned  int   line,
      const            char  *strfmt, ...)
 {
@@ -123,42 +142,30 @@ lgrf(enum   verblvls        verblvl,
         else { fprintf(fpstrm, "%9s  ", "]"); }
     }
 
-    char *tvlvln    = verblvl == INTERN_TRACE   ? INTERN_TRACE_STR
-                    : verblvl == INTERN_DEBUG   ? INTERN_DEBUG_STR
-                    : verblvl == INTERN_INFO    ? INTERN_INFO_STR
-                    : verblvl == INTERN_WARNING ? INTERN_WARNING_STR
-                    : verblvl == TRACE          ? TRACE_STR
-                    : verblvl == DEBUG          ? DEBUG_STR
-                    : verblvl == INFO           ? INFO_STR
-                    : verblvl == NOTICE         ? NOTICE_STR
-                    : verblvl == WARNING        ? WARNING_STR
-                    : verblvl == ERROR          ? ERROR_STR
-                    : verblvl == FATAL          ? FATAL_STR
-                    : NVALID_VERB_LVL_STR;
-    fprintf(fpstrm, "%-14s  ", tvlvln);
+    fprintf(fpstrm, "%-14s  ", getvlvln(verblvl));
     va_list ap;
     va_start(ap, strfmt);
     vfprintf(fpstrm, strfmt, ap);
     va_end(ap);
 }
 
-#include  "../inc/lgrmsgs.h"
-#include  "../inc/lgr.h"
-
 #ifndef NAME_MAX
 #define NAME_MAX  0xfe
 #endif  /* NAME_MAX */
 
 #ifdef  LGR_DEV
+#ifndef LOGLTXF_H
+#include  "../inc/lgrmsgs.h"
+#include  "../inc/logltxf.h"
+#endif  /* LOGLTXF_H  */
+
 int
 main(int argc, char **argv)
 {
-    setfilename("lgr");
-    printf("%s\n", fnout);
-    fclose(fout);
+    INFUNC_MSGL(INTERN_DEBUG);
     return EXIT_SUCCESS;
 }
-#endif  /* LGR_DEV */
+#endif  /* LGR_DEV    */
 
 #define fatalf(fmt, ...)                      \
     {                                         \
@@ -185,11 +192,12 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);                   \
     }
 
+#include  "../inc/lgr.h"
 
 char*
 getverblvlname(enum verblvls verblvl)
 {
-    logltlf(INTERN_DEBUG, "%s\n", __func__);
+    INFUNC_MSGL(INTERN_DEBUG);
 
     unsigned char tmpvlvl = INTERN_INFO;
 
@@ -214,6 +222,7 @@ int
 isverblvl(unsigned char lvl)
 {
 
+    INFUNC_MSGL(INTERN_DEBUG);
     unsigned char tmpvlvl = INTERN_INFO;
 
     int tmplvl =
@@ -235,7 +244,7 @@ mallstr(char *stra, char **pstrb, char *strbn)
     if (tmpstrbsz != tmpstrasz)
     {
         if (!(*pstrb = malloc(tmpstrasz + 1ul))) {
-            fatalstr(MALLOC_FAIL);
+           // fatalstr(MALLOC_FAIL);
         }
 
     }
@@ -291,7 +300,7 @@ setverblvl(enum verblvls verblvl)
         setvlvln(verblvl);
 
         int ti = strcmp(vlvln, getverblvlname(vlvl));
-        if (ti) { fatalf(VALIDATE_FAIL, ti); }
+        //if (ti) { fatalf(VALIDATE_FAIL, ti); }
 
 
         return vlvl;
@@ -353,15 +362,15 @@ setfout(void)
     if (!ti) { fatalstr(strerror(errno)); }
 
     char *tmpfno    = malloc(NAME_MAX);
-    if (!tmpfno) { fatalstr(MALLOC_FAIL); }
+    //if (!tmpfno) { fatalstr(MALLOC_FAIL); }
 
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
-    if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz); }
+    //if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz); }
 
     tmpfnosz        = sprintf(tmpfno, "%s-%s", tmpfno, fname);
-    if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz) }
+    //if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz) }
 
-    if (!realloc(tmpfno, tmpfnosz + 1)) { fatalstr(REALLOC_FAIL); }
+    //if (!realloc(tmpfno, tmpfnosz + 1)) { fatalstr(REALLOC_FAIL); }
 
     mallstr(tmpfno, &fnout, "fnout");
     fnout = tmpfno;
