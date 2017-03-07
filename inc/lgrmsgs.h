@@ -64,7 +64,7 @@
                    "Updating: %s from: %hhu to: %hhu...\n", \
                    (s),                                     \
                    (hhua),                                  \
-                   (hhub))                                  \\
+                   (hhub))                                  \
     )
 
 #define SET_MSGLSD(l, s, da, db)                                              \
