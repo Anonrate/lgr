@@ -27,9 +27,54 @@
 
 #ifndef LGRMSGS_H
 #define LGRMSGS_H
-#define INFUNC_MSG(verblvl)       \
+
+#define RMSG_LHHU(l, hhu)           \
+    (                               \
+        lgr((l),                    \
+            __TIME__,               \
+            __FILE__,               \
+            __func__,               \
+            __LINE__,               \
+            "Returning %hhu...\n",  \
+            (hhu))                  \
+    )
+
+#define RMSG_LD(l, d)             \
     (                             \
-        lgr((verblvl),            \
+        lgr((l),                  \
+            __TIME__,             \
+            __FILE__,             \
+            __func__,             \
+            __LINE__,             \
+            "Returning %d...\n",  \
+            (d))                  \
+    )
+
+#define RMSG_LU(l, u)             \
+    (                             \
+        lgr((l),                  \
+            __TIME__,             \
+            __FILE__,             \
+            __func__,             \
+            __LINE__,             \
+            "Returning %u...\n",  \
+            (u))                  \
+    )
+
+#define RMSG_LS(l, str)           \
+    (                             \
+        lgr((l),                  \
+            __TIME__,             \
+            __FILE__,             \
+            __func__,             \
+            __LINE__,             \
+            "Returning %s...\n",  \
+            (str))                \
+    )
+
+#define INFUNC_MSGL(l)            \
+    (                             \
+        lgr((l),                  \
             __TIME__,             \
             __FILE__,             \
             __func__,             \
