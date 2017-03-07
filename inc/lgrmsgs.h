@@ -28,53 +28,30 @@
 #ifndef LGRMSGS_H
 #define LGRMSGS_H
 
-#define R_MSGLHHU(l, hhu)           \
-    (                               \
-        lgr((l),                    \
-            __TIME__,               \
-            __FILE__,               \
-            __func__,               \
-            __LINE__,               \
-            "Returning %hhu...\n",  \
-            (hhu))                  \
-    )
-
-#define R_MSGLD(l, d)             \
-    (                             \
-        lgr((l),                  \
-            __TIME__,             \
-            __FILE__,             \
-            __func__,             \
-            __LINE__,             \
-            "Returning %d...\n",  \
-            (d))                  \
-    )
-
-#define R_MSGLU(l, u)             \
-    (                             \
-        lgr((l),                  \
-            __TIME__,             \
-            __FILE__,             \
-            __func__,             \
-            __LINE__,             \
-            "Returning %u...\n",  \
-            (u))                  \
-    )
-
-#define R_MSGLS(l, s)             \
-    (                             \
-        lgr((l),                  \
-            __TIME__,             \
-            __FILE__,             \
-            __func__,             \
-            __LINE__,             \
-            "Returning %s...\n",  \
-            (s))                  \
-    )
-
-#define INFUNC_MSGL(l)                                \
+#define R_MSGLHHU(l, hhu)                             \
     (                                                 \
-        logltffnlf((l), "Entering %s...\n", __func__) \
+        logltffnlf((l), "Returning %hhu...\n", (hhu)) \
+    )
+
+#define R_MSGLD(l, d)                             \
+    (                                             \
+        logltffnlf((l), "Returning %d...\n", (d)) \
+    )
+
+#define R_MSGLU(l, u)                             \
+    (                                             \
+        logltffnlf((l), "Returning %u...\n", (u)) \
+    )
+
+#define R_MSGLS(l, s)                             \
+    (                                             \
+                                                  \
+        logltffnlf((l), "Returning %s...\n", (s)) \
+    )
+
+#define INFUNC_MSGL(l)                                  \
+    (                                                   \
+        logltffnlf((l), "Entering %s()...\n", __func__) \
     )
 
 #define GET_MSGLS(l, s)                         \
