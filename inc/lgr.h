@@ -38,46 +38,6 @@
         lgrf((verblvl), 0, 0, 0, 0, (str))  \
     )
 
-#define logltf(verblvl, fmt, ...)                               \
-    (                                                           \
-        lgrf((verblvl), __TIME__, 0, 0, 0, (fmt), __VA_ARGS__)  \
-    )
-
-#define logltstr(verblvl, str)                    \
-    (                                             \
-        lgrf((verblvl), __TIME__, 0, 0, 0, (str)) \
-    )
-
-#define loglff(verblvl, fmt, ...)                               \
-    (                                                           \
-        lgrf((verblvl), 0, __FILE__, 0, 0, (fmt), __VA_ARGS__)  \
-    )
-
-#define loglfstr(verblvl, str)                    \
-    (                                             \
-        lgrf((verblvl), 0, __FILE__, 0, 0, (str)) \
-    )
-
-#define loglfnf(verblvl, fmt, ...)                              \
-    (                                                           \
-        lgrf((verblvl), 0, 0, __func__, 0, (fmt), __VA_ARGS__)  \
-    )
-
-#define loglfnstr(verblvl, str)                   \
-    (                                             \
-        lgrf((verblvl), 0, 0, __func__, 0, (str)) \
-    )
-
-#define logllf(verblvl, fmt, ...)                               \
-    (                                                           \
-        lgrf((verblvl), 0, 0, 0, __LINE__, (fmt), __VA_ARGS__)  \
-    )
-
-#define logllstr(verblvl, str)                    \
-    (                                             \
-        lgrf((verblvl), 0, 0, 0, __LINE__, (str)) \
-    )
-
 extern char*
 getverblvlname(enum verblvls verblvl);
 
@@ -108,9 +68,6 @@ setfilename(char *filename);
 extern char*
 getfilename(void);
 
-static inline int
-getlogtofile(void)
-{
-    logltffnlf(INTERN_DEBUG, )
-}
+extern int
+getlogtofile(void);
 #endif  /* LGR_H */
