@@ -62,4 +62,9 @@
     (                                                                         \
         logltffnlf((l), "Updating: %s from: %d to: %d...\n", (s), (da), (db)) \
     )
+
+#define CALLFN_MSGLS(l, s)                                          \
+    (                                                               \
+        logltffnlf((l), "Calling: %s from %s...\n", (s), __func__)  \
+    )
 #endif  /* LGRMSGS_H */
