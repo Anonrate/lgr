@@ -45,7 +45,6 @@
 
 #define R_MSGLS(l, s)                             \
     (                                             \
-                                                  \
         logltffnlf((l), "Returning %s...\n", (s)) \
     )
 
