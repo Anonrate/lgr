@@ -28,6 +28,16 @@
 #ifndef LOGLTXF_H
 #define LOGLTFX_H
 
+#define logltf(verblvl, fmt, ...)                               \
+    (                                                           \
+        lgrf((verblvl), __TIME__, 0, 0, 0, (fmt), __VA_ARGS__)  \
+    )
+
+#define logltstr(verblvl, str)                    \
+    (                                             \
+        lgrf((verblvl), __TIME__, 0, 0, 0, (str)) \
+    )
+
 #define logltff(verblvl, fmt, ...)                                      \
     (                                                                   \
         lgrf((verblvl), __TIME__, __FILE__, 0, 0u, (fmt), __VA_ARGS__)  \
