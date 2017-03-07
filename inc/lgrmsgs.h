@@ -61,7 +61,7 @@
             (u))                  \
     )
 
-#define R_MSGLS(l, str)           \
+#define R_MSGLS(l, s)             \
     (                             \
         lgr((l),                  \
             __TIME__,             \
@@ -69,17 +69,16 @@
             __func__,             \
             __LINE__,             \
             "Returning %s...\n",  \
-            (str))                \
+            (s))                  \
     )
 
-#define INFUNC_MSGL(l)            \
-    (                             \
-        lgr((l),                  \
-            __TIME__,             \
-            __FILE__,             \
-            __func__,             \
-            __LINE__,             \
-            "Entering %s()...\n", \
-            __func__)             \
+#define INFUNC_MSGL(l)                                \
+    (                                                 \
+        logltffnlf((l), "Entering %s...\n", __func__) \
+    )
+
+#define GET_MSGLS(l, s)                         \
+    (                                           \
+        logltffnlf((l), "Getting %s...\n", (s)) \
     )
 #endif  /* LGRMSGS_H */
