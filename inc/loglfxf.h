@@ -48,12 +48,12 @@
         lgrf((verblvl), 0, __FILE__, 0, __LINE__, (str))  \
     )
 
-#define logltffnlf(verblvl, fmt, ...)                                         \
+#define loglffnlf(verblvl, fmt, ...)                                          \
     (                                                                         \
         lgrf((verblvl), 0, __FILE__, __func__, __LINE__, (fmt), __VA_ARGS__)  \
     )
 
-#define logltffnlstr(verblvl, str)                              \
+#define loglffnlstr(verblvl, str)                               \
     (                                                           \
         lgrf((verblvl), 0, __FILE__, __func__, __LINE__, (str)) \
     )
