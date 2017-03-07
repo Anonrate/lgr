@@ -79,7 +79,7 @@ verblvls
   , INTERN_DEBUG    = 0xau
 #endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE__INTERN_TRACE
+#ifdef  ENABLE_INTERN_TRACE
   , INTERN_TRACE    = 0xbu
 #endif  /* ENABLE_INTERN_TRACE    */
 };
