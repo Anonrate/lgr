@@ -1,6 +1,6 @@
 /**
- *  @file     loglnf.h
- *  @brief    loglnf.h
+ *  @file     logllf.h
+ *  @brief    logllf.h
  *  @version  v.1
  *  @date     03/06/2017 22:38:26
  *  @author   Anonrate
@@ -25,8 +25,8 @@
  *    \endparblock
  */
 
-#ifndef LOGLNF_H
-#define LOGLNF_H
+#ifndef LOGLLF_H
+#define LOGLLF_H
 
 #define logllf(verblvl, fmt, ...)                               \
     (                                                           \
@@ -37,4 +37,4 @@
     (                                             \
         lgrf((verblvl), 0, 0, 0, __LINE__, (str)) \
     )
-#endif  /* LOGLNF_H */
+#endif  /* LOGLLF_H */
