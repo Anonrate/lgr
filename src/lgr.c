@@ -197,6 +197,10 @@ main(int argc, char **argv)
 char*
 getverblvlname(enum verblvls verblvl)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
+
     INFUNC_MSGL(INTERN_DEBUG);
 
     unsigned char tmpvlvl = INTERN_INFO;
@@ -215,12 +219,18 @@ getverblvlname(enum verblvls verblvl)
 
                     : (tmpvlvl = WARNING, NVALID_VERB_LVL_STR);
 
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLS
+    R_MSGLS(INTERN_DEBUG, tmpvlvln);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLS      */
     return tmpvlvln;
 }
 
 int
 isverblvl(unsigned char lvl)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
     INFUNC_MSGL(INTERN_DEBUG);
     unsigned char tmpvlvl = INTERN_INFO;
@@ -230,12 +240,19 @@ isverblvl(unsigned char lvl)
          ? lvl
          : (tmpvlvl = INTERN_WARNING, NVALID_VERB_LVL));
 
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLD
+    R_MSGLD(INTERN_DEBUG, tmplvl);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLD      */
     return tmplvl;
 }
 
 static void
 mallstr(char *stra, char **pstrb, char *strbn)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
+
     if (!*pstrb) { (*pstrb) = malloc(1); }
 
     size_t tmpstrbsz   = strlen(*pstrb);
@@ -253,11 +270,16 @@ mallstr(char *stra, char **pstrb, char *strbn)
 static char*
 setvlvln(enum verblvls verblvl)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
     char *tmpvlvln = getverblvlname(verblvl);
     if (!strcmp(vlvln, tmpvlvln))
     {
-
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLS
+        R_MSGLS(INTERN_DEBUG, vlvln);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLS      */
         return vlvln;
     }
 
@@ -267,29 +289,45 @@ setvlvln(enum verblvls verblvl)
         mallstr(tmpvlvln, &vlvln, "vlvln");
 
         vlvln = tmpvlvln;
-
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLS
+        R_MSGLS(INTERN_DEBUG, vlvln);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLS      */
         return vlvln;
     }
 
-
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLS
+    R_MSGLS(INTERN_DEBUG, vlvln);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLS      */
     return vlvln;
 }
 
 static unsigned char
 setvlvl(unsigned char verblvl)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
     vlvl = verblvl;
 
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLHHU
+    R_MSGLS(INTERN_DEBUG, verblvl);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLHHU    */
     return (verblvl);
 }
 
 int
 setverblvl(enum verblvls verblvl)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
     if (vlvl == verblvl)
     {
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLD
+        R_MSGLD(INTERN_DEBUG, vlvl);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLD      */
         return vlvl;
     }
 
@@ -302,55 +340,104 @@ setverblvl(enum verblvls verblvl)
         int ti = strcmp(vlvln, getverblvlname(vlvl));
         //if (ti) { fatalf(VALIDATE_FAIL, ti); }
 
-
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLD
+        R_MSGLD(INTERN_DEBUG, vlvl);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLD      */
         return vlvl;
     }
-
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLD
+    R_MSGLD(INTERN_DEBUG, vlvl);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLD      */
     return vlvl;
 }
 
 enum verblvls
 getverblvl()
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
+#if defined ENABLE_INTERN_INFO  && defined GET_MSGLS
+    GET_MSGLS(INTERN_INFO, "vlvl");
+#endif  /* ENABLE_INTERN_INFO   && GET_MSGLS    */
+
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLHHU
+    R_MSGLS(INTERN_DEBUG, fprio);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLHHU    */
     return vlvl;
 }
 
 enum verblvls
 getfileprio(void)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
+#if defined ENABLE_INTERN_INFO  && defined GET_MSGLS
+    GET_MSGLS(INTERN_INFO, "fprio");
+#endif  /* ENABLE_INTERN_INFO   && GET_MSGLS    */
+
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLHHU
+    R_MSGLS(INTERN_DEBUG, fprio);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLHHU    */
     return fprio;
 }
 
 int
 geterrwarn(void)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
+
+#if defined ENABLE_INTERN_INFO  && defined GET_MSGLS
+    GET_MSGLS(INTERN_INFO, "ltf");
+#endif  /* ENABLE_INTERN_INFO   && GET_MSGLS    */
+
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLD
+    R_MSGLD(INTERN_DEBUG, errwarn);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLD      */
     return errwarn;
 }
 
 enum verblvls
 setfileprio(enum verblvls fileprio)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
     unsigned char tmpvlvl = isverblvl(fileprio);
     fprio = fileprio;
-
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLHHU
+    R_MSGLS(INTERN_DEBUG, fprio);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLHHU    */
     return fprio;
 }
 
 int
 seterrwarn(int treatwarnerr)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
     errwarn = treatwarnerr;
 
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLD
+    R_MSGLD(INTERN_DEBUG, errwarn);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLD      */
     return errwarn;
 }
 
 static char*
 setfout(void)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
 
     if (!fname)
     {
@@ -376,12 +463,19 @@ setfout(void)
     fnout = tmpfno;
     fout = fopen(fnout, "a");
 
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLS
+    R_MSGLS(INTERN_DEBUG, fnout);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLS      */
     return fnout;
 }
 
 char*
 setfilename(char *filename)
 {
+#if defined ENABLE_INTERN_DEBUG && defined INFUNC_MSGL
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG  && INFUNC_MSGL  */
+
     if (!filename)
     {
         return fname;
@@ -392,5 +486,8 @@ setfilename(char *filename)
     fname = filename;
     setfout();
 
+#if defined ENABLE_INTERN_DEBUG && defined R_MSGLS
+    R_MSGLS(INTERN_DEBUG, fname);
+#endif  /* ENABLE_INTERN_DEBUG  && R_MSGLS      */
     return fname;
 }
