@@ -25,7 +25,7 @@
  *    \endparblock
  */
 
-#ifndef (LOGLFXF_H)
+#ifndef LOGLFXF_H
 #define LOGLFXF_H
 
 #define loglff(verblvl, fmt, ...)                               \
