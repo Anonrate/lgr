@@ -179,11 +179,20 @@ lgrf(enum   verblvls        verblvl,
  || defined ENABLE_INTERN_TRACE
 #ifndef LGRMSGS_H
 #include  "../inc/lgrmsgs.h"
-#endif  /* LGRMSGS_H */
+#endif  /* LGRMSGS_H  */
 
-#ifndef LOGLTXF_H
-#include  "../inc/logltxf.h"
-#endif  /* LOGLTXF_H */
+#ifndef logltffnlf
+#define logltffnlf(verblvl, fmt, ...) \
+    (                                 \
+        lgrf((verblvl),               \
+             __TIME__,                \
+             __FILE__,                \
+             __func__,                \
+             __LINE__,                \
+             (fmt),                   \
+             __VA_ARGS__)             \
+    )
+#endif  /* logltffnlf */
 #endif  /*
          *     ENABLE_INTERN_WARNING
          *  || ENABLE_INTERN_INFO
@@ -281,6 +290,8 @@ isverblvl(unsigned char lvl)
 #if defined ENABLE_INTERN_DEBUG && defined LGRMSGS_H
     INFUNC_MSGL(INTERN_DEBUG);
 #endif  /* ENABLE_INTERN_DEBUG  && LGRMSGS_H    */
+
+#ifdef  ENABLE_INTERN_INFO
     unsigned char tmpvlvl = INTERN_INFO;
 
     int tmplvl =
