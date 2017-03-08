@@ -84,4 +84,5 @@
         logltffnlf((l), "      char **pstrb = &%s(%s)\n", (#sb), (sb)); \
         logltffnlf((l), "      char *strbn  = \"%s\"\n", (#sb));        \
     }
-#endif  /* LGRMSGS_H */
+#endif  /* LGR_DEV    */
+#endif  /* LGRMSGS_H  */
