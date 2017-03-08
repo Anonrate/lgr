@@ -78,7 +78,7 @@
     )
 
 #ifdef  LGR_DEV
-#define MALLSTR_DEVMSGLSS(sa, sb)                     \
+#define MALLSTR_DEVMSGSS(sa, sb)                      \
     {                                                 \
         logltffnlf(DEV_INTERN_TRACE,                  \
                    "const char *stra   = %s(%s)\n",   \
