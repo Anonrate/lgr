@@ -93,4 +93,6 @@
                    (#sb));                            \
     }
 #endif  /* LGR_DEV    */
+
+#define MALLOC_FAIL_MSGSF "Failed to allocated memory for %s!\n"
 #endif  /* LGRMSGS_H  */
