@@ -38,7 +38,7 @@
         lgrf((verblvl), 0, 0, 0, 0, (str))  \
     )
 
-extern char*
+extern const char*
 getverblvlname(enum verblvls verblvl);
 
 extern int

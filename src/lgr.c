@@ -228,7 +228,7 @@ main(int argc, char **argv)
     }
 
 
-char*
+const char*
 getverblvlname(enum verblvls verblvl)
 {
 #if defined ENABLE_INTERN_DEBUG && defined LGRMSGS_H
