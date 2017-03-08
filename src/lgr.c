@@ -227,6 +227,22 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);                   \
     }
 
+/*
+ *  Defined here just in case if header 'logltxf.h' was not included for
+ *    whatever reason the user may have.
+ */
+#ifndef logltffnlf
+#define logltffnlf(verblvl, fmt, ...) \
+    (                                 \
+        lgrf((verblvl),               \
+             __TIME__,                \
+             __FILE__,                \
+             __func__,                \
+             __LINE__,                \
+             (fmt),                   \
+             __VA_ARGS__)             \
+    )
+#endif  /* logltffnlf */
 
 const char*
 getverblvlname(enum verblvls verblvl)
@@ -243,11 +259,15 @@ getverblvlname(enum verblvls verblvl)
     unsigned  char  tmpvlvl;
 #ifdef  ENABLE_INTERN_INFO
     tmpvlvl = INTERN_INFO;
-#endif  /* ENABLE_INTERN_INFO */
-              char  *tmpstr = ((strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
-                            ? " "
-                            : (tmpvlvl = WARNING, " not "));
+              char  *tmpstr   = ((strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
+                              ? " "
+                              : (tmpvlvl = WARNING, " not "));
     logltffnlf(tmpvlvl, "%hhu is%sa valid verbose level!\n", verblvl, tmpstr);
+#else /* !defined ENABLE_INTERN_INFO  */
+    if (strcmp(tmpvlvlv, NVALID_VERB_LVL_STR)) {
+        logltffnlf(WARNING, "%hhu is not a valid verbose level!\n", verblvl);
+    }
+#endif  /* ENABLE_INTERN_INFO */
 
 #if defined ENABLE_INTERN_DEBUG && defined LGRMSGS_H
     R_MSGLS(INTERN_DEBUG, tmpvlvln);
