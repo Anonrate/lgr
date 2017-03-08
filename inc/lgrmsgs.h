@@ -58,18 +58,22 @@
         logltffnlf((l), "Getting %s...\n", (s)) \
     )
 
-#define SET_MSGLSHHU(l, s, hhua, hhub)                      \
+#define SET_MSGLHHU(l, hhua, hhub)                          \
     (                                                       \
         logltffnlf((l),                                     \
                    "Updating: %s from: %hhu to: %hhu...\n", \
-                   (s),                                     \
+                   (#hhua),                                 \
                    (hhua),                                  \
                    (hhub))                                  \
     )
 
-#define SET_MSGLSD(l, s, da, db)                                              \
-    (                                                                         \
-        logltffnlf((l), "Updating: %s from: %d to: %d...\n", (s), (da), (db)) \
+#define SET_MSGLSD(l, da, db)                           \
+    (                                                   \
+        logltffnlf((l),                                 \
+                   "Updating: %s from: %d to: %d...\n", \
+                   (#da),                               \
+                   (da),                                \
+                   (db))                                \
     )
 
 #define CALLFN_MSGLS(l, s)                                          \
