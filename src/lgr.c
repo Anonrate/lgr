@@ -156,10 +156,10 @@ lgrf(enum   verblvls        verblvl,
     if (timestr || line)
     {
         fprintf(fpstrm, "[");
-        if (timestr)          { fprintf(fpstrm, "%s", timestr); }
-        if (timestr && line)  { fprintf(fpstrm, ":%7u]  ", line); }
-        else if (line)        { fprintf(fpstrm, "%7u]  ", line); }
-        else { fprintf(fpstrm, "%9s  ", "]"); }
+        if (timestr)          { fprintf(fpstrm, "%s",       timestr); }
+        if (timestr && line)  { fprintf(fpstrm, ":%7u]  ",  line);    }
+        else if (line)        { fprintf(fpstrm, "%7u]  ",   line);    }
+        else                  { fprintf(fpstrm, "%9s  ",    "]");     }
     }
 
     fprintf(fpstrm, "%-14s  ", getvlvln(verblvl));
