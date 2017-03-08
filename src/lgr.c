@@ -241,7 +241,7 @@ getverblvlname(enum verblvls verblvl)
     char *tmpvlvln  = getvlvln(verblvl);
 
     unsigned  char  tmpvlvl;
-#ifdef  (ENABLE_INTERN_INFO)
+#ifdef  ENABLE_INTERN_INFO
     tmpvlvl = INTERN_INFO;
 #endif  /* ENABLE_INTERN_INFO */
               char  *tmpstr = ((strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
