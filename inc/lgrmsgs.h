@@ -25,7 +25,7 @@
  *    \endparblock
  */
 
-#ifndef LGRMSGS_H
+#ifndef (LGRMSGS_H)
 #define LGRMSGS_H
 
 #define R_MSGLHHU(l, hhu)                             \

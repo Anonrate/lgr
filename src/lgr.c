@@ -35,20 +35,20 @@
 #include  <assert.h>
 
 #define LGR_DEV
-#ifdef  LGR_DEV
-#ifndef ENABLE_INTERN_WARNING
+#ifdef  (LGR_DEV)
+#ifndef (ENABLE_INTERN_WARNING)
 #define ENABLE_INTERN_WARNING
 #endif  /* ENABLE_INTERN_WARNING  */
 
-#ifndef ENABLE_INTERN_INFO
+#ifndef (ENABLE_INTERN_INFO)
 #define ENABLE_INTERN_INFO
 #endif  /* ENABLE_INTERN_INFO     */
 
-#ifndef ENABLE_INTERN_DEBUG
+#ifndef (ENABLE_INTERN_DEBUG)
 #define ENABLE_INTERN_DEBUG
 #endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifndef ENABLE_INTERN_TRACE
+#ifndef (ENABLE_INTERN_TRACE)
 #define ENABLE_INTERN_TRACE
 #endif  /* ENABLE_INTERN_TRACE    */
 #endif  /* LGR_DEV                */
