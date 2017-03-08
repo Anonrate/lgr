@@ -238,7 +238,7 @@ getverblvlname(enum verblvls verblvl)
 #if defined ENABLE_INTERN_TRACE && defined LGRMSGS_H
     CALLFN_MSGLS(INTERN_TRACE, "getvlvln()");
 #endif  /* ENABLE_INTERN_TRACE  && LGRMSGS_H    */
-    char *tmpvlvln  = getvlvln(verblvl);
+    const     char *tmpvlvln  = getvlvln(verblvl);
 
     unsigned  char  tmpvlvl;
 #ifdef  ENABLE_INTERN_INFO
