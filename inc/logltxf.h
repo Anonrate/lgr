@@ -98,6 +98,7 @@
         lgrf((verblvl), __TIME__, 0, __func__, __LINE__, (str)) \
     )
 
+#ifndef logltffnlf
 #define logltffnlf(verblvl, fmt, ...) \
     (                                 \
         lgrf((verblvl),               \
@@ -108,6 +109,7 @@
              (fmt),                   \
              __VA_ARGS__)             \
     )
+#endif  /* logltffnlf */
 
 #define logltffnlstr(verblvl, str)                                      \
     (                                                                   \
