@@ -99,7 +99,7 @@ static enum verblvls  fprio     = ERROR;
 static int            errwarn   = 0;
 
 static char           *fnsfxfmt = "%y%m%d%H%M%S";
-static char           *fname    = "\0"
+static char           *fname    = "\0";
 
 static char           *fnout    = "\0";
 
