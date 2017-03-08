@@ -305,7 +305,7 @@ setvlvln(enum verblvls verblvl)
 #if defined ENABLE_INTERN_TRACE && defined LGRMSGS_H
     CALLFN_MSGLS(INTERN_TRACE, "getverblvlname()");
 #endif  /* ENABLE_INTERN_TRACE  && LGRMSGS_H    */
-    char *tmpvlvln = getverblvlname(verblvl);
+    const char *tmpvlvln = getverblvlname(verblvl);
     if (!strcmp(vlvln, tmpvlvln))
     {
 #if defined ENABLE_INTERN_DEBUG && defined LGRMSGS_H
