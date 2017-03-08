@@ -321,7 +321,8 @@ setvlvln(enum verblvls verblvl)
 #endif  /* ENABLE_INTERN_TRACE  && LGRMSGS_H    */
         mallstr(tmpvlvln, &vlvln, "vlvln");
 
-        vlvln = tmpvlvln;
+        strcpy(vlvln, tmpvlvln);
+        //vlvln = tmpvlvln;
 #if defined ENABLE_INTERN_DEBUG && defined LGRMSGS_H
         R_MSGLS(INTERN_DEBUG, vlvln);
 #endif  /* ENABLE_INTERN_DEBUG  && LGRMSGS_H    */
