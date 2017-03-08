@@ -275,7 +275,7 @@ isverblvl(unsigned char lvl)
 }
 
 static void
-mallstr(char *stra, char **pstrb, char *strbn)
+mallstr(const char *stra, char **pstrb, char *strbn)
 {
 #if defined ENABLE_INTERN_DEBUG && defined LGRMSGS_H
     INFUNC_MSGL(INTERN_DEBUG);
