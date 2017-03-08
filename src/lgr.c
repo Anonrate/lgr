@@ -180,19 +180,6 @@ lgrf(enum   verblvls        verblvl,
 #ifndef LGRMSGS_H
 #include  "../inc/lgrmsgs.h"
 #endif  /* LGRMSGS_H  */
-
-#ifndef logltffnlf
-#define logltffnlf(verblvl, fmt, ...) \
-    (                                 \
-        lgrf((verblvl),               \
-             __TIME__,                \
-             __FILE__,                \
-             __func__,                \
-             __LINE__,                \
-             (fmt),                   \
-             __VA_ARGS__)             \
-    )
-#endif  /* logltffnlf */
 #endif  /*
          *     ENABLE_INTERN_WARNING
          *  || ENABLE_INTERN_INFO
@@ -235,23 +222,6 @@ main(int argc, char **argv)
         fprintf(stderr, "%s\n", (str));       \
         exit(EXIT_FAILURE);                   \
     }
-
-/*
- *  Defined here just in case if header 'logltxf.h' was not included for
- *    whatever reason the user may have.
- */
-#ifndef logltffnlf
-#define logltffnlf(verblvl, fmt, ...) \
-    (                                 \
-        lgrf((verblvl),               \
-             __TIME__,                \
-             __FILE__,                \
-             __func__,                \
-             __LINE__,                \
-             (fmt),                   \
-             __VA_ARGS__)             \
-    )
-#endif  /* logltffnlf */
 
 const char*
 getverblvlname(enum verblvls verblvl)

@@ -38,6 +38,19 @@
         lgrf((verblvl), 0, 0, 0, 0, (str))  \
     )
 
+#ifndef logltffnlf
+#define logltffnlf(verblvl, fmt, ...) \
+    (                                 \
+        lgrf((verblvl),               \
+             __TIME__,                \
+             __FILE__,                \
+             __func__,                \
+             __LINE__,                \
+             (fmt),                   \
+             __VA_ARGS__)             \
+    )
+#endif  /* logltffnlf */
+
 extern const char*
 getverblvlname(enum verblvls verblvl);
 
