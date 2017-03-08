@@ -58,35 +58,42 @@
 static const char*
 getvlvln(enum verblvls verblvl)
 {
-    return  ((verblvl ==          FATAL)  ? FATAL_STR
-           : (verblvl ==          ERROR)  ? ERROR_STR
-           : (verblvl ==        WARNING)  ? WARNING_STR
-           : (verblvl ==         NOTICE)  ? NOTICE_STR
-           : (verblvl ==           INFO)  ? INFO_STR
-           : (verblvl ==          DEBUG)  ? DEBUG_STR
-           : (verblvl ==          TRACE)  ? TRACE_STR
+    return  ((verblvl ==              FATAL)  ? FATAL_STR
+           : (verblvl ==              ERROR)  ? ERROR_STR
+           : (verblvl ==            WARNING)  ? WARNING_STR
+           : (verblvl ==             NOTICE)  ? NOTICE_STR
+           : (verblvl ==               INFO)  ? INFO_STR
+           : (verblvl ==              DEBUG)  ? DEBUG_STR
+           : (verblvl ==              TRACE)  ? TRACE_STR
 #ifdef  ENABLE_INTERN_WARNING
-           : (verblvl == INTERN_WARNING)  ? INTERN_WARNING_STR
+           : (verblvl ==     INTERN_WARNING)  ? INTERN_WARNING_STR
 #endif  /* ENABLE_INTERN_WARNING  */
 
 #ifdef  ENABLE_INTERN_INFO
-           : (verblvl ==    INTERN_INFO)  ? INTERN_INFO_STR
+           : (verblvl ==        INTERN_INFO)  ? INTERN_INFO_STR
 #endif  /* ENABLE_INTERN_INFO     */
 
 #ifdef  ENABLE_INTERN_DEBUG
-           : (verblvl ==   INTERN_DEBUG)  ? INTERN_DEBUG_STR
+           : (verblvl ==       INTERN_DEBUG)  ? INTERN_DEBUG_STR
 #endif  /* ENABLE_INTERN_DEBUG    */
 
 #ifdef  ENABLE_INTERN_TRACE
-           : (verblvl ==   INTERN_TRACE)  ? INTERN_TRACE_STR
+           : (verblvl ==       INTERN_TRACE)  ? INTERN_TRACE_STR
 #endif  /* ENABLE_INTERN_TRACE    */
 
-           :                                NVALID_VERB_LVL_STR);
+#ifdef  LGR_DEV
+           : (verblvl == DEV_INTERN_WARNING)  ? DEV_INTERN_WARNING_STR
+           : (verblvl ==    DEV_INTERN_INFO)  ? DEV_INTERN_INFO_STR
+           : (verblvl ==   DEV_INTERN_DEBUG)  ? DEV_INTERN_DEBUG_STR
+           : (verblvl ==   DEV_INTERN_TRACE)  ? DEV_INTERN_TRACE_STR
+#endif  /* LGR_DEV                */
+
+           :                                    NVALID_VERB_LVL_STR);
 }
 
 #ifdef  LGR_DEV
-static char           *vlvln    = INTERN_TRACE_STR;
-static enum verblvls  vlvl      = INTERN_TRACE;
+static char           *vlvln    = DEV_INTERN_TRACE_STR;
+static enum verblvls  vlvl      = DEV_INTERN_TRACE;
 #else
 static char           *vlvln    = WARNING_STR;
 static enum verblvls  vlvl      = WARNING;
@@ -115,7 +122,9 @@ lgrf(enum   verblvls        verblvl,
 {
     if (!(verblvl > 0
                 && verblvl <=
-#if   defined ENABLE_INTERN_TRACE
+#if   defined LGR_DEV
+                              DEV_INTERN_TRACE
+#elif defined ENABLE_INTERN_TRACE   /* !defined LGR_DEV               */
                               INTERN_TRACE
 #elif defined ENABLE_INTERN_DEBUG   /* !defined ENABLE_INTERN_TRACE   */
                               INTERN_DEBUG
@@ -123,15 +132,16 @@ lgrf(enum   verblvls        verblvl,
                               INTERN_INFO
 #elif defined ENABLE_INTERN_WARNING /* !defined ENABLE_INTERN_INFO    */
                               INTERN_WARNING
-#else                                 /* !defined ENABLE_INTERN_WARNING */
+#else                               /* !defined ENABLE_INTERN_WARNING */
                               TRACE
-#endif                                /*
-                                       *    ENABLE_INTERN_TRACE
-                                       *  : ENABLE_INTERN_DEBUG
-                                       *  : ENABLE_INTERN_INFO
-                                       *  : ENABLE_INTERN_WARNING
-                                       *  :
-                                       */
+#endif                              /*
+                                     *    LGR_DEV
+                                     *  : ENABLE_INTERN_TRACE
+                                     *  : ENABLE_INTERN_DEBUG
+                                     *  : ENABLE_INTERN_INFO
+                                     *  : ENABLE_INTERN_WARNING
+                                     *  :
+                                     */
          )  ? verblvl
             : NVALID_VERB_LVL) { return; }
 
@@ -141,12 +151,7 @@ lgrf(enum   verblvls        verblvl,
     if (tmpvlvl > vlvl) { return; }
     FILE *fpstrm  =
         ((errwarn)
-         ? ((verblvl
-#ifdef  ENABLE_INTERN_WARNING
-                     == INTERN_WARNING
-                 || verblvl
-#endif  /* ENABLE_INTERN_WARNING */
-                            <= WARNING)
+         ? ((verblvl <= WARNING)
              ? stderr
              : stdout)
          : ((verblvl <= ERROR)
@@ -350,9 +355,7 @@ setvlvln(enum verblvls verblvl)
 #ifdef  ENABLE_INTERN_TRACE
         CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
 #ifdef  LGR_DEV
-    logltffnlf(INTERN_TRACE, "const char *stra   = tmpvlvln(%s)\n", tmpvlvln);
-    logltffnlf(INTERN_TRACE, "      char **pstrb = &vlvln(%s)\n", vlvln);
-    logltffnlf(INTERN_TRACE, "      char *strbn  = \"vlvln\"\n");
+        MALLSTR_DEVMSGLSS(INTERN_TRACE, tmpvlvln, vlvln);
 #endif  /* LGR_DEV                */
 #endif  /* ENABLE_INTERN_TRACE    */
         mallstr(tmpvlvln, &vlvln, "vlvln");
