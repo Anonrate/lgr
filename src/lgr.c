@@ -176,7 +176,7 @@ lgrf(enum   verblvls        verblvl,
 #if defined ENABLE_INTERN_WARNING \
  || defined ENABLE_INTERN_INFO    \
  || defined ENABLE_INTERN_DEBUG   \
- || defined ENABLE_INTERN_TRACE   \
+ || defined ENABLE_INTERN_TRACE
 #ifndef LGRMSGS_H
 #include  "../inc/lgrmsgs.h"
 #endif  /* LGRMSGS_H */
