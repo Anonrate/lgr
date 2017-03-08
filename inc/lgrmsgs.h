@@ -76,4 +76,12 @@
     (                                                               \
         logltffnlf((l), "Calling: %s from %s...\n", (s), __func__)  \
     )
+
+#ifdef  LGR_DEV
+#define MALLSTR_DEVMSGLSS(l, sa, sb)                                    \
+    {                                                                   \
+        logltffnlf((l), "const char *stra   = %s(%s)\n", (#sa), (sa));  \
+        logltffnlf((l), "      char **pstrb = &%s(%s)\n", (#sb), (sb)); \
+        logltffnlf((l), "      char *strbn  = \"%s\"\n", (#sb));        \
+    }
 #endif  /* LGRMSGS_H */
