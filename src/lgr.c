@@ -563,4 +563,5 @@ getlogtofile(void)
 #if defined ENABLE_INTERN_DEBUG && defined LGRMSGS_H
     R_MSGLD(INTERN_DEBUG, ltf);
 #endif  /* ENABLE_INTERN_DEBUG  && LGRMSGS_H    */
+    return ltf;
 }
