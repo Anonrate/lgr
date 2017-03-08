@@ -53,8 +53,6 @@
 #endif  /* ENABLE_INTERN_TRACE    */
 #endif  /* LGR_DEV                */
 
-#if (defined ENABLE_INTERN_WARNING )
-
 #include  "../inc/lgrverblvls.h"
 
 static const char*
@@ -101,11 +99,11 @@ static enum verblvls  fprio     = ERROR;
 static int            errwarn   = 0;
 
 static char           *fnsfxfmt = "%y%m%d%H%M%S";
-static char           *fname    = "x";
+static char           *fname    = "\0"
 
-static char           *fnout    = "g";
+static char           *fnout    = "\0";
 
-static FILE           *fout;
+static FILE           *fout     = 0;
 
 static void
 lgrf(enum   verblvls        verblvl,
@@ -116,8 +114,25 @@ lgrf(enum   verblvls        verblvl,
      const            char  *strfmt, ...)
 {
     if (!(verblvl > 0
-                && verblvl <= INTERN_TRACE)
-            ? verblvl
+                && verblvl <=
+#if   (defined ENABLE_INTERN_TRACE)
+                              INTERN_TRACE
+#elif (defined ENABLE_INTERN_DEBUG)   /* !defined ENABLE_INTERN_TRACE   */
+                              INTERN_DEBUG
+#elif (defined ENABLE_INTERN_INFO)    /* !defined ENABLE_INTERN_DEBUG   */
+                              INTERN_INFO
+#elif (defined ENABLE_INTERN_WARNING) /* !defined ENABLE_INTERN_INFO    */
+                              INTERN_WARNING
+#else                                 /* !defined ENABLE_INTERN_WARNING */
+                              TRACE
+#endif                                /*
+                                       *    ENABLE_INTERN_TRACE
+                                       *  : ENABLE_INTERN_DEBUG
+                                       *  : ENABLE_INTERN_INFO
+                                       *  : ENABLE_INTERN_WARNING
+                                       *  :
+                                       */
+         )  ? verblvl
             : NVALID_VERB_LVL) { return; }
 
     const unsigned char tmpvlvl =
@@ -126,8 +141,12 @@ lgrf(enum   verblvls        verblvl,
     if (tmpvlvl > vlvl) { return; }
     FILE *fpstrm  =
         ((errwarn)
-         ? ((verblvl == INTERN_WARNING
-                 || verblvl <= WARNING)
+         ? ((verblvl
+#ifdef  (ENABLE_INTERN_WARNING)
+                     == INTERN_WARNING
+                 || verblvl
+#endif  /* ENABLE_INTERN_WARNING */
+                            <= WARNING)
              ? stderr
              : stdout)
          : ((verblvl <= ERROR)
@@ -155,12 +174,27 @@ lgrf(enum   verblvls        verblvl,
 #define NAME_MAX  0xfe
 #endif  /* NAME_MAX */
 
-#ifdef  (LGR_DEV)
-#ifndef (LOGLTXF_H)
+#if (defined ENABLE_INTERN_WARNING  \
+  || defined ENABLE_INTERN_INFO     \
+  || defined ENABLE_INTERN_DEBUG    \
+  || defined ENABLE_INTERN_TRACE)   \
+#ifndef (LGRMSGS_H) \
 #include  "../inc/lgrmsgs.h"
-#include  "../inc/logltxf.h"
-#endif  /* LOGLTXF_H  */
+#endif  /* LGRMSGS_H */
 
+#ifndef (LOGLTXF_H)
+#include  "../inc/logltxf.h"
+#endif  /* LOGLTXF_H */
+#endif  /*
+         *     ENABLE_INTERN_WARNING
+         *  || ENABLE_INTERN_INFO
+         *  || ENABLE_INTERN_DEBUG
+         *  || ENABLE_INTERN_TRACE
+         */
+
+#include  "../inc/lgr.h"
+
+#ifdef  (LGR_DEV)
 int
 main(int argc, char **argv)
 {
@@ -194,7 +228,6 @@ main(int argc, char **argv)
         exit(EXIT_FAILURE);                   \
     }
 
-#include  "../inc/lgr.h"
 
 char*
 getverblvlname(enum verblvls verblvl)
@@ -208,7 +241,10 @@ getverblvlname(enum verblvls verblvl)
 #endif  /* ENABLE_INTERN_TRACE   && LGRMSGS_H   */
     char *tmpvlvln  getvlvln(verblvl);
 
-    unsigned  char  tmpvlvl = INTERN_INFO;
+    unsigned  char  tmpvlvl;
+#ifdef  (ENABLE_INTERN_INFO)
+    tmpvlvl = INTERN_INFO;
+#endif  /* ENABLE_INTERN_INFO */
               char  *tmpstr = ((strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
                             ? " "
                             : (tmpvlvl = WARNING, " not "));
