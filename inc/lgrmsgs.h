@@ -58,7 +58,7 @@
         logltffnlf((l), "Getting %s...\n", (s)) \
     )
 
-#define SET_MSGLHHU(l, hhua, hhub)                          \
+#define SET_MSGLHHUHHU(l, hhua, hhub)                       \
     (                                                       \
         logltffnlf((l),                                     \
                    "Updating: %s from: %hhu to: %hhu...\n", \
@@ -67,7 +67,7 @@
                    (hhub))                                  \
     )
 
-#define SET_MSGLD(l, da, db)                           \
+#define SET_MSGLDD(l, da, db)                           \
     (                                                   \
         logltffnlf((l),                                 \
                    "Updating: %s from: %d to: %d...\n", \
@@ -76,7 +76,7 @@
                    (db))                                \
     )
 
-#define SET_MSGLS(l, sa, sb)                            \
+#define SET_MSGLSS(l, sa, sb)                           \
     (                                                   \
         logltffnlf((l),                                 \
                    "Updating: %s from: %s to: %s...\n", \
@@ -107,5 +107,14 @@
     }
 #endif  /* LGR_DEV    */
 
-#define MALLOC_FAIL_MSGSF "Failed to allocated memory for %s!\n"
+#define MALLOC_FAIL_MSGSF "Failed to allocated memory for: %s!\n"
+
+#define REALLOC_FAIL_MSGULUL(ula, ulb)                          \
+    (                                                           \
+        fatalf("Failed to reallocate: %s(%lu) to: %lu(%s)!\n",  \
+               (#ula),                                          \
+               (ula),                                           \
+               (ulb),                                           \
+               (#ulb))                                          \
+    )
 #endif  /* LGRMSGS_H  */
