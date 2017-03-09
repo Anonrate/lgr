@@ -117,4 +117,6 @@
                sizeof (ulb),                                    \
                (#ulb))                                          \
     )
+
+#define STRZ_MSGSF        "%s can not be 0!\n"
 #endif  /* LGRMSGS_H  */
