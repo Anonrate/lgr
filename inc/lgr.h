@@ -28,6 +28,31 @@
 #ifndef LGR_H
 #define LGR_H
 
+#define fatalf(fmt, ...)                      \
+    {                                         \
+        fprintf(stderr,                       \
+                "\n[%s:%s:%s:%u]  FATAL:  ",  \
+                __TIME__,                     \
+                __FILE__,                     \
+                __func__,                     \
+                __LINE__);                    \
+        fprintf(stderr, (fmt), __VA_ARGS__);  \
+        fprintf(stderr, "\n");                \
+        exit(EXIT_FAILURE);                   \
+    }
+
+#define fatalstr(str)                         \
+    {                                         \
+        fprintf(stderr,                       \
+                "\n[%s:%s:%s:%u]  FATAL:  ",  \
+                __TIME__,                     \
+                __FILE__,                     \
+                __func__,                     \
+                __LINE__);                    \
+        fprintf(stderr, "%s\n", (str));       \
+        exit(EXIT_FAILURE);                   \
+    }
+
 #define loglf(verblvl, fmt, ...)                        \
     (                                                   \
         lgrf((verblvl), 0, 0, 0, 0, (fmt), __VA_ARGS__) \

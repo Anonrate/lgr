@@ -173,6 +173,8 @@ lgrf(enum   verblvls        verblvl,
     va_end(ap);
 }
 
+#include  "../inc/lgr.h"
+
 #ifndef NAME_MAX
 #define NAME_MAX  0xfe
 #endif  /* NAME_MAX */
@@ -191,8 +193,6 @@ lgrf(enum   verblvls        verblvl,
          *  || ENABLE_INTERN_TRACE
          */
 
-#include  "../inc/lgr.h"
-
 #ifdef  LGR_DEV
 int
 main(int argc, char **argv)
@@ -204,30 +204,6 @@ main(int argc, char **argv)
 }
 #endif  /* LGR_DEV    */
 
-#define fatalf(fmt, ...)                      \
-    {                                         \
-        fprintf(stderr,                       \
-                "\n[%s:%s:%s:%u]  FATAL:  ",  \
-                __TIME__,                     \
-                __FILE__,                     \
-                __func__,                     \
-                __LINE__);                    \
-        fprintf(stderr, (fmt), __VA_ARGS__);  \
-        fprintf(stderr, "\n");                \
-        exit(EXIT_FAILURE);                   \
-    }
-
-#define fatalstr(str)                         \
-    {                                         \
-        fprintf(stderr,                       \
-                "\n[%s:%s:%s:%u]  FATAL:  ",  \
-                __TIME__,                     \
-                __FILE__,                     \
-                __func__,                     \
-                __LINE__);                    \
-        fprintf(stderr, "%s\n", (str));       \
-        exit(EXIT_FAILURE);                   \
-    }
 
 const char*
 getverblvlname(enum verblvls verblvl)
@@ -356,6 +332,9 @@ setvlvln(enum verblvls verblvl)
 #endif  /* ENABLE_INTERN_TRACE    */
         mallstr(tmpvlvln, &vlvln, "vlvln");
 
+#ifdef  ENABLE_INTERN_INFO
+        SET_MSGLSS(INTERN_INFO, vlvln, tmpvlvln);
+#endif  /* ENABLE_INTERN_INFO     */
         strcpy(vlvln, tmpvlvln);
 #ifdef  ENABLE_INTERN_DEBUG
         R_MSGLS(INTERN_DEBUG, vlvln);
@@ -380,7 +359,7 @@ setvlvl(unsigned char verblvl)
 #endif  /* ENABLE_INTERN_DEBUG    */
 
 #ifdef  ENABLE_INTERN_INFO
-    SET_MSGLHHU(INTERN_INFO, vlvl, verblvl);
+    SET_MSGLHHUHHU(INTERN_INFO, vlvl, verblvl);
 #endif  /* ENABLE_INTERN_INFO     */
     vlvl = verblvl;
 
@@ -531,7 +510,7 @@ setfileprio(enum verblvls fileprio)
     unsigned char tmpvlvl = isverblvl(fileprio);
 
 #ifdef  ENABLE_INTERN_INFO
-    SET_MSGLSHHU(INTERN_INFO, "fprio", fprio, fileprio);
+    SET_MSGLHHUHHU(INTERN_INFO, fprio, fileprio);
 #endif  /* ENABLE_INTERN_INFO     */
     fprio = fileprio;
 
@@ -552,7 +531,7 @@ seterrwarn(int treatwarnerr)
 #endif  /* ENABLE_INTERN_DEBUG    */
 
 #ifdef  ENABLE_INTERN_INFO
-    SET_MSGLSD(INTERN_INFO, "errwarn", errwarn, treatwarnerr);
+    SET_MSGLDD(INTERN_INFO, errwarn, treatwarnerr);
 #endif  /* ENABLE_INTERN_INFO     */
     errwarn = treatwarnerr;
 
@@ -579,7 +558,7 @@ setfout(void)
     if (!ti) { fatalstr(strerror(errno)); }
 
     char *tmpfno    = malloc(NAME_MAX);
-    //if (!tmpfno) { fatalstr(MALLOC_FAIL); }
+    if (!tmpfno) { fatalf(MALLOC_FAIL_MSGSF("tmpfno")); }
 
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
     //if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz); }
@@ -587,7 +566,9 @@ setfout(void)
     tmpfnosz        = sprintf(tmpfno, "%s-%s", tmpfno, fname);
     //if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz) }
 
-    //if (!realloc(tmpfno, tmpfnosz + 1)) { fatalstr(REALLOC_FAIL); }
+    if (!realloc(tmpfno, tmpfnosz + 1)) {
+        REALLOC_FAIL_MSGULUL(tmpfno, tmpnosz);
+    }
 
     mallstr(tmpfno, &fnout, "fnout");
     fnout = tmpfno;
@@ -624,7 +605,9 @@ setfilename(char *filename)
 #endif  /* LGR_DEV                */
 #endif  /* ENABLE_INTERN_TRACE    */
     mallstr(filename, &fname, "fname");
-
+#ifdef  ENABLE_INTERN_INFO
+    SET_MSGLSS(INTERN_INFO, fname, filename);
+#endif  /* ENABLE_INTERN_INFO     */
     fname = filename;
     setfout();
 
