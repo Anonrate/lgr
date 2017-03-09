@@ -67,13 +67,22 @@
                    (hhub))                                  \
     )
 
-#define SET_MSGLSD(l, da, db)                           \
+#define SET_MSGLD(l, da, db)                           \
     (                                                   \
         logltffnlf((l),                                 \
                    "Updating: %s from: %d to: %d...\n", \
                    (#da),                               \
                    (da),                                \
                    (db))                                \
+    )
+
+#define SET_MSGLS(l, sa, sb)                            \
+    (                                                   \
+        logltffnlf((l),                                 \
+                   "Updating: %s from: %s to: %s...\n", \
+                   (#sa),                               \
+                   (sa),                                \
+                   (sb))                                \
     )
 
 #define CALLFN_MSGLS(l, s)                                          \
