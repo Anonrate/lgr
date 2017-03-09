@@ -57,7 +57,7 @@ getverblvlname(enum verblvls verblvl);
 extern int
 isverblvl(unsigned char lvl);
 
-extern int
+extern unsigned char
 setverblvl(enum verblvls verblvl);
 
 extern enum verblvls
