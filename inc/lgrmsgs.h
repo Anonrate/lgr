@@ -113,8 +113,8 @@
     (                                                           \
         fatalf("Failed to reallocate: %s(%lu) to: %lu(%s)!\n",  \
                (#ula),                                          \
-               (ula),                                           \
-               (ulb),                                           \
+               sizeof (ula),                                    \
+               sizeof (ulb),                                    \
                (#ulb))                                          \
     )
 #endif  /* LGRMSGS_H  */
