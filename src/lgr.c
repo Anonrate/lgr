@@ -454,7 +454,7 @@ setverblvl(enum verblvls verblvl)
         return vlvl;
     }
 #ifdef  ENABLE_INTERN_DEBUG
-    R_MSGLD(INTERN_DEBUG, vlvl);
+    R_MSGLHHU(INTERN_DEBUG, vlvl);
 #endif  /* ENABLE_INTERN_DEBUG    */
     return vlvl;
 }
