@@ -157,7 +157,6 @@ lgrf(enum   verblvls        verblvl,
              ? stderr
              : stdout));
 
-
     int doltf = ltf && fout && tmpvlvl <= fprio;
 
     if (timestr)
@@ -188,9 +187,9 @@ lgrf(enum   verblvls        verblvl,
 
         if (line)
         {
-            fprintf(fpstrm,   "%lu:", line);
+            fprintf(fpstrm,   "%u:", line);
             if (doltf) {
-                fprintf(fout, "%lu:", line);
+                fprintf(fout, "%u:", line);
             }
         }
 
@@ -320,7 +319,9 @@ mallstr(const char *stra, char **pstrb, char *strbn)
     size_t tmpstrasz  = strlen(stra);
     if (tmpstrbsz != tmpstrasz) {
         if (!(*pstrb = malloc(tmpstrasz + 1ul))) {
-            fatalf(MALLOC_FAIL_MSGSF, "*pstrb");
+            fatalf("Failed to allocate %lu + 1 for %s!\n",
+                   tmpstrasz,
+                   "*pstrb");
         }
     }
 }
@@ -539,7 +540,20 @@ setfileprio(enum verblvls fileprio)
                fileprio);
 #endif  /* LGR_DEV                */
 #endif  /* ENABLE_INTERN_TRACE    */
-    unsigned char tmpvlvl = isverblvl(fileprio);
+    if (!isverblvl(fileprio))
+    {
+        logltffnlf(ERROR,
+                  "Failed to update file priority.  %hhu is not a valid "
+                  "verbose level.  Leaving file priority as is.(%hhu)\n",
+                  fileprio,
+                  fprio);
+
+#ifdef  ENABLE_INTERN_DEBUG
+        R_MSGLHHU(INTERN_DEBUG, (unsigned char)0);
+#endif  /* ENABLE_INTERN_DEBUG    */
+        return (unsigned char)0;
+
+    }
 
 #ifdef  ENABLE_INTERN_INFO
     SET_MSGLHHUHHU(INTERN_INFO, fprio, fileprio);
@@ -547,7 +561,7 @@ setfileprio(enum verblvls fileprio)
     fprio = fileprio;
 
 #ifdef  ENABLE_INTERN_DEBUG
-    R_MSGLS(INTERN_DEBUG, fprio);
+    R_MSGLHHU(INTERN_DEBUG, fprio);
 #endif  /* ENABLE_INTERN_DEBUG    */
     return fprio;
 }
@@ -582,6 +596,14 @@ setfout(void)
 
     if (!fname)
     {
+        logltffnlf(WARNING, "%s\n", "Filename is not set!");
+        logltffnlf(NOTICE,
+                   "%s\n",
+                   "Filename not being set may result in log files "
+                   "conflicting with one another as there is no name to "
+                   "differentiate what log file is for what.  Because of so, "
+                   "it may be hard to maintain and read the log files as you "
+                   "may not know what the log file is for.");
     }
 
     time_t t        = time(0);
@@ -593,16 +615,20 @@ setfout(void)
     logltffnlf(INTERN_DEBUG, "malloc(%lu)\n", NAME_MAX);
 #endif  /* ENABLE_INTERN_DEBUG    */
     char *tmpfno    = malloc(NAME_MAX);
-    if (!tmpfno) { fatalf(MALLOC_FAIL_MSGSF, "tmpfno"); }
+    if (!tmpfno) { fatalf("Failed to allocate memory for: %s!\n", "tmpfno"); }
 
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
-    if (!tmpfnosz) { fatalf(STRZ_MSGSF, "tmpfno"); }
+    if (!tmpfnosz) { fatalf("%s can not be 0!\n", "tmpfno"); }
 
     tmpfnosz        = sprintf(tmpfno, "%s-%s", tmpfno, fname);
-    if (!tmpfnosz) { fatalf(STRZ_MSGSF, "tmpfno"); }
+    if (!tmpfnosz) { fatalf("%s can not be 0!\n", "tmpfno"); }
 
     if (!realloc(tmpfno, tmpfnosz + 1)) {
-        REALLOC_FAIL_MSGULUL(tmpfno, tmpfnosz);
+        fatalf("Failed to reallocate: %s(%lu) to: %lu(%s) + 1!\n",
+               "tmpfno",
+               strlen(tmpfno),
+               tmpfnosz,
+               "tmpfnosz");
     }
 
 #ifdef  ENABLE_INTERN_TRACE
@@ -660,6 +686,7 @@ setfilename(char *filename)
 #endif  /* LGR_DEV                */
 #endif  /* ENABLE_INTERN_TRACE    */
     mallstr(filename, &fname, "fname");
+
 #ifdef  ENABLE_INTERN_INFO
     SET_MSGLSS(INTERN_INFO, fname, filename);
 #endif  /* ENABLE_INTERN_INFO     */
@@ -708,4 +735,76 @@ getlogtofile(void)
     R_MSGLD(INTERN_DEBUG, ltf);
 #endif  /* ENABLE_INTERN_DEBUG    */
     return ltf;
+}
+
+char*
+setfilenamesuffixfmt(const char *suffixfmt)
+{
+#ifdef  ENABLE_INTERN_DEBUG
+    INFUNC_MSGL(INTERN_DEBUG);
+#ifdef  LGR_DEV
+    logltffnlf(DEV_INTERN_DEBUG, "const char *suffixfmt = %s\n", suffixfmt);
+#endif  /* LGR_DEV                */
+#endif  /* ENABLE_INTERN_DEBUG    */
+
+    time_t t        = time(0);
+
+    struct tm *ti   = localtime(&t);
+    if (!ti) { fatalstr(strerror(errno)); }
+
+#ifdef  ENABLE_INTERN_DEBUG
+    logltffnlf(INTERN_DEBUG, "malloc(%lu)\n", NAME_MAX);
+#endif  /* ENABLE_INTERN_DEBUG    */
+    char *tmpfno    = malloc(NAME_MAX);
+    if (!tmpfno) { fatalf("Failed to allocate memory for: %s!\n", "tmpfno"); }
+
+    size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
+    if (!tmpfnosz)
+    {
+        logltffnlf(ERROR,
+                   "%s is not a valid of a valid format!  Using current set "
+                   "fnsfxfmt...\n",
+                   suffixfmt);
+
+#ifdef  ENABLE_INTERN_DEBUG
+        R_MSGLS(INTERN_DEBUG, fnsfxfmt);
+#endif  /* ENABLE_INTERN_DEBUG    */
+        return fnsfxfmt;
+
+    }
+
+#ifdef  ENABLE_INTERN_TRACE
+    CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
+#ifdef  LGR_DEV
+    MALLSTR_DEVMSGSS(suffixfmt, fnsfxfmt);
+#endif  /* LGR_DEV                */
+#endif  /* ENABLE_INTERN_TRACE    */
+    mallstr(suffixfmt, &fnsfxfmt, "fnsfxfmt");
+
+#ifdef  ENABLE_INTERN_INFO
+    SET_MSGLSS(INTERN_INFO, fnsfxfmt, suffixfmt);
+#endif  /* ENABLE_INTERN_INFO     */
+    strcpy(fnsfxfmt, suffixfmt);
+
+#ifdef  ENABLE_INTERN_DEBUG
+    R_MSGLS(INTERN_DEBUG, fnsfxfmt);
+#endif  /* ENABLE_INTERN_DEBUG    */
+    return fnsfxfmt;
+}
+
+char*
+getfilenamesuffixfmt(void)
+{
+#ifdef  ENABLE_INTERN_DEBUG
+    INFUNC_MSGL(INTERN_DEBUG);
+#endif  /* ENABLE_INTERN_DEBUG    */
+
+#ifdef  ENABLE_INTERN_INFO
+    GET_MSGLS(INTERN_INFO, "fnsfxfmt");
+#endif  /* ENABLE_INTERN_INFO     */
+
+#ifdef  ENABLE_INTERN_DEBUG
+    R_MSGLS(INTERN_DEBUG, fnsfxfmt);
+#endif  /* ENABLE_INTERN_DEBUG    */
+    return fnsfxfmt;
 }
