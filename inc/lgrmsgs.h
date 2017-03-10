@@ -106,19 +106,4 @@
                    (#sb));                            \
     }
 #endif  /* LGR_DEV    */
-
-#define MALLOC_FAIL_MSGSF "Failed to allocated memory for: %s!\n"
-
-#define REALLOC_FAIL_MSGULUL(ula, ulb)                          \
-    (                                                           \
-        fatalf("Failed to reallocate: %s(%lu) to: %lu(%s)!\n",  \
-               (#ula),                                          \
-               sizeof (ula),                                    \
-               sizeof (ulb),                                    \
-               (#ulb))                                          \
-    )
-
-#define STRZ_MSGSF        "%s can not be 0!\n"
-
-#define FNZ_MSG           "Filename is not set!"
 #endif  /* LGRMSGS_H  */
