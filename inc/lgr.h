@@ -107,5 +107,8 @@ extern char*
 getfilename(void);
 
 extern int
+setlogtofile(int logtofile);
+
+extern int
 getlogtofile(void);
 #endif  /* LGR_H */
