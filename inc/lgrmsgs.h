@@ -119,4 +119,6 @@
     )
 
 #define STRZ_MSGSF        "%s can not be 0!\n"
+
+#define FNZ_MSG           "Filename is not set!"
 #endif  /* LGRMSGS_H  */
