@@ -157,19 +157,51 @@ lgrf(enum   verblvls        verblvl,
              ? stderr
              : stdout));
 
-    if (timestr || line)
+
+    int doltf = ltf && fout && tmpvlvl <= fprio;
+
+    if (timestr)
     {
-        fprintf(fpstrm, "[");
-        if (timestr)          { fprintf(fpstrm, "%s",       timestr); }
-        if (timestr && line)  { fprintf(fpstrm, ":%7u]  ",  line);    }
-        else if (line)        { fprintf(fpstrm, "%7u]  ",   line);    }
-        else                  { fprintf(fpstrm, "%9s  ",    "]");     }
+        fprintf(fpstrm,   "[%s]  %-18s:  ", timestr,  getvlvln(verblvl));
+        if (doltf) {
+            fprintf(fout, "[%s]  %-18s:  ", timestr,  getvlvln(verblvl));
+        }
     }
 
-    fprintf(fpstrm, "%-14s  ", getvlvln(verblvl));
+    if (filestr || funcstr || line)
+    {
+        if (filestr)
+        {
+            fprintf(fpstrm,   "%s:",  filestr);
+            if (doltf) {
+                fprintf(fout, "%s:",  filestr);
+            }
+        }
+
+        if (funcstr)
+        {
+            fprintf(fpstrm,   "%s:",  funcstr);
+            if (doltf) {
+                fprintf(fout, "%s:",  funcstr);
+            }
+        }
+
+        if (line)
+        {
+            fprintf(fpstrm,   "%lu:", line);
+            if (doltf) {
+                fprintf(fout, "%lu:", line);
+            }
+        }
+
+        fprintf(fpstrm,             "   ");
+        if (doltf) { fprintf(fout,  "   "); }
+    }
+
     va_list ap;
     va_start(ap, strfmt);
-    vfprintf(fpstrm, strfmt, ap);
+    vfprintf(fpstrm,            strfmt, ap);
+    if (doltf) { vfprintf(fout, strfmt, ap); }
     va_end(ap);
 }
 
@@ -197,9 +229,7 @@ lgrf(enum   verblvls        verblvl,
 int
 main(int argc, char **argv)
 {
-    char *str = "Hello";
-    char *strrr = "NIGGER";
-    MALLSTR_DEVMSGSS(str, strrr);
+    setfilename("lgr");
     return EXIT_SUCCESS;
 }
 #endif  /* LGR_DEV    */
@@ -290,7 +320,7 @@ mallstr(const char *stra, char **pstrb, char *strbn)
     size_t tmpstrasz  = strlen(stra);
     if (tmpstrbsz != tmpstrasz) {
         if (!(*pstrb = malloc(tmpstrasz + 1ul))) {
-            fatalf(MALLOC_FAIL_MSGSF("*pstrb"));
+            fatalf(MALLOC_FAIL_MSGSF, "*pstrb");
         }
     }
 }
@@ -336,6 +366,7 @@ setvlvln(enum verblvls verblvl)
         SET_MSGLSS(INTERN_INFO, vlvln, tmpvlvln);
 #endif  /* ENABLE_INTERN_INFO     */
         strcpy(vlvln, tmpvlvln);
+
 #ifdef  ENABLE_INTERN_DEBUG
         R_MSGLS(INTERN_DEBUG, vlvln);
 #endif  /* ENABLE_INTERN_DEBUG    */
@@ -386,6 +417,7 @@ setverblvl(enum verblvls verblvl)
 #endif  /* ENABLE_INTERN_DEBUG    */
         return vlvl;
     }
+
 #ifdef  ENABLE_INTERN_TRACE
     CALLFN_MSGLS(INTERN_TRACE, "isverblvl()");
 #ifdef  LGR_DEV
@@ -425,7 +457,7 @@ setverblvl(enum verblvls verblvl)
 #endif  /* LGR_DEV                */
 #endif  /* ENABLE_INTERN_TRACE    */
         int ti = strcmp(vlvln, getverblvlname(vlvl));
-        //if (ti) { fatalf(VALIDATE_FAIL, ti); }
+        if (ti) { fatalf("Validation failed..  strcmp returned %d.", ti); }
 
 #ifdef  ENABLE_INTERN_DEBUG
         R_MSGLD(INTERN_DEBUG, vlvl);
@@ -557,21 +589,44 @@ setfout(void)
     struct tm *ti   = localtime(&t);
     if (!ti) { fatalstr(strerror(errno)); }
 
+#ifdef  ENABLE_INTERN_DEBUG
+    logltffnlf(INTERN_DEBUG, "malloc(%lu)\n", NAME_MAX);
+#endif  /* ENABLE_INTERN_DEBUG    */
     char *tmpfno    = malloc(NAME_MAX);
-    if (!tmpfno) { fatalf(MALLOC_FAIL_MSGSF("tmpfno")); }
+    if (!tmpfno) { fatalf(MALLOC_FAIL_MSGSF, "tmpfno"); }
 
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
-    //if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz); }
+    if (!tmpfnosz) { fatalf(STRZ_MSGSF, "tmpfno"); }
 
     tmpfnosz        = sprintf(tmpfno, "%s-%s", tmpfno, fname);
-    //if (!tmpfnosz) { fatalf(STR_NZ, "tmpfno", tmpfnosz) }
+    if (!tmpfnosz) { fatalf(STRZ_MSGSF, "tmpfno"); }
 
     if (!realloc(tmpfno, tmpfnosz + 1)) {
-        REALLOC_FAIL_MSGULUL(tmpfno, tmpnosz);
+        REALLOC_FAIL_MSGULUL(tmpfno, tmpfnosz);
     }
 
+#ifdef  ENABLE_INTERN_TRACE
+        CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
+#ifdef  LGR_DEV
+        MALLSTR_DEVMSGSS(tmpfno, fnout);
+#endif  /* LGR_DEV                */
+#endif  /* ENABLE_INTERN_TRACE    */
     mallstr(tmpfno, &fnout, "fnout");
+
+#ifdef  ENABLE_INTERN_INFO
+    SET_MSGLSS(INTERN_INFO, fnout, tmpfno);
+#endif  /* ENABLE_INTERN_INFO     */
     fnout = tmpfno;
+
+#ifdef  ENABLE_INTERN_INFO
+    logltffnlf(INTERN_INFO, "Updating fout(%s)...\n", fnout);
+#endif  /* ENABLE_INTERN_INFO     */
+
+#ifdef  ENABLE_INTERN_DEBUG
+    logltffnlf(INTERN_DEBUG,
+               "Opening file fout(%s) in append mode...\n",
+               fnout);
+#endif  /* ENABLE_INTERN_DEBUG    */
     fout = fopen(fnout, "a");
 
 #ifdef  ENABLE_INTERN_DEBUG
@@ -615,6 +670,27 @@ setfilename(char *filename)
     R_MSGLS(INTERN_DEBUG, fname);
 #endif  /* ENABLE_INTERN_DEBUG    */
     return fname;
+}
+
+int
+setlogtofile(int logtofile)
+{
+#ifdef  ENABLE_INTERN_DEBUG
+    INFUNC_MSGL(INTERN_DEBUG);
+#ifdef  LGR_DEV
+    logltffnlf(DEV_INTERN_DEBUG, "int logtofile = %d\n", logtofile);
+#endif  /* LGR_DEV                */
+#endif  /* ENABLE_INTERN_DEBUG    */
+
+#ifdef  ENABLE_INTERN_INFO
+    SET_MSGLDD(INTERN_INFO, ltf, logtofile);
+#endif  /* ENABLE_INTERN_INFO     */
+    ltf = logtofile;
+
+#ifdef  ENABLE_INTERN_DEBUG
+    R_MSGLD(INTERN_DEBUG, ltf);
+#endif  /* ENABLE_INTERN_DEBUG    */
+    return ltf;
 }
 
 int
