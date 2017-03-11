@@ -64,22 +64,10 @@ getvlvln(enum verblvls verblvl)
            : (verblvl ==               INFO)  ? INFO_STR
            : (verblvl ==              DEBUG)  ? DEBUG_STR
            : (verblvl ==              TRACE)  ? TRACE_STR
-#ifdef  ENABLE_INTERN_WARNING
            : (verblvl ==     INTERN_WARNING)  ? INTERN_WARNING_STR
-#endif  /* ENABLE_INTERN_WARNING  */
-
-#ifdef  ENABLE_INTERN_INFO
            : (verblvl ==        INTERN_INFO)  ? INTERN_INFO_STR
-#endif  /* ENABLE_INTERN_INFO     */
-
-#ifdef  ENABLE_INTERN_DEBUG
            : (verblvl ==       INTERN_DEBUG)  ? INTERN_DEBUG_STR
-#endif  /* ENABLE_INTERN_DEBUG    */
-
-#ifdef  ENABLE_INTERN_TRACE
            : (verblvl ==       INTERN_TRACE)  ? INTERN_TRACE_STR
-#endif  /* ENABLE_INTERN_TRACE    */
-
 #ifdef  LGR_DEV
            : (verblvl == DEV_INTERN_WARNING)  ? DEV_INTERN_WARNING_STR
            : (verblvl ==    DEV_INTERN_INFO)  ? DEV_INTERN_INFO_STR
@@ -121,26 +109,11 @@ lgrf(enum   verblvls        verblvl,
 {
     if (!(verblvl > 0
                 && verblvl <=
-#if   defined LGR_DEV
+#ifdef  LGR_DEV
                               DEV_INTERN_TRACE
-#elif defined ENABLE_INTERN_TRACE   /* !defined LGR_DEV               */
-                              INTERN_TRACE
-#elif defined ENABLE_INTERN_DEBUG   /* !defined ENABLE_INTERN_TRACE   */
-                              INTERN_DEBUG
-#elif defined ENABLE_INTERN_INFO    /* !defined ENABLE_INTERN_DEBUG   */
-                              INTERN_INFO
-#elif defined ENABLE_INTERN_WARNING /* !defined ENABLE_INTERN_INFO    */
-                              INTERN_WARNING
-#else                               /* !defined ENABLE_INTERN_WARNING */
+#else /* !defined LGR_DEV */
                               TRACE
-#endif                              /*
-                                     *    LGR_DEV
-                                     *  : ENABLE_INTERN_TRACE
-                                     *  : ENABLE_INTERN_DEBUG
-                                     *  : ENABLE_INTERN_INFO
-                                     *  : ENABLE_INTERN_WARNING
-                                     *  :
-                                     */
+#endif  /* LGR_DEV        */
          )  ? verblvl
             : NVALID_VERB_LVL) { return; }
 
@@ -210,19 +183,7 @@ lgrf(enum   verblvls        verblvl,
 #define NAME_MAX  0xfe
 #endif  /* NAME_MAX */
 
-#if defined ENABLE_INTERN_WARNING \
- || defined ENABLE_INTERN_INFO    \
- || defined ENABLE_INTERN_DEBUG   \
- || defined ENABLE_INTERN_TRACE
-#ifndef LGRMSGS_H
 #include  "../inc/lgrmsgs.h"
-#endif  /* LGRMSGS_H  */
-#endif  /*
-         *     ENABLE_INTERN_WARNING
-         *  || ENABLE_INTERN_INFO
-         *  || ENABLE_INTERN_DEBUG
-         *  || ENABLE_INTERN_TRACE
-         */
 
 #ifdef  LGR_DEV
 int
@@ -237,83 +198,64 @@ main(int argc, char **argv)
 const char*
 getverblvlname(enum verblvls verblvl)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "enum verblvls verblvl = %hhu\n", verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_TRACE
     CALLFN_MSGLS(INTERN_TRACE, "getvlvln()");
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_TRACE,
                "enum verblvls verblvl = verblvl(%hhu)\n",
                verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
     const     char *tmpvlvln  = getvlvln(verblvl);
 
     unsigned  char  tmpvlvl;
-#ifdef  ENABLE_INTERN_INFO
     tmpvlvl = INTERN_INFO;
               char  *tmpstr   = ((strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
                               ? " "
                               : (tmpvlvl = WARNING, " not "));
     logltffnlf(tmpvlvl, "%hhu is%sa valid verbose level!\n", verblvl, tmpstr);
-#else /* !defined ENABLE_INTERN_INFO  */
     if (strcmp(tmpvlvlv, NVALID_VERB_LVL_STR)) {
         logltffnlf(WARNING, "%hhu is not a valid verbose level!\n", verblvl);
     }
-#endif  /* ENABLE_INTERN_INFO     */
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLS(INTERN_DEBUG, tmpvlvln);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return tmpvlvln;
 }
 
 int
 isverblvl(unsigned char lvl)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "unsigned char lvl = %hhu\n", lvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_TRACE
     CALLFN_MSGLS(INTERN_TRACE, "getverblvlname()");
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_TRACE, "enum verblvls verblvl = lvl(%hhu)\n", lvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
     if (strcmp(getverblvlname(lvl), NVALID_VERB_LVL_STR))
     {
-#ifdef  ENABLE_INTERN_DEBUG
         R_MSGLHHU(INTERN_DEBUG, NVALID_VERB_LVL);
-#endif  /* ENABLE_INTERN_DEBUG    */
         return NVALID_VERB_LVL;
     }
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLHHU(INTERN_DEBUG, lvl);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return (int)lvl;
 }
 
 static void
 mallstr(const char *stra, char **pstrb, char *strbn)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "const char *stra   = %s\n", stra);
     logltffnlf(DEV_INTERN_DEBUG, "      char **pstrb = %s\n", *pstrb);
     logltffnlf(DEV_INTERN_DEBUG, "      char *strbn  = %s\n", strbn);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
     size_t tmpstrbsz  = strlen(*pstrb);
     size_t tmpstrasz  = strlen(stra);
@@ -329,217 +271,158 @@ mallstr(const char *stra, char **pstrb, char *strbn)
 static char*
 setvlvln(enum verblvls verblvl)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "enum verblvls verblvl = %hhu\n", verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_TRACE
     CALLFN_MSGLS(INTERN_TRACE, "getverblvlname()");
-#ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_TRACE,
                "enum verblvls verblvl = verblvl(%hhu)\n",
                verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
     const char *tmpvlvln = getverblvlname(verblvl);
     if (!strcmp(vlvln, tmpvlvln))
     {
-#ifdef  ENABLE_INTERN_DEBUG
         R_MSGLS(INTERN_DEBUG, vlvln);
-#endif  /* ENABLE_INTERN_DEBUG    */
         return vlvln;
     }
 
     if (strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
     {
-#ifdef  ENABLE_INTERN_TRACE
         CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
 #ifdef  LGR_DEV
         MALLSTR_DEVMSGSS(tmpvlvln, vlvln);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
         mallstr(tmpvlvln, &vlvln, "vlvln");
 
-#ifdef  ENABLE_INTERN_INFO
         SET_MSGLSS(INTERN_INFO, vlvln, tmpvlvln);
-#endif  /* ENABLE_INTERN_INFO     */
         strcpy(vlvln, tmpvlvln);
 
-#ifdef  ENABLE_INTERN_DEBUG
         R_MSGLS(INTERN_DEBUG, vlvln);
-#endif  /* ENABLE_INTERN_DEBUG    */
         return vlvln;
     }
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLS(INTERN_DEBUG, vlvln);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return vlvln;
 }
 
 static unsigned char
 setvlvl(unsigned char verblvl)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "unsigned char verblvl = %hhu\n", verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_INFO
     SET_MSGLHHUHHU(INTERN_INFO, vlvl, verblvl);
-#endif  /* ENABLE_INTERN_INFO     */
     vlvl = verblvl;
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLHHU(INTERN_DEBUG, verblvl);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return (verblvl);
 }
 
 unsigned char
 setverblvl(enum verblvls verblvl)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "enum verblvls verblvl = %hhu\n", verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
     if (vlvl == verblvl)
     {
-#ifdef  ENABLE_INTERN_DEBUG
         R_MSGLHHU(INTERN_DEBUG, vlvl);
-#endif  /* ENABLE_INTERN_DEBUG    */
         return vlvl;
     }
 
-#ifdef  ENABLE_INTERN_TRACE
     CALLFN_MSGLS(INTERN_TRACE, "isverblvl()");
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_TRACE,
                "unsigned char verblvl = verblvl(%hhu)\n",
                verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
     if (isverblvl(verblvl))
     {
-#ifdef  ENABLE_INTERN_TRACE
         CALLFN_MSGLS(INTERN_TRACE, "setvlvl()");
 #ifdef  LGR_DEV
         logltffnlf(DEV_INTERN_TRACE,
                    "unsigned char verblvl = verblvl(%hhu)\n",
                    verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
         setvlvl(verblvl);
 
-#ifdef  ENABLE_INTERN_TRACE
         CALLFN_MSGLS(INTERN_TRACE, "setvlvln()");
 #ifdef  LGR_DEV
         logltffnlf(DEV_INTERN_TRACE,
                    "unsigned char verblvl = verblvl(%hhu)\n",
                    verblvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
         setvlvln(verblvl);
 
-#ifdef  ENABLE_INTERN_TRACE
         CALLFN_MSGLS(INTERN_TRACE, "getverblvlname()");
 #ifdef  LGR_DEV
         logltffnlf(DEV_INTERN_TRACE,
                    "enum verblvls verblvl = vlvl(%hhu)\n",
                    vlvl);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
         int ti = strcmp(vlvln, getverblvlname(vlvl));
         if (ti) { fatalf("Validation failed..  strcmp returned %d.", ti); }
 
-#ifdef  ENABLE_INTERN_DEBUG
         R_MSGLD(INTERN_DEBUG, vlvl);
-#endif  /* ENABLE_INTERN_DEBUG    */
         return vlvl;
     }
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLHHU(INTERN_DEBUG, vlvl);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return vlvl;
 }
 
 enum verblvls
 getverblvl(void)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_INFO
     GET_MSGLS(INTERN_INFO, "vlvl");
-#endif  /* ENABLE_INTERN_INFO     */
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLS(INTERN_DEBUG, vlvl);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return vlvl;
 }
 
 enum verblvls
 getfileprio(void)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_INFO
     GET_MSGLS(INTERN_INFO, "fprio");
-#endif  /* ENABLE_INTERN_INFO     */
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLS(INTERN_DEBUG, fprio);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return fprio;
 }
 
 int
 geterrwarn(void)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_INFO
     GET_MSGLS(INTERN_INFO, "errwarn");
-#endif  /* ENABLE_INTERN_INFO     */
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLD(INTERN_DEBUG, errwarn);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return errwarn;
 }
 
 enum verblvls
 setfileprio(enum verblvls fileprio)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "enum verblvls fileprio = %hhu\n", fileprio);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_TRACE
     CALLFN_MSGLS(INTERN_TRACE, "isverblvl()");
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_TRACE,
                "unsigned char lvl = fileprio(%s)\n",
                fileprio);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
     if (!isverblvl(fileprio))
     {
         logltffnlf(ERROR,
@@ -548,51 +431,37 @@ setfileprio(enum verblvls fileprio)
                   fileprio,
                   fprio);
 
-#ifdef  ENABLE_INTERN_DEBUG
         R_MSGLHHU(INTERN_DEBUG, (unsigned char)0);
-#endif  /* ENABLE_INTERN_DEBUG    */
         return (unsigned char)0;
 
     }
 
-#ifdef  ENABLE_INTERN_INFO
     SET_MSGLHHUHHU(INTERN_INFO, fprio, fileprio);
-#endif  /* ENABLE_INTERN_INFO     */
     fprio = fileprio;
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLHHU(INTERN_DEBUG, fprio);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return fprio;
 }
 
 int
 seterrwarn(int treatwarnerr)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "int treatwarnerr = %d\n", treatwarnerr);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_INFO
     SET_MSGLDD(INTERN_INFO, errwarn, treatwarnerr);
-#endif  /* ENABLE_INTERN_INFO     */
     errwarn = treatwarnerr;
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLD(INTERN_DEBUG, errwarn);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return errwarn;
 }
 
 static char*
 setfout(void)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
-#endif  /* ENABLE_INTERN_DEBUG    */
 
     if (!fname)
     {
@@ -611,9 +480,7 @@ setfout(void)
     struct tm *ti   = localtime(&t);
     if (!ti) { fatalstr(strerror(errno)); }
 
-#ifdef  ENABLE_INTERN_DEBUG
     logltffnlf(INTERN_DEBUG, "malloc(%lu)\n", NAME_MAX);
-#endif  /* ENABLE_INTERN_DEBUG    */
     char *tmpfno    = malloc(NAME_MAX);
     if (!tmpfno) { fatalf("Failed to allocate memory for: %s!\n", "tmpfno"); }
 
@@ -631,130 +498,94 @@ setfout(void)
                "tmpfnosz");
     }
 
-#ifdef  ENABLE_INTERN_TRACE
         CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
 #ifdef  LGR_DEV
         MALLSTR_DEVMSGSS(tmpfno, fnout);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
     mallstr(tmpfno, &fnout, "fnout");
 
-#ifdef  ENABLE_INTERN_INFO
     SET_MSGLSS(INTERN_INFO, fnout, tmpfno);
-#endif  /* ENABLE_INTERN_INFO     */
     fnout = tmpfno;
 
-#ifdef  ENABLE_INTERN_INFO
     logltffnlf(INTERN_INFO, "Updating fout(%s)...\n", fnout);
-#endif  /* ENABLE_INTERN_INFO     */
 
-#ifdef  ENABLE_INTERN_DEBUG
     logltffnlf(INTERN_DEBUG,
                "Opening file fout(%s) in append mode...\n",
                fnout);
-#endif  /* ENABLE_INTERN_DEBUG    */
     fout = fopen(fnout, "a");
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLS(INTERN_DEBUG, fnout);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return fnout;
 }
 
 char*
 setfilename(char *filename)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "char *filename = %s\n", filename);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
     if (!filename)
     {
-#ifdef  ENABLE_INTERN_DEBUG
         R_MSGLS(INTERN_DEBUG, fname);
-#endif  /* ENABLE_INTERN_DEBUG    */
         return fname;
     }
 
-#ifdef  ENABLE_INTERN_TRACE
     CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
 #ifdef  LGR_DEV
     MALLSTR_DEVMSGSS(filename, fname);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
     mallstr(filename, &fname, "fname");
 
-#ifdef  ENABLE_INTERN_INFO
     SET_MSGLSS(INTERN_INFO, fname, filename);
-#endif  /* ENABLE_INTERN_INFO     */
     fname = filename;
     setfout();
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLS(INTERN_DEBUG, fname);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return fname;
 }
 
 int
 setlogtofile(int logtofile)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "int logtofile = %d\n", logtofile);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_INFO
     SET_MSGLDD(INTERN_INFO, ltf, logtofile);
-#endif  /* ENABLE_INTERN_INFO     */
     ltf = logtofile;
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLD(INTERN_DEBUG, ltf);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return ltf;
 }
 
 int
 getlogtofile(void)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_INFO
     GET_MSGLS(INTERN_INFO, "ltf");
-#endif  /* ENABLE_INTERN_INFO     */
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLD(INTERN_DEBUG, ltf);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return ltf;
 }
 
 char*
 setfilenamesuffixfmt(const char *suffixfmt)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "const char *suffixfmt = %s\n", suffixfmt);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_DEBUG    */
 
     time_t t        = time(0);
 
     struct tm *ti   = localtime(&t);
     if (!ti) { fatalstr(strerror(errno)); }
 
-#ifdef  ENABLE_INTERN_DEBUG
     logltffnlf(INTERN_DEBUG, "malloc(%lu)\n", NAME_MAX);
-#endif  /* ENABLE_INTERN_DEBUG    */
     char *tmpfno    = malloc(NAME_MAX);
     if (!tmpfno) { fatalf("Failed to allocate memory for: %s!\n", "tmpfno"); }
 
@@ -766,45 +597,31 @@ setfilenamesuffixfmt(const char *suffixfmt)
                    "fnsfxfmt...\n",
                    suffixfmt);
 
-#ifdef  ENABLE_INTERN_DEBUG
         R_MSGLS(INTERN_DEBUG, fnsfxfmt);
-#endif  /* ENABLE_INTERN_DEBUG    */
         return fnsfxfmt;
 
     }
 
-#ifdef  ENABLE_INTERN_TRACE
     CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
 #ifdef  LGR_DEV
     MALLSTR_DEVMSGSS(suffixfmt, fnsfxfmt);
 #endif  /* LGR_DEV                */
-#endif  /* ENABLE_INTERN_TRACE    */
     mallstr(suffixfmt, &fnsfxfmt, "fnsfxfmt");
 
-#ifdef  ENABLE_INTERN_INFO
     SET_MSGLSS(INTERN_INFO, fnsfxfmt, suffixfmt);
-#endif  /* ENABLE_INTERN_INFO     */
     strcpy(fnsfxfmt, suffixfmt);
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLS(INTERN_DEBUG, fnsfxfmt);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return fnsfxfmt;
 }
 
 char*
 getfilenamesuffixfmt(void)
 {
-#ifdef  ENABLE_INTERN_DEBUG
     INFUNC_MSGL(INTERN_DEBUG);
-#endif  /* ENABLE_INTERN_DEBUG    */
 
-#ifdef  ENABLE_INTERN_INFO
     GET_MSGLS(INTERN_INFO, "fnsfxfmt");
-#endif  /* ENABLE_INTERN_INFO     */
 
-#ifdef  ENABLE_INTERN_DEBUG
     R_MSGLS(INTERN_DEBUG, fnsfxfmt);
-#endif  /* ENABLE_INTERN_DEBUG    */
     return fnsfxfmt;
 }
