@@ -34,23 +34,6 @@
 #include  <assert.h>
 
 #define LGR_DEV
-#ifdef  LGR_DEV
-#ifndef ENABLE_INTERN_WARNING
-#define ENABLE_INTERN_WARNING
-#endif  /* ENABLE_INTERN_WARNING  */
-
-#ifndef ENABLE_INTERN_INFO
-#define ENABLE_INTERN_INFO
-#endif  /* ENABLE_INTERN_INFO     */
-
-#ifndef ENABLE_INTERN_DEBUG
-#define ENABLE_INTERN_DEBUG
-#endif  /* ENABLE_INTERN_DEBUG    */
-
-#ifndef ENABLE_INTERN_TRACE
-#define ENABLE_INTERN_TRACE
-#endif  /* ENABLE_INTERN_TRACE    */
-#endif  /* LGR_DEV                */
 
 #include  "../inc/lgrverblvls.h"
 
@@ -211,15 +194,11 @@ getverblvlname(enum verblvls verblvl)
 #endif  /* LGR_DEV                */
     const     char *tmpvlvln  = getvlvln(verblvl);
 
-    unsigned  char  tmpvlvl;
-    tmpvlvl = INTERN_INFO;
+    unsigned  char  tmpvlvl   = INTERN_INFO;
               char  *tmpstr   = ((strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
                               ? " "
                               : (tmpvlvl = WARNING, " not "));
     logltffnlf(tmpvlvl, "%hhu is%sa valid verbose level!\n", verblvl, tmpstr);
-    if (strcmp(tmpvlvlv, NVALID_VERB_LVL_STR)) {
-        logltffnlf(WARNING, "%hhu is not a valid verbose level!\n", verblvl);
-    }
 
     R_MSGLS(INTERN_DEBUG, tmpvlvln);
     return tmpvlvln;
@@ -277,6 +256,7 @@ setvlvln(enum verblvls verblvl)
 #endif  /* LGR_DEV                */
 
     CALLFN_MSGLS(INTERN_TRACE, "getverblvlname()");
+#ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_TRACE,
                "enum verblvls verblvl = verblvl(%hhu)\n",
                verblvl);
@@ -380,7 +360,6 @@ enum verblvls
 getverblvl(void)
 {
     INFUNC_MSGL(INTERN_DEBUG);
-
     GET_MSGLS(INTERN_INFO, "vlvl");
 
     R_MSGLS(INTERN_DEBUG, vlvl);
@@ -391,7 +370,6 @@ enum verblvls
 getfileprio(void)
 {
     INFUNC_MSGL(INTERN_DEBUG);
-
     GET_MSGLS(INTERN_INFO, "fprio");
 
     R_MSGLS(INTERN_DEBUG, fprio);
@@ -402,7 +380,6 @@ int
 geterrwarn(void)
 {
     INFUNC_MSGL(INTERN_DEBUG);
-
     GET_MSGLS(INTERN_INFO, "errwarn");
 
     R_MSGLD(INTERN_DEBUG, errwarn);
@@ -416,6 +393,8 @@ setfileprio(enum verblvls fileprio)
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "enum verblvls fileprio = %hhu\n", fileprio);
 #endif  /* LGR_DEV                */
+
+    if (!ltf) { logltffnlf(WARNING, "%s\n", "Logging to file is not set..."); }
 
     CALLFN_MSGLS(INTERN_TRACE, "isverblvl()");
 #ifdef  LGR_DEV
@@ -463,6 +442,7 @@ setfout(void)
 {
     INFUNC_MSGL(INTERN_DEBUG);
 
+    if (!ltf) { logltffnlf(WARNING, "%s\n", "Logging to file is not set..."); }
     if (!fname)
     {
         logltffnlf(WARNING, "%s\n", "Filename is not set!");
@@ -526,6 +506,7 @@ setfilename(char *filename)
     logltffnlf(DEV_INTERN_DEBUG, "char *filename = %s\n", filename);
 #endif  /* LGR_DEV                */
 
+    if (!ltf) { logltffnlf(WARNING, "%s\n", "Logging to file is not set..."); }
     if (!filename)
     {
         R_MSGLS(INTERN_DEBUG, fname);
@@ -565,7 +546,6 @@ int
 getlogtofile(void)
 {
     INFUNC_MSGL(INTERN_DEBUG);
-
     GET_MSGLS(INTERN_INFO, "ltf");
 
     R_MSGLD(INTERN_DEBUG, ltf);
@@ -619,7 +599,6 @@ char*
 getfilenamesuffixfmt(void)
 {
     INFUNC_MSGL(INTERN_DEBUG);
-
     GET_MSGLS(INTERN_INFO, "fnsfxfmt");
 
     R_MSGLS(INTERN_DEBUG, fnsfxfmt);
