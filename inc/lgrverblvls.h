@@ -37,22 +37,10 @@
 #define INFO_STR            "INFO"
 #define DEBUG_STR           "DEBUG"
 #define TRACE_STR           "TRACE"
-
-#ifdef  ENABLE_INTERN_WARNING
 #define INTERN_WARNING_STR  "INTERN_WARNING"
-#endif  /* ENABLE_INTERN_WARNING  */
-
-#ifdef  ENABLE_INTERN_INFO
 #define INTERN_INFO_STR     "INTERN_INFO"
-#endif  /* ENABLE_INTERN_INFO     */
-
-#ifdef  ENABLE_INTERN_DEBUG
 #define INTERN_DEBUG_STR    "INTERN_DEBUG"
-#endif  /* ENABLE_INTERN_DEBUG    */
-
-#ifdef  ENABLE_INTERN_TRACE
 #define INTERN_TRACE_STR    "INTERN_TRACE"
-#endif  /* ENABLE_INTERN_TRACE    */
 
 #ifdef  LGR_DEV
 #define DEV_INTERN_WARNING_STR  "DEV:INTERN_WARNING"
@@ -72,23 +60,11 @@ verblvls
     NOTICE  = 0x4u,
     INFO    = 0x5u,
     DEBUG   = 0x6u,
-    TRACE   = 0x7u
-
-#ifdef  ENABLE_INTERN_WARNING
-  , INTERN_WARNING  = 0x8u
-#endif  /* ENABLE_INTERN_WARNING  */
-
-#ifdef  ENABLE_INTERN_INFO
-  , INTERN_INFO     = 0x9u
-#endif  /* ENABLE_INTERN_INFO     */
-
-#ifdef  ENABLE_INTERN_DEBUG
-  , INTERN_DEBUG    = 0xau
-#endif  /* ENABLE_INTERN_DEBUG    */
-
-#ifdef  ENABLE_INTERN_TRACE
-  , INTERN_TRACE    = 0xbu
-#endif  /* ENABLE_INTERN_TRACE    */
+    TRACE   = 0x7u,
+    INTERN_WARNING  = 0x8u,
+    INTERN_INFO     = 0x9u,
+    INTERN_DEBUG    = 0xau,
+    INTERN_TRACE    = 0xbu
 
 #ifdef  LGR_DEV
   , DEV_INTERN_WARNING  = 0xcu,
