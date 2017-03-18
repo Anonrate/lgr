@@ -111,4 +111,13 @@ setlogtofile(int logtofile);
 
 extern int
 getlogtofile(void);
+
+extern char*
+setfilenamesuffixfmt(const char *suffixfmt);
+
+extern char*
+getfilenamesuffixfmt(void);
+
+extern char*
+getfilenameout(void);
 #endif  /* LGR_H */
