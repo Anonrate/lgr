@@ -455,8 +455,10 @@ setfout(void)
                    "may not know what the log file is for.");
     }
 
+    logltffnlf(INTERN_DEBUG, "%s\n", "time()");
     time_t t        = time(0);
 
+    logltffnlf(INTERN_DEBUG, "%s\n", "localtime()");
     struct tm *ti   = localtime(&t);
     if (!ti) { fatalstr(strerror(errno)); }
 
@@ -464,12 +466,42 @@ setfout(void)
     char *tmpfno    = malloc(NAME_MAX);
     if (!tmpfno) { fatalf("Failed to allocate memory for: %s!\n", "tmpfno"); }
 
+    logltffnlf(INTERN_DEBUG, "%s\n", "strftime()");
+#ifdef  LGR_DEV
+    logltffnlf(DEV_INTERN_DEBUG,
+               "              char    *s      = tmpfno(%s)\n",
+               tmpfno);
+    logltffnlf(DEV_INTERN_DEBUG,
+               "              size_t  max     = NAME_MAX(%lu)\n",
+               NAME_MAX);
+    logltffnlf(DEV_INTERN_DEBUG,
+               "const         char    *format = fnsfxfmt(%s)\n",
+               fnsfxfmt);
+    logltffnlf(DEV_INTERN_DEBUG,
+               "const struct  tm      *tm     = %s\n", "ti");
+#endif  /* LGR_DEV                */
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
     if (!tmpfnosz) { fatalf("%s can not be 0!\n", "tmpfno"); }
 
+    CALLFN_MSGLS(INTERN_TRACE, "sprintf()");
+#ifdef  LGR_DEV
+    logltffnlf(DEV_INTERN_DEBUG, "      char *str     = tmpfno(%s)\n", tmpfno);
+    logltffnlf(DEV_INTERN_DEBUG, "const char *format  = %s\n", "\"%%s-%%s\"");
+    logltffnlf(DEV_INTERN_DEBUG, "      ...           = tmpfno(%s)\n", tmpfno);
+    logltffnlf(DEV_INTERN_DEBUG, "      ...           = fname(%s)\n", fname);
+#endif  /* LGR_DEV                */
     tmpfnosz        = sprintf(tmpfno, "%s-%s", tmpfno, fname);
     if (!tmpfnosz) { fatalf("%s can not be 0!\n", "tmpfno"); }
 
+    logltffnlf(INTERNR_DEBUG, "%s\n", "realloc()");
+#ifdef  LGR_DEV
+    logltffnlf(DEV_INTERN_DEBUG,
+               "void    *ptr  = tmpfno(%lu)\n",
+               strlen(tmpfno));
+    logltffnlf(DEV_INTERN_DEBUG,
+               "size_t  size  = tmpfnosz(%lu) + 1",
+               tmpfnosz);
+#endif  /* LGR_DEV                */
     if (!realloc(tmpfno, tmpfnosz + 1)) {
         fatalf("Failed to reallocate: %s(%lu) to: %lu(%s) + 1!\n",
                "tmpfno",
@@ -493,6 +525,9 @@ setfout(void)
                "Opening file fout(%s) in append mode...\n",
                fnout);
     fout = fopen(fnout, "a");
+    if (!fout) {
+        fatalf("Failed to open %s! %s(%d)\n", fnout, strerror(errno), errno);
+    }
 
     R_MSGLS(INTERN_DEBUG, fnout);
     return fnout;
@@ -509,6 +544,8 @@ setfilename(char *filename)
     if (!ltf) { logltffnlf(WARNING, "%s\n", "Logging to file is not set..."); }
     if (!filename)
     {
+        logltffnlf(WARNING, "%s\n", "No filename specified...");
+
         R_MSGLS(INTERN_DEBUG, fname);
         return fname;
     }
@@ -521,6 +558,8 @@ setfilename(char *filename)
 
     SET_MSGLSS(INTERN_INFO, fname, filename);
     fname = filename;
+
+    CALLFN_MSGLS(INTERN_TRACE, "setfout()");
     setfout();
 
     R_MSGLS(INTERN_DEBUG, fname);
@@ -560,8 +599,10 @@ setfilenamesuffixfmt(const char *suffixfmt)
     logltffnlf(DEV_INTERN_DEBUG, "const char *suffixfmt = %s\n", suffixfmt);
 #endif  /* LGR_DEV                */
 
+    logltffnlf(INTERN_DEBUG, "%s\n", "time()");
     time_t t        = time(0);
 
+    logltffnlf(INTERN_DEBUG, "%s\n", "localtime()");
     struct tm *ti   = localtime(&t);
     if (!ti) { fatalstr(strerror(errno)); }
 
@@ -569,6 +610,19 @@ setfilenamesuffixfmt(const char *suffixfmt)
     char *tmpfno    = malloc(NAME_MAX);
     if (!tmpfno) { fatalf("Failed to allocate memory for: %s!\n", "tmpfno"); }
 
+#ifdef  LGR_DEV
+    logltffnlf(DEV_INTERN_DEBUG,
+               "              char    *s      = tmpfno(%s)\n",
+               tmpfno);
+    logltffnlf(DEV_INTERN_DEBUG,
+               "              size_t  max     = NAME_MAX(%lu)\n",
+               NAME_MAX);
+    logltffnlf(DEV_INTERN_DEBUG,
+               "const         char    *format = fnsfxfmt(%s)\n",
+               fnsfxfmt);
+    logltffnlf(DEV_INTERN_DEBUG,
+               "const struct  tm      *tm     = %s\n", "ti");
+#endif  /* LGR_DEV                */
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
     if (!tmpfnosz)
     {
@@ -603,4 +657,14 @@ getfilenamesuffixfmt(void)
 
     R_MSGLS(INTERN_DEBUG, fnsfxfmt);
     return fnsfxfmt;
+}
+
+char*
+getfilenameout(void)
+{
+    INFUNC_MSGL(INTERN_DEBUG);
+    GET_MSGLS(INTERN_INFO, "fnout");
+
+    R_MSGLS(INTERN_DEBUG, fnout);
+    return fnout;
 }
