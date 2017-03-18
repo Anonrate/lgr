@@ -486,14 +486,14 @@ setfout(void)
     CALLFN_MSGLS(INTERN_TRACE, "sprintf()");
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG, "      char *str     = tmpfno(%s)\n", tmpfno);
-    logltffnlf(DEV_INTERN_DEBUG, "const char *format  = %s\n", "\"%%s-%%s\"");
+    logltffnlf(DEV_INTERN_DEBUG, "const char *format  = %s\n", "\"%s-%s\"");
     logltffnlf(DEV_INTERN_DEBUG, "      ...           = tmpfno(%s)\n", tmpfno);
     logltffnlf(DEV_INTERN_DEBUG, "      ...           = fname(%s)\n", fname);
 #endif  /* LGR_DEV                */
     tmpfnosz        = sprintf(tmpfno, "%s-%s", tmpfno, fname);
     if (!tmpfnosz) { fatalf("%s can not be 0!\n", "tmpfno"); }
 
-    logltffnlf(INTERNR_DEBUG, "%s\n", "realloc()");
+    logltffnlf(INTERN_DEBUG, "%s\n", "realloc()");
 #ifdef  LGR_DEV
     logltffnlf(DEV_INTERN_DEBUG,
                "void    *ptr  = tmpfno(%lu)\n",
