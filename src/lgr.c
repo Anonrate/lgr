@@ -499,7 +499,7 @@ setfout(void)
                "void    *ptr  = tmpfno(%lu)\n",
                strlen(tmpfno));
     logltffnlf(DEV_INTERN_DEBUG,
-               "size_t  size  = tmpfnosz(%lu) + 1",
+               "size_t  size  = tmpfnosz(%lu) + 1\n",
                tmpfnosz);
 #endif  /* LGR_DEV                */
     if (!realloc(tmpfno, tmpfnosz + 1)) {
