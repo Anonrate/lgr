@@ -28,6 +28,16 @@
 #ifndef LGR_H
 #define LGR_H
 
+#include "lgrverblvls.h"
+
+extern void
+lgrf(enum   verblvls        verblvl,
+     const            char  *timestr,
+     const            char  *filestr,
+     const            char  *funcstr,
+     const  unsigned  int   line,
+     const            char  *strfmt, ...);
+
 #define fatalf(fmt, ...)                      \
     {                                         \
         fprintf(stderr,                       \
