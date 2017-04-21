@@ -58,6 +58,15 @@
         logltffnlf((l), "Getting %s...\n", (s)) \
     )
 
+#define SET_MSGLUU(l, ua, ub)                           \
+    (                                                   \
+        logltffnlf((l),                                 \
+                   "Updating: %s from: %u to: %u...\n", \
+                   (#ua),                               \
+                   (ua),                                \
+                   (ub))                                \
+    )
+
 #define SET_MSGLHHUHHU(l, hhua, hhub)                       \
     (                                                       \
         logltffnlf((l),                                     \

@@ -75,6 +75,7 @@ static int            ltf       = 0;
 static enum verblvls  fprio     = ERROR;
 
 static int            errwarn   = 0;
+static int            eim       = 0;
 
 static char           *fnsfxfmt = "%y%m%d%H%M%S";
 static char           *fname    = "\0";
@@ -92,14 +93,15 @@ lgrf(enum   verblvls        verblvl,
      const            char  *strfmt, ...)
 {
     if (!(verblvl > 0
-                && verblvl <= TRACE
+                && verblvl <= INTERN_TRACE
          )  ? verblvl
             : NVALID_VERB_LVL) { return; }
 
     const unsigned char tmpvlvl =
         ((errwarn && verblvl == WARNING) ? ERROR : verblvl);
 
-    if (tmpvlvl > vlvl) { return; }
+    if (tmpvlvl > vlvl && (eim && tmpvlvl < TRACE)) { return; }
+
     FILE *fpstrm  =
         ((errwarn)
          ? ((verblvl <= WARNING)
@@ -109,7 +111,8 @@ lgrf(enum   verblvls        verblvl,
              ? stderr
              : stdout));
 
-    int doltf = ltf && fout && tmpvlvl <= fprio;
+    int doltf = ltf && fout && (tmpvlvl <= fprio || eim);
+
     if (timestr)
     {
         fprintf(fpstrm,   "[%s]  %-18s:  ", timestr,  getvlvln(verblvl));
@@ -186,6 +189,7 @@ getverblvlname(enum verblvls verblvl)
 int
 isverblvl(unsigned char lvl)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "isverblvl()"); }
     return (strcmp(getverblvlname(lvl), NVALID_VERB_LVL_STR)
             ? (int)lvl
             : NVALID_VERB_LVL);
@@ -194,6 +198,7 @@ isverblvl(unsigned char lvl)
 static void
 mallstr(const char *stra, char **pstrb)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "mallstr()"); }
     size_t tmpstrbsz  = strlen(*pstrb);
     size_t tmpstrasz  = strlen(stra);
     if (tmpstrbsz != tmpstrasz) { *pstrb = malloc(tmpstrasz + 1lu); }
@@ -202,6 +207,7 @@ mallstr(const char *stra, char **pstrb)
 static char*
 setvlvln(enum verblvls verblvl)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setvlvln()"); }
     const char *tmpvlvln = getverblvlname(verblvl);
     if (!strcmp(vlvln, tmpvlvln)) { return vlvln; }
     if (strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
@@ -216,12 +222,14 @@ setvlvln(enum verblvls verblvl)
 static unsigned char
 setvlvl(unsigned char verblvl)
 {
-    return (verblvl = vlvl);
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setvlvl()"); }
+    return (vlvl = verblvl);
 }
 
 unsigned char
 setverblvl(enum verblvls verblvl)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setverblvl()"); }
     if (vlvl == verblvl) { return vlvl; }
 
     if (isverblvl(verblvl))
@@ -236,24 +244,28 @@ setverblvl(enum verblvls verblvl)
 enum verblvls
 getverblvl(void)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getverblvl()"); }
     return vlvl;
 }
 
 enum verblvls
 getfileprio(void)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getfileprio()"); }
     return fprio;
 }
 
 int
 geterrwarn(void)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "geterrwarn()"); }
     return errwarn;
 }
 
 enum verblvls
 setfileprio(enum verblvls fileprio)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfileprio()"); }
     if (!isverblvl(fileprio)) { return (unsigned char)0; }
 
     return (fprio = fileprio);
@@ -262,12 +274,14 @@ setfileprio(enum verblvls fileprio)
 int
 seterrwarn(int treatwarnerr)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "seterrwarn()"); }
     return (errwarn = treatwarnerr);
 }
 
 static char*
 setfout(void)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfout()"); }
     time_t    t       = time(0);
     struct tm *ti     = localtime(&t);
     char      *tmpfno = malloc(NAME_MAX);
@@ -288,6 +302,7 @@ setfout(void)
 char*
 setfilename(char *filename)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfilename()"); }
     if (!filename || !ltf) { return fname; }
 
     mallstr(filename, &fname);
@@ -302,18 +317,21 @@ setfilename(char *filename)
 int
 setlogtofile(int logtofile)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setlogtofile()"); }
     return (ltf = logtofile);
 }
 
 int
 getlogtofile(void)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getlogtofile()"); }
     return ltf;
 }
 
 char*
 setfilenamesuffixfmt(const char *suffixfmt)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfilenamesuffixfmt()"); }
     time_t    t       = time(0);
     struct tm *ti     = localtime(&t);
     char      *tmpfno = malloc(NAME_MAX);
@@ -330,11 +348,41 @@ setfilenamesuffixfmt(const char *suffixfmt)
 char*
 getfilenamesuffixfmt(void)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getfilenamesuffixfmt()"); }
     return fnsfxfmt;
 }
 
 char*
 getfilenameout(void)
 {
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getfilenameout()"); }
     return fnout;
+}
+
+int
+setenableinternmsg(int enableinternmsg)
+{
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setenableinternmsg()"); }
+    return (eim = enableinternmsg);
+}
+
+int
+getenableinternmsg(void)
+{
+    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getenableinternmsg()"); }
+    return eim;
+}
+
+int
+closeout(void)
+{
+    return !fclose(fout);
+}
+
+int
+dellog(void)
+{
+    if (!fout) { return 1; }
+
+    return closeout() ? !remove(fnout) : 0;
 }

@@ -130,4 +130,17 @@ getfilenamesuffixfmt(void);
 
 extern char*
 getfilenameout(void);
+
+extern int
+setenableinternmsg(int enableinternmsg);
+
+extern int
+getenableinternmsg(void);
+
+extern int
+closeout(void);
+
+extern int
+dellog(void);
+
 #endif  /* LGR_H */
