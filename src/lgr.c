@@ -128,7 +128,7 @@ lgrf(enum   verblvls        verblvl,
 
     int doltf = ltf && fout && (tmpvlvl <= fprio || eim);
 
-    char *vfgc = (verblvl ==   FATAL ? fatafgc
+    char *vfgc = (verblvl ==   FATAL ? fatalfgc
                : (verblvl ==   ERROR ? errorfgc
                : (verblvl == WARNING ? warrningfgc
                : (verblvl ==  NOTICE ? noticefgc
@@ -140,7 +140,7 @@ lgrf(enum   verblvls        verblvl,
         fprintf(fpstrm,
                 "%s[%s%s]%s %s%-18s%s:%s  ",
                 debugfgc,
-                timefgc,
+                timestrfgc,
                 timestr,
                 debugfgc,
                 deffgc,
@@ -157,7 +157,12 @@ lgrf(enum   verblvls        verblvl,
     {
         if (filestr)
         {
-            fprintf(fpstrm, "%s%s%s:%s", filefgc, filestr, debugfgc, deffgc);
+            fprintf(fpstrm,
+                    "%s%s%s:%s",
+                    filestrfgc,
+                    filestr,
+                    debugfgc,
+                    deffgc);
             if (doltf) {
                 fprintf(fout, "%s:",  filestr);
             }
@@ -165,7 +170,12 @@ lgrf(enum   verblvls        verblvl,
 
         if (funcstr)
         {
-            fprintf(fpstrm, "%s%s%s:%s", funcfgc, funcstr, debugfgc, deffgc);
+            fprintf(fpstrm,
+                    "%s%s%s:%s",
+                    funcstrfgc,
+                    funcstr,
+                    debugfgc,
+                    deffgc);
             if (doltf) {
                 fprintf(fout, "%s:",  funcstr);
             }
