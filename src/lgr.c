@@ -138,7 +138,7 @@ lgrf(enum   verblvls        verblvl,
     if (timestr)
     {
         fprintf(fpstrm,
-                "%s[%s%s]%s %s%-18s%s:%s  ",
+                "%s[%s%s%s]%s %s%-18s%s:%s  ",
                 debugfgc,
                 timestrfgc,
                 timestr,
