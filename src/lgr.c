@@ -84,6 +84,21 @@ static char           *fnout    = "\0";
 
 static FILE           *fout     = 0;
 
+static char *deffgc       = "\e[39m";
+
+static char *fatalfgc     = "\e[31m";
+static char *errorfgc     = "\e[91m";
+static char *warrningfgc  = "\e[33m";
+static char *noticefgc    = "\e[94m";
+static char *infofgc      = "\e[93m";
+static char *debugfgc     = "\e[35m";
+static char *tracefgc     = "\e[95m";
+
+static char *timestrfgc   = "\e[92m";
+static char *filestrfgc   = "\e[33m";
+static char *funcstrfgc   = "\e[32m";
+static char *linefgc      = "\e[31m";
+
 void
 lgrf(enum   verblvls        verblvl,
      const            char  *timestr,
@@ -113,9 +128,26 @@ lgrf(enum   verblvls        verblvl,
 
     int doltf = ltf && fout && (tmpvlvl <= fprio || eim);
 
+    char *vfgc = (verblvl ==   FATAL ? fatafgc
+               : (verblvl ==   ERROR ? errorfgc
+               : (verblvl == WARNING ? warrningfgc
+               : (verblvl ==  NOTICE ? noticefgc
+               : (verblvl ==    INFO ? infofgc
+               : (verblvl ==   DEBUG ? debugfgc
+               : tracefgc))))));
     if (timestr)
     {
-        fprintf(fpstrm,   "[%s]  %-18s:  ", timestr,  getvlvln(verblvl));
+        fprintf(fpstrm,
+                "%s[%s%s]%s %s%-18s%s:%s  ",
+                debugfgc,
+                timefgc,
+                timestr,
+                debugfgc,
+                deffgc,
+                vfgc,
+                getvlvln(verblvl),
+                debugfgc,
+                deffgc);
         if (doltf) {
             fprintf(fout, "[%s]  %-18s:  ", timestr,  getvlvln(verblvl));
         }
@@ -125,7 +157,7 @@ lgrf(enum   verblvls        verblvl,
     {
         if (filestr)
         {
-            fprintf(fpstrm,   "%s:",  filestr);
+            fprintf(fpstrm, "%s%s%s:%s", filefgc, filestr, debugfgc, deffgc);
             if (doltf) {
                 fprintf(fout, "%s:",  filestr);
             }
@@ -133,7 +165,7 @@ lgrf(enum   verblvls        verblvl,
 
         if (funcstr)
         {
-            fprintf(fpstrm,   "%s:",  funcstr);
+            fprintf(fpstrm, "%s%s%s:%s", funcfgc, funcstr, debugfgc, deffgc);
             if (doltf) {
                 fprintf(fout, "%s:",  funcstr);
             }
@@ -141,7 +173,7 @@ lgrf(enum   verblvls        verblvl,
 
         if (line)
         {
-            fprintf(fpstrm,   "%u:", line);
+            fprintf(fpstrm, "%s%u%s:%s", linefgc, line, debugfgc, deffgc);
             if (doltf) {
                 fprintf(fout, "%u:", line);
             }
@@ -151,11 +183,13 @@ lgrf(enum   verblvls        verblvl,
         if (doltf) { fprintf(fout,  "   "); }
     }
 
+    fprintf(fpstrm, "%s", vfgc);
     va_list ap;
     va_start(ap, strfmt);
     vfprintf(fpstrm,            strfmt, ap);
     if (doltf) { vfprintf(fout, strfmt, ap); }
     va_end(ap);
+    fprintf(fpstrm, "%s", deffgc);
 }
 
 //#include  "../inc/lgr.h"
