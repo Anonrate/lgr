@@ -172,7 +172,7 @@ lgrf(enum   verblvls        verblvl,
         {
             fprintf(fpstrm,
                     "\e[%u;%u;%um%s\e[%u;%u;%um:\e[%u;%u;%um",
-                    funcstrattrb.fmt, funcstrattrb.fgc, functstrattrb.bgc,
+                    funcstrattrb.fmt, funcstrattrb.fgc, funcstrattrb.bgc,
                     funcstr,
                     debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
                     defattrb.fmt, defattrb.fgc, defattrb.bgc);
