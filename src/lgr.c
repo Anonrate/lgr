@@ -84,53 +84,19 @@ static char           *fnout    = "\0";
 
 static FILE           *fout     = 0;
 
-static unsigned int deffmt      = 0u;
-static unsigned int deffgc      = 39u;
-static unsigned int defbgc      = 49u;
+struct defattrb       = { RS_ALL, FG_DEF, BG_DEF };
+struct fatalattrb     = { defattrb.fmt, FG_RED, defattrb.bgc };
+struct errorattrb     = { defattrb.fmt, FG_LIGHT_RED, defattrb.bgc };
+struct warrningattrb  = { defattrb.fmt, FG_YELLOW, defattrb.bgc };
+struct noticeattrb    = { defattrb.fmt, FG_LIGHT_BLUE, defattrb.bgc };
+struct infoattrb      = { defattrb.fmt, FG_LIGHT_YELLOW, defattrb.bgc };
+struct debugattrb     = { defattrb.fmt, FG_MAGENTA, defattrb.bgc };
+struct traceattrb     = { defattrb.fmt, FG_LIGHT_MAGENTA, defattrb.bgc };
 
-static unsigned int fatalfmt    = deffmt;
-static unsigned int fatalfgc    = 31u;
-static unsigned int fatalbgc    = defbgc;
-
-static unsigned int errorfmt    = deffmt;
-static unsigned int errorfgc    = 91u;
-static unsigned int errorbgc    = defbgc;
-
-static unsigned int warrningfmg = deffmt;
-static unsigned int warrningfgc = 33u;
-static unsigned int warrninggbc = defbgc;
-
-static unsigned int noticefmt   = deffmt;
-static unsigned int noticefgc   = 94u;
-static unsigned int noticebgc   = defbgc;
-
-static unsigned int infofmt     = deffmt;
-static unsigned int infofgc     = 93u;
-static unsigned int infobgc     = defbgc;
-
-static unsigned int debugfmt    = deffmt;
-static unsigned int debugfgc    = 35u;
-static unsigned int debugbgc    = defbgc;
-
-static unsigned int tracefmg    = deffmt;
-static unsigned int tracefgc    = 95u;
-static unsigned int tracebgc    = defbgc;
-
-static unsigned int timestrfmt  = deffmt;
-static unsigned int timestrfgc  = 92u;
-static unsigned int timestrbgc  = defbgc;
-
-static unsigned int filestrfmt  = deffmt;
-static unsigned int filestrfgc  = 33u;
-static unsigned int filestrbgc  = defbgc;
-
-static unsigned int funcstrfmt  = deffmt;
-static unsigned int funcstrfgc  = 32u;
-static unsigned int funcstrbgc  = defbgc;
-
-static unsigned int linefmt     = deffmt;
-static unsigned int linefgc     = 31u;
-static unsigned int linebgc     = defbgc;
+struct timesstrattrb  = { defattrb.fmt, FG_LIGHT_GREEN, defattrb.bgc };
+struct filestrattrb   = { defattrb.fmt, FG_YELLOW, defattrb.bgc };
+struct funcstrattrb   = { defattrb.fmt, FG_GREEN, defattrb.bgc };
+struct lineattrb      = { defattrb.fmt, FG_RED, defattrb.bgc };
 
 void
 lgrf(enum   verblvls        verblvl,
