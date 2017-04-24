@@ -84,19 +84,31 @@ static char           *fnout    = "\0";
 
 static FILE           *fout     = 0;
 
-struct defattrb       = { RS_ALL, FG_DEF, BG_DEF };
-struct fatalattrb     = { defattrb.fmt, FG_RED, defattrb.bgc };
-struct errorattrb     = { defattrb.fmt, FG_LIGHT_RED, defattrb.bgc };
-struct warrningattrb  = { defattrb.fmt, FG_YELLOW, defattrb.bgc };
-struct noticeattrb    = { defattrb.fmt, FG_LIGHT_BLUE, defattrb.bgc };
-struct infoattrb      = { defattrb.fmt, FG_LIGHT_YELLOW, defattrb.bgc };
-struct debugattrb     = { defattrb.fmt, FG_MAGENTA, defattrb.bgc };
-struct traceattrb     = { defattrb.fmt, FG_LIGHT_MAGENTA, defattrb.bgc };
+struct fmtfgbgc_s defattrb      = {RS_ALL, FG_DEF, BG_DEF };
+struct fmtfgbgc_s fatalattrb    = { defattrb.fmt, FG_RED, defattrb.bgc };
 
-struct timesstrattrb  = { defattrb.fmt, FG_LIGHT_GREEN, defattrb.bgc };
-struct filestrattrb   = { defattrb.fmt, FG_YELLOW, defattrb.bgc };
-struct funcstrattrb   = { defattrb.fmt, FG_GREEN, defattrb.bgc };
-struct lineattrb      = { defattrb.fmt, FG_RED, defattrb.bgc };
+struct fmtfgbgc_s errorattrb    = {
+    defattrb.fmt, FG_LIGHT_RED, defattrb.bgc };
+
+struct fmtfgbgc_s warrningattrb = { defattrb.fmt, FG_YELLOW, defattrb.bgc };
+
+struct fmtfgbgc_s noticeattrb   = {
+    defattrb.fmt, FG_LIGHT_BLUE, defattrb.bgc };
+
+struct fmtfgbgc_s infoattrb     = {
+    defattrb.fmt, FG_LIGHT_YELLOW, defattrb.bgc };
+
+struct fmtfgbgc_s debugattrb    = { defattrb.fmt, FG_MAGENTA, defattrb.bgc };
+
+struct fmtfgbgc_s traceattrb    = {
+    defattrb.fmt, FG_LIGHT_MAGENTA, defattrb.bgc };
+
+struct fmtfgbgc_s timestrattrb = {
+    defattrb.fmt, FG_LIGHT_GREEN, defattrb.bgc };
+
+struct fmtfgbgc_s filestrattrb  = { defattrb.fmt, FG_YELLOW, defattrb.bgc };
+struct fmtfgbgc_s funcstrattrb  = { defattrb.fmt, FG_GREEN, defattrb.bgc };
+struct fmtfgbgc_s lineattrb     = { defattrb.fmt, FG_RED, defattrb.bgc };
 
 void
 lgrf(enum   verblvls        verblvl,
@@ -127,26 +139,27 @@ lgrf(enum   verblvls        verblvl,
 
     int doltf = ltf && fout && (tmpvlvl <= fprio || eim);
 
-    char *vfgc = (verblvl ==   FATAL ? fatalfgc
-               : (verblvl ==   ERROR ? errorfgc
-               : (verblvl == WARNING ? warrningfgc
-               : (verblvl ==  NOTICE ? noticefgc
-               : (verblvl ==    INFO ? infofgc
-               : (verblvl ==   DEBUG ? debugfgc
-               : tracefgc))))));
+    struct fmtfgbgc_s vattrb = (verblvl ==   FATAL ? fatalattrb
+                             : (verblvl ==   ERROR ? errorattrb
+                             : (verblvl == WARNING ? warrningattrb
+                             : (verblvl ==  NOTICE ? noticeattrb
+                             : (verblvl ==    INFO ? infoattrb
+                             : (verblvl ==   DEBUG ? debugattrb
+                             :  traceattrb))))));
     if (timestr)
     {
         fprintf(fpstrm,
-                "%s[%s%s%s]%s %s%-18s%s:%s  ",
-                debugfgc,
-                timestrfgc,
+                "\e[%u;%u;%um[\e[%u;%u;%um%s\e[%u;%u;%um]\e[%u;%u;%um "
+                    "\e[%u;%u;%um%-18s\e[%u;%u;%um:\e[%u;%u;%um  ",
+                debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
+                timestrattrb.fmt, timestrattrb.fgc, timestrattrb.bgc,
                 timestr,
-                debugfgc,
-                deffgc,
-                vfgc,
+                debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
+                defattrb.fmt, defattrb.fgc, defattrb.bgc,
+                vattrb.fmt, vattrb.fgc, vattrb.bgc,
                 getvlvln(verblvl),
-                debugfgc,
-                deffgc);
+                debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
+                defattrb.fmt, defattrb.fgc, defattrb.bgc);
         if (doltf) {
             fprintf(fout, "[%s]  %-18s:  ", timestr,  getvlvln(verblvl));
         }
@@ -157,11 +170,11 @@ lgrf(enum   verblvls        verblvl,
         if (filestr)
         {
             fprintf(fpstrm,
-                    "%s%s%s:%s",
-                    filestrfgc,
+                    "\e[%u;%u;%um%s\e[%u;%u;%um:\e[%u;%u;%um",
+                    filestrattrb.fmt, filestrattrb.fgc, filestrattrb.bgc,
                     filestr,
-                    debugfgc,
-                    deffgc);
+                    debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
+                    defattrb.fmt, defattrb.fgc, defattrb.bgc);
             if (doltf) {
                 fprintf(fout, "%s:",  filestr);
             }
@@ -170,11 +183,11 @@ lgrf(enum   verblvls        verblvl,
         if (funcstr)
         {
             fprintf(fpstrm,
-                    "%s%s%s:%s",
-                    funcstrfgc,
+                    "\e[%u;%u;%um%s\e[%u;%u;%um:\e[%u;%u;%um",
+                    funcstrattrb.fmt, funcstrattrb.fgc, functstrattrb.bgc,
                     funcstr,
-                    debugfgc,
-                    deffgc);
+                    debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
+                    defattrb.fmt, defattrb.fgc, defattrb.bgc);
             if (doltf) {
                 fprintf(fout, "%s:",  funcstr);
             }
@@ -182,7 +195,12 @@ lgrf(enum   verblvls        verblvl,
 
         if (line)
         {
-            fprintf(fpstrm, "%s%u%s:%s", linefgc, line, debugfgc, deffgc);
+            fprintf(fpstrm,
+                    "\e[%u;%u;%um%u\e[%u;%u;%um:\e[%u;%u;%um",
+                    lineattrb.fmt, lineattrb.fgc, lineattrb.bgc,
+                    line,
+                    debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
+                    defattrb.fmt, defattrb.fgc, defattrb.bgc);
             if (doltf) {
                 fprintf(fout, "%u:", line);
             }
@@ -192,13 +210,13 @@ lgrf(enum   verblvls        verblvl,
         if (doltf) { fprintf(fout,  "   "); }
     }
 
-    fprintf(fpstrm, "%s", vfgc);
+    fprintf(fpstrm, "\e[%u;%u;%um", vattrb.fmt, vattrb.fgc, vattrb.bgc);
     va_list ap;
     va_start(ap, strfmt);
     vfprintf(fpstrm,            strfmt, ap);
     if (doltf) { vfprintf(fout, strfmt, ap); }
     va_end(ap);
-    fprintf(fpstrm, "%s", deffgc);
+    fprintf(fpstrm, "\e[%u;%u;%um", defattrb.fmt, defattrb.fgc, defattrb.bgc);
 }
 
 //#include  "../inc/lgr.h"
@@ -428,15 +446,4 @@ dellog(void)
     if (!fout) { return 1; }
 
     return closeout() ? !remove(fnout) : 0;
-}
-
-void
-updatedeffgc(unsigned int u)
-{
-    size_t tsz = snprintf(0, 0, "\e[%um", u);
-    char *tstr = malloc(tsz + 1ul);
-    sprintf(tstr, "\e[%um", u);
-    mallstr(tstr, &deffgc);
-
-    deffgc = tstr;
 }
