@@ -28,7 +28,10 @@
 #ifndef LGR_H
 #define LGR_H
 
-#include "lgrverblvls.h"
+#include  "lgrverblvls.h"
+#include  "../../termsole/inc/linux/cntrlseq/enums/formatenum.h"
+#include  "../../termsole/inc/linux/cntrlseq/enums/fgcolenum.h"
+#include  "../../termsole/inc/linux/cntrlseq/enums/bgcolenum.h"
 
 extern void
 lgrf(enum   verblvls        verblvl,
@@ -142,5 +145,26 @@ closeout(void);
 
 extern int
 dellog(void);
+
+struct
+fmtfgbgc_s {
+    enum allfmts  fmt;
+    enum fgcol    fgc;
+    enum bgcol    bgc;
+};
+
+extern struct fmtfgbgc_s defattrb;
+extern struct fmtfgbgc_s fatalattrb;
+extern struct fmtfgbgc_s errorattrb;
+extern struct fmtfgbgc_s warrningattrb;
+extern struct fmtfgbgc_s noticeattrb;
+extern struct fmtfgbgc_s infoattrb;
+extern struct fmtfgbgc_s debugattrb;
+extern struct fmtfgbgc_s traceattrb;
+
+extern struct fmtfgbgc_s timestrattrb;
+extern struct fmtfgbgc_s filestrattrb;
+extern struct fmtfgbgc_s funcstrattrb;
+extern struct fmtfgbgc_s lineattrb;
 
 #endif  /* LGR_H */
