@@ -42,13 +42,6 @@
 #define INTERN_DEBUG_STR    "INTERN_DEBUG"
 #define INTERN_TRACE_STR    "INTERN_TRACE"
 
-#ifdef  LGR_DEV
-#define DEV_INTERN_WARNING_STR  "DEV:INTERN_WARNING"
-#define DEV_INTERN_INFO_STR     "DEV:INTERN_INFO"
-#define DEV_INTERN_DEBUG_STR    "DEV:INTERN_DEBUG"
-#define DEV_INTERN_TRACE_STR    "DEV:INTERN_TRACE"
-#endif  /* LGR_DEV                */
-
 enum
 verblvls
 {
@@ -65,12 +58,5 @@ verblvls
     INTERN_INFO     = 0x9u,
     INTERN_DEBUG    = 0xau,
     INTERN_TRACE    = 0xbu
-
-#ifdef  LGR_DEV
-  , DEV_INTERN_WARNING  = 0xcu,
-    DEV_INTERN_INFO     = 0xdu,
-    DEV_INTERN_DEBUG    = 0xeu,
-    DEV_INTERN_TRACE    = 0xfu
-#endif  /* LGR_DEV                */
 };
 #endif  /* LGRVERBLVLS_H */
