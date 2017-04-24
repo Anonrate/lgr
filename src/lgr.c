@@ -41,36 +41,39 @@
 static const char*
 getvlvln(enum verblvls verblvl)
 {
-    return  ((verblvl ==              FATAL)  ? FATAL_STR
-           : (verblvl ==              ERROR)  ? ERROR_STR
-           : (verblvl ==            WARNING)  ? WARNING_STR
-           : (verblvl ==             NOTICE)  ? NOTICE_STR
-           : (verblvl ==               INFO)  ? INFO_STR
-           : (verblvl ==              DEBUG)  ? DEBUG_STR
-           : (verblvl ==              TRACE)  ? TRACE_STR
-           : (verblvl ==     INTERN_WARNING)  ? INTERN_WARNING_STR
-           : (verblvl ==        INTERN_INFO)  ? INTERN_INFO_STR
-           : (verblvl ==       INTERN_DEBUG)  ? INTERN_DEBUG_STR
-           : (verblvl ==       INTERN_TRACE)  ? INTERN_TRACE_STR
-#ifdef  LGR_DEV
-           : (verblvl == DEV_INTERN_WARNING)  ? DEV_INTERN_WARNING_STR
-           : (verblvl ==    DEV_INTERN_INFO)  ? DEV_INTERN_INFO_STR
-           : (verblvl ==   DEV_INTERN_DEBUG)  ? DEV_INTERN_DEBUG_STR
-           : (verblvl ==   DEV_INTERN_TRACE)  ? DEV_INTERN_TRACE_STR
-#endif  /* LGR_DEV                */
-
-           :                                    NVALID_VERB_LVL_STR);
+    return  ((verblvl ==          FATAL)  ? FATAL_STR
+           : (verblvl ==          ERROR)  ? ERROR_STR
+           : (verblvl ==        WARNING)  ? WARNING_STR
+           : (verblvl ==         NOTICE)  ? NOTICE_STR
+           : (verblvl ==           INFO)  ? INFO_STR
+           : (verblvl ==          DEBUG)  ? DEBUG_STR
+           : (verblvl ==          TRACE)  ? TRACE_STR
+           : (verblvl == INTERN_WARNING)  ? INTERN_WARNING_STR
+           : (verblvl ==    INTERN_INFO)  ? INTERN_INFO_STR
+           : (verblvl ==   INTERN_DEBUG)  ? INTERN_DEBUG_STR
+           : (verblvl ==   INTERN_TRACE)  ? INTERN_TRACE_STR
+           :                                NVALID_VERB_LVL_STR);
 }
 
-#ifdef  LGR_DEV
-static char           *vlvln    = DEV_INTERN_TRACE_STR;
-static enum verblvls  vlvl      = DEV_INTERN_TRACE;
-#else
-static char           *vlvln    = WARNING_STR;
-static enum verblvls  vlvl      = WARNING;
-#endif  /* LGR_DEV */
+struct vnfo_s {
+    enum  verblvls  vlvl;
+    const char      *((*vlvln)());
+};
 
-static int            ltf       = 0;
+static const char*
+vlvln(struct vnfo_s *pvnfo)
+{
+    return getvlvln(pvnfo->vlvl);
+}
+
+static struct vnfo_s
+vnfo = { .vlvl  =
+#ifdef  LGR_DEV
+                  INTERN_TRACE,
+#else
+                  WARNING,
+#endif  /* LGR_DEV */
+         .vlvln = vlvln };
 
 static enum verblvls  fprio     = ERROR;
 
@@ -83,6 +86,11 @@ static char           *fname    = "\0";
 static char           *fnout    = "\0";
 
 static FILE           *fout     = 0;
+
+int usecolr           = 1;
+int enableinternmsgs  = 0;
+int erronwarn         = 0;
+int logtofile         = 0;
 
 struct fmtfgbgc_s defattrb      = { RS_ALL, FG_DEF, BG_DEF };
 struct fmtfgbgc_s fatalattrb    = { RS_ALL, FG_RED, BG_DEF };
@@ -98,45 +106,15 @@ struct fmtfgbgc_s filestrattrb  = { RS_ALL, FG_YELLOW, BG_DEF };
 struct fmtfgbgc_s funcstrattrb  = { RS_ALL, FG_GREEN, BG_DEF };
 struct fmtfgbgc_s lineattrb     = { RS_ALL, FG_RED, BG_DEF };
 
-void
-lgrf(enum   verblvls        verblvl,
-     const            char  *timestr,
-     const            char  *filestr,
-     const            char  *funcstr,
-     const  unsigned  int   line,
-     const            char  *strfmt, ...)
+static void
+printtimestr(       FILE        *strm,
+             const  char        *timestr,
+             struct fmtfgbgc_s  vattrb,
+             struct vnfo_s      verbnfo,
+                    int         doltf)
 {
-    if (!(verblvl > 0
-                && verblvl <= INTERN_TRACE
-         )  ? verblvl
-            : NVALID_VERB_LVL) { return; }
-
-    const unsigned char tmpvlvl =
-        ((errwarn && verblvl == WARNING) ? ERROR : verblvl);
-
-    if (tmpvlvl > vlvl && (eim && tmpvlvl < TRACE)) { return; }
-
-    FILE *fpstrm  =
-        ((errwarn)
-         ? ((verblvl <= WARNING)
-             ? stderr
-             : stdout)
-         : ((verblvl <= ERROR)
-             ? stderr
-             : stdout));
-
-    int doltf = ltf && fout && (tmpvlvl <= fprio || eim);
-
-    struct fmtfgbgc_s vattrb = (verblvl ==   FATAL ? fatalattrb
-                             : (verblvl ==   ERROR ? errorattrb
-                             : (verblvl == WARNING ? warrningattrb
-                             : (verblvl ==  NOTICE ? noticeattrb
-                             : (verblvl ==    INFO ? infoattrb
-                             : (verblvl ==   DEBUG ? debugattrb
-                             :  traceattrb))))));
-    if (timestr)
-    {
-        fprintf(fpstrm,
+    if (usecolr) {
+        fprintf(strm,
                 "\e[%u;%u;%um[\e[%u;%u;%um%s\e[%u;%u;%um]\e[%u;%u;%um "
                     "\e[%u;%u;%um%-18s\e[%u;%u;%um:\e[%u;%u;%um  ",
                 debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
@@ -145,66 +123,137 @@ lgrf(enum   verblvls        verblvl,
                 debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
                 defattrb.fmt, defattrb.fgc, defattrb.bgc,
                 vattrb.fmt, vattrb.fgc, vattrb.bgc,
-                getvlvln(verblvl),
+                verbnfo.vlvln(verbnfo),
                 debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
                 defattrb.fmt, defattrb.fgc, defattrb.bgc);
-        if (doltf) {
-            fprintf(fout, "[%s]  %-18s:  ", timestr,  getvlvln(verblvl));
-        }
+    } else {
+        fprintf(strm, "[%s]  %-18s:  ", timestr, verbnfo.vlvln(verbnfo));
     }
 
+    if (doltf) {
+        fprintf(fout, "[%s]  %-18s:  ", timestr, verbnfo.vlvln(verbnfo));
+    }
+}
+
+static void
+printfilefnstr(       FILE        *strm,
+               struct fmtfgbgc_s  fileorfnstrattrb,
+               const  char        *fileorfnstr,
+                      int         doltf)
+{
+    if (usecolr) {
+        fprintf(strm,
+                "\e[%u;%u;%um%s\e[%u;%u;%um:\e[%u;%u;%um",
+                fileorfnstrattrb.fmt,
+                    fileorfnstrattrb.fgc,
+                    fileorfnstrattrb.bgc,
+                fileorfnstr,
+                debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
+                defattrb.fmt, defattrb.fgc, defattrb.bgc);
+    } else     { fprintf(strm, "%s:", fileorfnstr); }
+    if (doltf) { fprintf(fout, "%s:", fileorfnstr); }
+}
+
+static void
+printline(          FILE  *strm,
+          unsigned  int   line,
+                    int   doltf)
+{
+    if (usecolr) {
+        fprintf(strm,
+                "\e[%u;%u;%um%u\e[%u;%u;%um:\e[%u;%u;%um",
+                lineattrb.fmt, lineattrb.fgc, lineattrb.bgc,
+                line,
+                debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
+                defattrb.fmt, defattrb.fgc, defattrb.bgc);
+    } else     { fprintf(strm, "%u:", line); }
+    if (doltf) { fprintf(fout, "%u:", line); }
+}
+
+static struct vnfo_s
+getvnfo(enum verblvls verblvl)
+{
+    struct vnfo_s tvnfo = { .vlvl   = verblvl,
+                            .vlvln  = vlvln };
+    return tvnfo;
+}
+
+static struct fmtfgbgc_s
+getvattrb(enum verblvls verblvl)
+{
+    return ((verblvl ==   FATAL) ? fatalattrb
+          : (verblvl ==   ERROR) ? errorattrb
+          : (verblvl == WARNING) ? warrningattrb
+          : (verblvl ==  NOTICE) ? noticeattrb
+          : (verblvl ==    INFO) ? infoattrb
+          : (verblvl ==   DEBUG) ? debugattrb
+          :                        traceattrb);
+}
+
+void
+lgrf(enum   verblvls        verblvl,
+     const            char  *timestr,
+     const            char  *filestr,
+     const            char  *funcstr,
+     const  unsigned  int   line,
+     const            char  *strfmt, ...)
+{
+    if (!((verblvl > 0)
+                && (verblvl <= INTERN_TRACE))
+            ? verblvl
+            : NVALID_VERB_LVL) { return; }
+
+    const unsigned char tmpvlvl =
+        ((erronwarn && (verblvl == WARNING)) ? ERROR : verblvl);
+
+    if ((tmpvlvl > vnfo.vlvl)
+            && (enableinternmsgs
+                && (tmpvlvl < TRACE))) { return; }
+
+    FILE *strm  =
+        ((errwarn)
+         ? ((verblvl <= WARNING)
+             ? stderr
+             : stdout)
+         : ((verblvl <= ERROR)
+             ? stderr
+             : stdout));
+
+    int doltf =
+        (logtofile
+         && fout
+         && ((tmpvlvl <= fprio)
+             || enableinternmsgs));
+
+    struct fmtfgbgc_s vattrb  = getvattrb(verblvl);
+    struct vnfo_s     tvnfo   = getvnfo(verblvl);
+
+    if (timestr) { printtimestr(strm, timestr, vattrb, tvnfo, doltf); }
     if (filestr || funcstr || line)
     {
-        if (filestr)
-        {
-            fprintf(fpstrm,
-                    "\e[%u;%u;%um%s\e[%u;%u;%um:\e[%u;%u;%um",
-                    filestrattrb.fmt, filestrattrb.fgc, filestrattrb.bgc,
-                    filestr,
-                    debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
-                    defattrb.fmt, defattrb.fgc, defattrb.bgc);
-            if (doltf) {
-                fprintf(fout, "%s:",  filestr);
-            }
-        }
+        if (filestr) { printfilefnstr(strm, filestrattrb, filestr, doltf); }
+        if (funcstr) { printfilefnstr(strm, funcstrattrb, funcstr, doltf); }
+        if (line)    { printline(strm, line, doltf); }
 
-        if (funcstr)
-        {
-            fprintf(fpstrm,
-                    "\e[%u;%u;%um%s\e[%u;%u;%um:\e[%u;%u;%um",
-                    funcstrattrb.fmt, funcstrattrb.fgc, funcstrattrb.bgc,
-                    funcstr,
-                    debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
-                    defattrb.fmt, defattrb.fgc, defattrb.bgc);
-            if (doltf) {
-                fprintf(fout, "%s:",  funcstr);
-            }
-        }
-
-        if (line)
-        {
-            fprintf(fpstrm,
-                    "\e[%u;%u;%um%u\e[%u;%u;%um:\e[%u;%u;%um",
-                    lineattrb.fmt, lineattrb.fgc, lineattrb.bgc,
-                    line,
-                    debugattrb.fmt, debugattrb.fgc, debugattrb.bgc,
-                    defattrb.fmt, defattrb.fgc, defattrb.bgc);
-            if (doltf) {
-                fprintf(fout, "%u:", line);
-            }
-        }
-
-        fprintf(fpstrm,             "   ");
+        fprintf(strm,               "   ");
         if (doltf) { fprintf(fout,  "   "); }
     }
 
-    fprintf(fpstrm, "\e[%u;%u;%um", vattrb.fmt, vattrb.fgc, vattrb.bgc);
+    if (usecolr) {
+        fprintf(strm, "\e[%u;%u;%um", vattrb.fmt, vattrb.fgc, vattrb.bgc);
+    }
+
     va_list ap;
     va_start(ap, strfmt);
-    vfprintf(fpstrm,            strfmt, ap);
+    vfprintf(strm,              strfmt, ap);
     if (doltf) { vfprintf(fout, strfmt, ap); }
     va_end(ap);
-    fprintf(fpstrm, "\e[%u;%u;%um", defattrb.fmt, defattrb.fgc, defattrb.bgc);
+
+    if (usecolr) {
+        fprintf(strm,
+                "\e[%u;%u;%um",
+                defattrb.fmt, defattrb.fgc, defattrb.bgc);
+    }
 }
 
 //#include  "../inc/lgr.h"
@@ -253,48 +302,21 @@ mallstr(const char *stra, char **pstrb)
     if (tmpstrbsz != tmpstrasz) { *pstrb = malloc(tmpstrasz + 1lu); }
 }
 
-static char*
-setvlvln(enum verblvls verblvl)
-{
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setvlvln()"); }
-    const char *tmpvlvln = getverblvlname(verblvl);
-    if (!strcmp(vlvln, tmpvlvln)) { return vlvln; }
-    if (strcmp(tmpvlvln, NVALID_VERB_LVL_STR))
-    {
-        mallstr(tmpvlvln, &vlvln);
-        strcpy(vlvln, tmpvlvln);
-    }
-
-    return vlvln;
-}
-
-static unsigned char
-setvlvl(unsigned char verblvl)
-{
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setvlvl()"); }
-    return (vlvl = verblvl);
-}
-
 unsigned char
 setverblvl(enum verblvls verblvl)
 {
     if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setverblvl()"); }
-    if (vlvl == verblvl) { return vlvl; }
+    if (vnfo.vlvl == verblvl) { return vnfo.vlvl; }
+    if (isverblvl(verblvl)) { vnfo.vlvl = verblvl; }
 
-    if (isverblvl(verblvl))
-    {
-        setvlvl(verblvl);
-        setvlvln(verblvl);
-    }
-
-    return vlvl;
+    return vnfo.vlvl;
 }
 
 enum verblvls
 getverblvl(void)
 {
     if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getverblvl()"); }
-    return vlvl;
+    return vnfo.vlvl;
 }
 
 enum verblvls
@@ -304,13 +326,6 @@ getfileprio(void)
     return fprio;
 }
 
-int
-geterrwarn(void)
-{
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "geterrwarn()"); }
-    return errwarn;
-}
-
 enum verblvls
 setfileprio(enum verblvls fileprio)
 {
@@ -318,13 +333,6 @@ setfileprio(enum verblvls fileprio)
     if (!isverblvl(fileprio)) { return (unsigned char)0; }
 
     return (fprio = fileprio);
-}
-
-int
-seterrwarn(int treatwarnerr)
-{
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "seterrwarn()"); }
-    return (errwarn = treatwarnerr);
 }
 
 static char*
@@ -352,7 +360,7 @@ char*
 setfilename(char *filename)
 {
     if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfilename()"); }
-    if (!filename || !ltf) { return fname; }
+    if (!filename || !logtofile) { return fname; }
 
     mallstr(filename, &fname);
 
@@ -361,20 +369,6 @@ setfilename(char *filename)
     setfout();
 
     return fname;
-}
-
-int
-setlogtofile(int logtofile)
-{
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setlogtofile()"); }
-    return (ltf = logtofile);
-}
-
-int
-getlogtofile(void)
-{
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getlogtofile()"); }
-    return ltf;
 }
 
 char*
@@ -406,20 +400,6 @@ getfilenameout(void)
 {
     if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getfilenameout()"); }
     return fnout;
-}
-
-int
-setenableinternmsg(int enableinternmsg)
-{
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setenableinternmsg()"); }
-    return (eim = enableinternmsg);
-}
-
-int
-getenableinternmsg(void)
-{
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getenableinternmsg()"); }
-    return eim;
 }
 
 int

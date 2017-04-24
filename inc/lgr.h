@@ -146,12 +146,31 @@ closeout(void);
 extern int
 dellog(void);
 
-struct
-fmtfgbgc_s {
+struct fmtfgbgc_s {
     enum allfmts  fmt;
     enum fgcol    fgc;
     enum bgcol    bgc;
 };
+
+/*
+extern struct lgropts_s {
+    char            *vlvln;
+    enum  verblvls  vlvl;
+    int             ltf;
+    enum  verblvls  fprio;
+    int             errwarn;
+    int             eim;
+    char            *fnsfxfmt;
+    char            *fname;
+    char            *fout;
+    FILE            *fout;
+    int             usecolr;
+};
+*/
+extern int usecolr;
+extern int enableinternmsgs;
+extern int erronwarn;
+extern int logtofile;
 
 extern struct fmtfgbgc_s defattrb;
 extern struct fmtfgbgc_s fatalattrb;
@@ -166,5 +185,4 @@ extern struct fmtfgbgc_s timestrattrb;
 extern struct fmtfgbgc_s filestrattrb;
 extern struct fmtfgbgc_s funcstrattrb;
 extern struct fmtfgbgc_s lineattrb;
-
 #endif  /* LGR_H */
