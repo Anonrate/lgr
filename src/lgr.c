@@ -84,31 +84,19 @@ static char           *fnout    = "\0";
 
 static FILE           *fout     = 0;
 
-struct fmtfgbgc_s defattrb      = {RS_ALL, FG_DEF, BG_DEF };
-struct fmtfgbgc_s fatalattrb    = { defattrb.fmt, FG_RED, defattrb.bgc };
+struct fmtfgbgc_s defattrb      = { RS_ALL, FG_DEF, BG_DEF };
+struct fmtfgbgc_s fatalattrb    = { RS_ALL, FG_RED, BG_DEF };
+struct fmtfgbgc_s errorattrb    = { RS_ALL, FG_LIGHT_RED, BG_DEF };
+struct fmtfgbgc_s warrningattrb = { RS_ALL, FG_YELLOW, BG_DEF };
+struct fmtfgbgc_s noticeattrb   = { RS_ALL, FG_LIGHT_BLUE, BG_DEF };
+struct fmtfgbgc_s infoattrb     = { RS_ALL, FG_LIGHT_YELLOW, BG_DEF };
+struct fmtfgbgc_s debugattrb    = { RS_ALL, FG_MAGENTA, BG_DEF };
+struct fmtfgbgc_s traceattrb    = { RS_ALL, FG_LIGHT_MAGENTA, BG_DEF };
 
-struct fmtfgbgc_s errorattrb    = {
-    defattrb.fmt, FG_LIGHT_RED, defattrb.bgc };
-
-struct fmtfgbgc_s warrningattrb = { defattrb.fmt, FG_YELLOW, defattrb.bgc };
-
-struct fmtfgbgc_s noticeattrb   = {
-    defattrb.fmt, FG_LIGHT_BLUE, defattrb.bgc };
-
-struct fmtfgbgc_s infoattrb     = {
-    defattrb.fmt, FG_LIGHT_YELLOW, defattrb.bgc };
-
-struct fmtfgbgc_s debugattrb    = { defattrb.fmt, FG_MAGENTA, defattrb.bgc };
-
-struct fmtfgbgc_s traceattrb    = {
-    defattrb.fmt, FG_LIGHT_MAGENTA, defattrb.bgc };
-
-struct fmtfgbgc_s timestrattrb = {
-    defattrb.fmt, FG_LIGHT_GREEN, defattrb.bgc };
-
-struct fmtfgbgc_s filestrattrb  = { defattrb.fmt, FG_YELLOW, defattrb.bgc };
-struct fmtfgbgc_s funcstrattrb  = { defattrb.fmt, FG_GREEN, defattrb.bgc };
-struct fmtfgbgc_s lineattrb     = { defattrb.fmt, FG_RED, defattrb.bgc };
+struct fmtfgbgc_s timestrattrb = { RS_ALL, FG_LIGHT_GREEN, BG_DEF };
+struct fmtfgbgc_s filestrattrb  = { RS_ALL, FG_YELLOW, BG_DEF };
+struct fmtfgbgc_s funcstrattrb  = { RS_ALL, FG_GREEN, BG_DEF };
+struct fmtfgbgc_s lineattrb     = { RS_ALL, FG_RED, BG_DEF };
 
 void
 lgrf(enum   verblvls        verblvl,
