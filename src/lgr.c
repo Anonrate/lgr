@@ -84,20 +84,53 @@ static char           *fnout    = "\0";
 
 static FILE           *fout     = 0;
 
-static char *deffgc       = "\e[39m";
+static unsigned int deffmt      = 0u;
+static unsigned int deffgc      = 39u;
+static unsigned int defbgc      = 49u;
 
-static char *fatalfgc     = "\e[31m";
-static char *errorfgc     = "\e[91m";
-static char *warrningfgc  = "\e[33m";
-static char *noticefgc    = "\e[94m";
-static char *infofgc      = "\e[93m";
-static char *debugfgc     = "\e[35m";
-static char *tracefgc     = "\e[95m";
+static unsigned int fatalfmt    = deffmt;
+static unsigned int fatalfgc    = 31u;
+static unsigned int fatalbgc    = defbgc;
 
-static char *timestrfgc   = "\e[92m";
-static char *filestrfgc   = "\e[33m";
-static char *funcstrfgc   = "\e[32m";
-static char *linefgc      = "\e[31m";
+static unsigned int errorfmt    = deffmt;
+static unsigned int errorfgc    = 91u;
+static unsigned int errorbgc    = defbgc;
+
+static unsigned int warrningfmg = deffmt;
+static unsigned int warrningfgc = 33u;
+static unsigned int warrninggbc = defbgc;
+
+static unsigned int noticefmt   = deffmt;
+static unsigned int noticefgc   = 94u;
+static unsigned int noticebgc   = defbgc;
+
+static unsigned int infofmt     = deffmt;
+static unsigned int infofgc     = 93u;
+static unsigned int infobgc     = defbgc;
+
+static unsigned int debugfmt    = deffmt;
+static unsigned int debugfgc    = 35u;
+static unsigned int debugbgc    = defbgc;
+
+static unsigned int tracefmg    = deffmt;
+static unsigned int tracefgc    = 95u;
+static unsigned int tracebgc    = defbgc;
+
+static unsigned int timestrfmt  = deffmt;
+static unsigned int timestrfgc  = 92u;
+static unsigned int timestrbgc  = defbgc;
+
+static unsigned int filestrfmt  = deffmt;
+static unsigned int filestrfgc  = 33u;
+static unsigned int filestrbgc  = defbgc;
+
+static unsigned int funcstrfmt  = deffmt;
+static unsigned int funcstrfgc  = 32u;
+static unsigned int funcstrbgc  = defbgc;
+
+static unsigned int linefmt     = deffmt;
+static unsigned int linefgc     = 31u;
+static unsigned int linebgc     = defbgc;
 
 void
 lgrf(enum   verblvls        verblvl,
@@ -429,4 +462,15 @@ dellog(void)
     if (!fout) { return 1; }
 
     return closeout() ? !remove(fnout) : 0;
+}
+
+void
+updatedeffgc(unsigned int u)
+{
+    size_t tsz = snprintf(0, 0, "\e[%um", u);
+    char *tstr = malloc(tsz + 1ul);
+    sprintf(tstr, "\e[%um", u);
+    mallstr(tstr, &deffgc);
+
+    deffgc = tstr;
 }
