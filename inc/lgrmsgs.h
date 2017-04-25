@@ -28,24 +28,28 @@
 #ifndef LGRMSGS_H
 #define LGRMSGS_H
 
-#define R_MSGLHHU(l, hhu)                                         \
-    (                                                             \
-        logltffnlf((l), "Returning %s(%hhu)...\n", (#hhu), (hhu)) \
+#define R_MSGLHHU(l, hhu)                                           \
+    (                                                               \
+        logltffnlf((l), "Returning %s(%hhu)...\n", (#hhu), (hhu)),  \
+        (hhu)                                                       \
     )
 
-#define R_MSGLD(l, d)                                       \
-    (                                                       \
-        logltffnlf((l), "Returning %s(%d)...\n", (#d), (d)) \
+#define R_MSGLD(l, d)                                         \
+    (                                                         \
+        logltffnlf((l), "Returning %s(%d)...\n", (#d), (d)),  \
+        (d)                                                   \
     )
 
-#define R_MSGLU(l, u)                                       \
-    (                                                       \
-        logltffnlf((l), "Returning %s(%u)...\n", (#u), (u)) \
+#define R_MSGLU(l, u)                                         \
+    (                                                         \
+        logltffnlf((l), "Returning %s(%u)...\n", (#u), (u)),  \
+        (u)                                                   \
     )
 
-#define R_MSGLS(l, s)                                       \
-    (                                                       \
-        logltffnlf((l), "Returning %s(%s)...\n", (#s), (s)) \
+#define R_MSGLS(l, s)                                         \
+    (                                                         \
+        logltffnlf((l), "Returning %s(%s)...\n", (#s), (s)),  \
+        (s)                                                  \
     )
 
 #define INFUNC_MSGL(l)                                  \
