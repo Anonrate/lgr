@@ -56,25 +56,6 @@ getvlvln(enum verblvls verblvl)
            :                                NVALID_VERB_LVL_STR);
 }
 
-struct vnfo_s {
-    enum  verblvls  vlvl;
-    const char      *((*vlvln)());
-};
-
-static const char*
-vlvln(struct vnfo_s *pvnfo)
-{
-    return getvlvln(pvnfo->vlvl);
-}
-
-static struct vnfo_s vnfo = {
-    .vlvl  =
-#ifdef  LGR_DEV
-             INTERN_TRACE,
-#else
-             WARNING,
-#endif  /* LGR_DEV */
-    .vlvln = vlvln };
 
 static enum verblvls  fprio     = ERROR;
 static char           *fnsfxfmt = "%y%m%d%H%M%S";
@@ -102,6 +83,26 @@ struct fmtfgbgc_s timestrattrb  = { RS_ALL, FG_LIGHT_GREEN, BG_DEF };
 struct fmtfgbgc_s filestrattrb  = { RS_ALL, FG_YELLOW, BG_DEF };
 struct fmtfgbgc_s funcstrattrb  = { RS_ALL, FG_GREEN, BG_DEF };
 struct fmtfgbgc_s lineattrb     = { RS_ALL, FG_RED, BG_DEF };
+
+struct vnfo_s {
+    enum  verblvls  vlvl;
+    const char      *((*vlvln)());
+};
+
+static const char*
+vlvln(struct vnfo_s *pvnfo)
+{
+    return getvlvln(pvnfo->vlvl);
+}
+
+static struct vnfo_s vnfo = {
+    .vlvl  =
+#ifdef  LGR_DEV
+             INTERN_TRACE,
+#else
+             WARNING,
+#endif  /* LGR_DEV */
+    .vlvln = vlvln };
 
 static void
 printtimestr(       FILE        *strm,
@@ -253,13 +254,9 @@ lgrf(enum   verblvls        verblvl,
     }
 }
 
-//#include  "../inc/lgr.h"
-
 #ifndef NAME_MAX
 #define NAME_MAX  0xfe
 #endif  /* NAME_MAX */
-
-//#include  "../inc/lgrmsgs.h"
 
 #ifdef  LGR_DEV
 int
@@ -273,7 +270,6 @@ main(int argc, char **argv)
     return EXIT_SUCCESS;
 }
 #endif  /* LGR_DEV    */
-
 
 const char*
 getverblvlname(enum verblvls verblvl)
@@ -338,7 +334,7 @@ setfileprio(enum verblvls fileprio)
         return R_MSGLHHU(INTERN_DEBUG, (unsigned char)0);
     }
 
-    return R_MSGLHHU(INTERN_DEBUG, (fprio = fileprio);
+    return R_MSGLHHU(INTERN_DEBUG, (fprio = fileprio));
 }
 
 static char*
