@@ -37,6 +37,7 @@
 #undef  LGR_DEV
 
 #include  "../inc/lgr.h"
+#include  "../inc/lgrmsgs.h"
 
 static const char*
 getvlvln(enum verblvls verblvl)
@@ -66,20 +67,16 @@ vlvln(struct vnfo_s *pvnfo)
     return getvlvln(pvnfo->vlvl);
 }
 
-static struct vnfo_s
-vnfo = { .vlvl  =
+static struct vnfo_s vnfo = {
+    .vlvl  =
 #ifdef  LGR_DEV
-                  INTERN_TRACE,
+             INTERN_TRACE,
 #else
-                  WARNING,
+             WARNING,
 #endif  /* LGR_DEV */
-         .vlvln = vlvln };
+    .vlvln = vlvln };
 
 static enum verblvls  fprio     = ERROR;
-
-static int            errwarn   = 0;
-static int            eim       = 0;
-
 static char           *fnsfxfmt = "%y%m%d%H%M%S";
 static char           *fname    = "\0";
 
@@ -211,7 +208,7 @@ lgrf(enum   verblvls        verblvl,
                 && (tmpvlvl < TRACE))) { return; }
 
     FILE *strm  =
-        ((errwarn)
+        ((erronwarn)
          ? ((verblvl <= WARNING)
              ? stderr
              : stdout)
@@ -281,22 +278,25 @@ main(int argc, char **argv)
 const char*
 getverblvlname(enum verblvls verblvl)
 {
-    return getvlvln(verblvl);
+    INFUNC_MSGL(INTERN_DEBUG);
+    return R_MSGLS(INTERN_DEBUG, getvlvln(verblvl));
 }
 
 int
 isverblvl(unsigned char lvl)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "isverblvl()"); }
-    return (strcmp(getverblvlname(lvl), NVALID_VERB_LVL_STR)
-            ? (int)lvl
-            : NVALID_VERB_LVL);
+    INFUNC_MSGL(INTERN_DEBUG);
+    CALLFN_MSGLS(INTERN_TRACE, "getverblvlname()");
+    return R_MSGLD(INTERN_DEBUG,
+                   (strcmp(getverblvlname(lvl), NVALID_VERB_LVL_STR)
+                    ? (int)lvl
+                    : NVALID_VERB_LVL));
 }
 
 static void
 mallstr(const char *stra, char **pstrb)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "mallstr()"); }
+    if (enableinternmsgs) { INFUNC_MSGL(INTERN_DEBUG); }
     size_t tmpstrbsz  = strlen(*pstrb);
     size_t tmpstrasz  = strlen(stra);
     if (tmpstrbsz != tmpstrasz) { *pstrb = malloc(tmpstrasz + 1lu); }
@@ -305,40 +305,46 @@ mallstr(const char *stra, char **pstrb)
 unsigned char
 setverblvl(enum verblvls verblvl)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setverblvl()"); }
-    if (vnfo.vlvl == verblvl) { return vnfo.vlvl; }
+    INFUNC_MSGL(INTERN_DEBUG);
+    if (vnfo.vlvl == verblvl) { return R_MSGLHHU(INTERN_DEBUG, vnfo.vlvl); }
+
+    CALLFN_MSGLS(INTERN_TRACE, "isverblvl()");
     if (isverblvl(verblvl)) { vnfo.vlvl = verblvl; }
 
-    return vnfo.vlvl;
+    return R_MSGLHHU(INTERN_DEBUG, vnfo.vlvl);
 }
 
 enum verblvls
 getverblvl(void)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getverblvl()"); }
-    return vnfo.vlvl;
+    INFUNC_MSGL(INTERN_DEBUG);
+    return R_MSGLU(INTERN_DEBUG, vnfo.vlvl);
 }
 
 enum verblvls
 getfileprio(void)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getfileprio()"); }
-    return fprio;
+    INFUNC_MSGL(INTERN_DEBUG);
+    return R_MSGLU(INTERN_DEBUG, fprio);
 }
 
 enum verblvls
 setfileprio(enum verblvls fileprio)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfileprio()"); }
-    if (!isverblvl(fileprio)) { return (unsigned char)0; }
+    INFUNC_MSGL(INTERN_DEBUG);
+    CALLFN_MSGLS(INTERN_TRACE, "isverblvl()");
 
-    return (fprio = fileprio);
+    if (!isverblvl(fileprio)) {
+        return R_MSGLHHU(INTERN_DEBUG, (unsigned char)0);
+    }
+
+    return R_MSGLHHU(INTERN_DEBUG, (fprio = fileprio);
 }
 
 static char*
 setfout(void)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfout()"); }
+    if (enableinternmsgs) { INFUNC_MSGL(INTERN_DEBUG); }
     time_t    t       = time(0);
     struct tm *ti     = localtime(&t);
     char      *tmpfno = malloc(NAME_MAX);
@@ -348,70 +354,79 @@ setfout(void)
     size_t tmpfnosz = sprintf(tmpfno, "%s-%s", tmpfno, fname);
 
     realloc(tmpfno, tmpfnosz + 1lu);
+    if (enableinternmsgs) { CALLFN_MSGLS(INTERN_TRACE, "mallstr()"); }
     mallstr(tmpfno, &fnout);
 
     fnout = tmpfno;
     fout  = fopen(fnout, "a");
 
+    if (enableinternmsgs) { return R_MSGLS(INTERN_DEBUG, fnout); }
     return fnout;
 }
 
 char*
 setfilename(char *filename)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfilename()"); }
-    if (!filename || !logtofile) { return fname; }
+    INFUNC_MSGL(INTERN_DEBUG);
+    if (!filename || !logtofile) { return R_MSGLS(INTERN_DEBUG, fname); }
 
+    CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
     mallstr(filename, &fname);
 
     fname = filename;
 
+    CALLFN_MSGLS(INTERN_TRACE, "setfout()");
     setfout();
 
-    return fname;
+    return R_MSGLS(INTERN_DEBUG, fname);
 }
 
 char*
 setfilenamesuffixfmt(const char *suffixfmt)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "setfilenamesuffixfmt()"); }
+    INFUNC_MSGL(INTERN_DEBUG);
     time_t    t       = time(0);
     struct tm *ti     = localtime(&t);
     char      *tmpfno = malloc(NAME_MAX);
 
     size_t tmpfnosz = strftime(tmpfno, NAME_MAX, fnsfxfmt, ti);
-    if (!tmpfnosz) { return fnsfxfmt; }
+    if (!tmpfnosz) { return R_MSGLS(INTERN_DEBUG, fnsfxfmt); }
 
+    CALLFN_MSGLS(INTERN_TRACE, "mallstr()");
     mallstr(suffixfmt, &fnsfxfmt);
     strcpy(fnsfxfmt, suffixfmt);
 
-    return fnsfxfmt;
+    return R_MSGLS(INTERN_DEBUG, fnsfxfmt);
 }
 
 char*
 getfilenamesuffixfmt(void)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getfilenamesuffixfmt()"); }
-    return fnsfxfmt;
+    INFUNC_MSGL(INTERN_DEBUG);
+    return R_MSGLS(INTERN_DEBUG, fnsfxfmt);
 }
 
 char*
 getfilenameout(void)
 {
-    if (eim) { logltffnlf(INTERN_TRACE, "%s\n", "getfilenameout()"); }
-    return fnout;
+    INFUNC_MSGL(INTERN_DEBUG);
+    return R_MSGLS(INTERN_DEBUG, fnout);
 }
 
 int
 closeout(void)
 {
-    return !fclose(fout);
+    INFUNC_MSGL(INTERN_DEBUG);
+    CALLFN_MSGLS(INTERN_TRACE, "fclose()");
+    return R_MSGLD(INTERN_DEBUG, !fclose(fout));
 }
 
 int
 dellog(void)
 {
-    if (!fout) { return 1; }
+    INFUNC_MSGL(INTERN_DEBUG);
+    if (!fout) { return R_MSGLD(INTERN_DEBUG, 1); }
 
-    return closeout() ? !remove(fnout) : 0;
+    CALLFN_MSGLS(INTERN_TRACE, "closeout()");
+    return R_MSGLD(INTERN_DEBUG, (closeout() ? !remove(fnout) : 0));
 }
